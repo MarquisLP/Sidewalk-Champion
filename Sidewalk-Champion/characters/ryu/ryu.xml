@@ -1,0 +1,105 @@
+﻿<sidewalk_champion>
+    <character name="Ryu" stamina="1000" speed="80" stun_threshold="100" mugshot="ryu/images/mug.png">
+        <action name="Stand" filepath="ryu/images/stand.png" width="78" height="111" x_offset="0" condition="0" multi_hit="0" priority="1" meter_gain="0" meter_needed="0" proximity="0" start_counter_frame="0">
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="8" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="16" width="54" height="95" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="8" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="16" width="54" height="95" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="2" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="0" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="0" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="0" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="0" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="1" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="2" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="35" y_offset="6" width="19" height="17" />
+                <hurtbox x_offset="12" y_offset="14" width="54" height="97" />
+            </frame>
+            <input_list></input_list>
+        </action>
+        <action name="Far Light Punch" filepath="ryu/images/far_light_punch.png" width="121" height="107" x_offset="0" condition="0" multi_hit="0" priority="1" meter_gain="0" meter_needed="0" proximity="0" start_counter_frame="0">
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="38" y_offset="0" width="17" height="16" />
+                <hurtbox x_offset="18" y_offset="9" width="47" height="98" />
+            </frame>
+            <frame duration="2" cancelable="2" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="38" y_offset="0" width="17" height="16" />
+                <hurtbox x_offset="18" y_offset="9" width="47" height="98" />
+                <hurtbox x_offset="58" y_offset="13" width="57" height="14" />
+                <hitbox x_offset="66" y_offset="9" width="61" height="23" damage="10" hitstun="0" blockstun="0" knockback="0" dizzy_stun="0" effect="0" high_block="1" low_block="1" />
+                <projectile filepath="ryu/hadoken.xml" x_offset="107" y_offset="0" x_speed="300" y_speed="0" />
+            </frame>
+            <frame duration="3" cancelable="2" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="38" y_offset="0" width="17" height="16" />
+                <hurtbox x_offset="18" y_offset="9" width="47" height="98" />
+                <hurtbox x_offset="58" y_offset="13" width="57" height="14" />
+                <hitbox x_offset="66" y_offset="9" width="61" height="23" damage="10" hitstun="0" blockstun="0" knockback="0" dizzy_stun="0" effect="0" high_block="1" low_block="1" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="38" y_offset="0" width="17" height="16" />
+                <hurtbox x_offset="18" y_offset="9" width="47" height="98" />
+                <hurtbox x_offset="64" y_offset="20" width="26" height="16" />
+            </frame>
+            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+                <hurtbox x_offset="38" y_offset="0" width="17" height="16" />
+                <hurtbox x_offset="18" y_offset="9" width="47" height="98" />
+            </frame>
+            <input_list>
+                <input_step>
+                    <input>Light Punch</input>
+                </input_step>
+            </input_list>
+        </action>
+        <default_actions>
+            <intro>0</intro>
+            <stand>0</stand>
+            <walk>0</walk>
+            <crouch_down>0</crouch_down>
+            <crouching_idle>0</crouching_idle>
+            <jump_up>0</jump_up>
+            <jump_forward>0</jump_forward>
+            <jump_back>0</jump_back>
+            <block_standing>0</block_standing>
+            <block_high>0</block_high>
+            <block_low>0</block_low>
+            <standing_recoil>0</standing_recoil>
+            <crouching_recoil>0</crouching_recoil>
+            <jumping_recoil>0</jumping_recoil>
+            <tripped>0</tripped>
+            <launched>0</launched>
+            <falling>0</falling>
+            <knockdown>0</knockdown>
+            <recover>0</recover>
+            <dizzy>0</dizzy>
+            <chip_ko>0</chip_ko>
+            <victory>0</victory>
+        </default_actions>
+    </character>
+    <verification code="dfh943ooJLM3" />
+</sidewalk_champion>

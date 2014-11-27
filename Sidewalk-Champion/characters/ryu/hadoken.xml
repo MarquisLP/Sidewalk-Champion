@@ -1,0 +1,19 @@
+<sidewalk_champion>
+	<projectile name="Hadoken" spritesheet="ryu/images/hadoken.png" width="40" height="52" stamina="1" first_loop_frame="1" first_collision_frame="2">
+		<frame cancelable="0" move_x="0" move_y="0" duration="4" sfx="">
+			<hitbox x_offset="19" y_offset="4" width="21" height="43" damage="50" hitstun="10" blockstun="5" knockback="0" dizzy_stun="0" effect="0" high_block="1" low_block="1" />
+		</frame>
+		<frame cancelable="0" move_x="0" move_y="0" duration="4" sfx="">
+			<hitbox x_offset="16" y_offset="11" width="25" height="28" damage="50" hitstun="10" blockstun="5" knockback="0" dizzy_stun="0" effect="0" high_block="1" low_block="1" />
+		</frame>
+		<frame cancelable="0" move_x="0" move_y="0" duration="2" sfx="" >
+		</frame>
+		<frame cancelable="0" move_x="0" move_y="0" duration="2" sfx="" >
+		</frame>
+		<frame cancelable="0" move_x="0" move_y="0" duration="4" sfx="" >
+		</frame>
+		<frame cancelable="0" move_x="0" move_y="0" duration="2" sfx="" >
+		</frame>
+	</projectile>
+	<verification code="f849udjQMoh7" />
+</sidewalk_champion>
