@@ -53,8 +53,9 @@ class SettingsState(State):
         is_editing_binding: A Boolean that indicates whether the next
             key press will be saved to the currently-selected Key
             Binding.
-        is_leaving_state: A Boolean that indicates whether the leaving
-            animation is currently being shown.
+        is_leaving_state: A Boolean that indicates whether the game
+            is currently in the process of exiting this State and going
+            to another State.
     """
     BG_PATH = "images/settings_back.png"
     """@rtype: String"""
@@ -119,7 +120,7 @@ class SettingsState(State):
         self.reset_state()
 
     def reset_state(self):
-        """Reset this State upon entering it."""
+        """Reset this State and prepare its introductory animation."""
         self.state_pass.will_reset_state = False
 
         scale = self.state_pass.settings.screen_scale
@@ -288,7 +289,7 @@ class SettingsState(State):
         """Save a new key binding for the currently-selected input.
 
         Args:
-            new_key     The name of the key that will be bound.
+            new_key: The name of the key that will be bound.
         """
         player_num = self.setting_list.get_binding_player()
         self.binding_list.edit_selected_binding(player_num, new_key)
@@ -306,13 +307,11 @@ class SettingsState(State):
 
     def scroll_selected_list(self, should_scroll_up=False):
         """Scrolls through either the Setting List or the Key Binding
-        List based on which is currently selected.
+        List based on whichever one is currently selected.
 
         Args:
-            should_scroll_up        Set to True if the selected list
-                                    list should be scrolled up.
-                                    The default value, False, will cause
-                                    the list to scroll down.
+            should_scroll_up: A Boolean indicating whether the list
+                should be scrolled up instead of down.
         """
         if self.setting_list.active_setting == SettingIndex.BINDING_LIST:
             self.binding_list.scroll_bindings(should_scroll_up)
@@ -351,6 +350,10 @@ class SettingsState(State):
     def draw_state(self):
         """Draw all of this State's contained graphics onto the State
         Surface.
+
+        If the State Screen is currently in the process of sliding into
+        or out of the window, the previously-active Game State will be
+        drawn underneath it until the animation finishes.
         """
         if self.is_intro_on or self.is_leaving_state:
             self.draw_previous_state()
@@ -363,6 +366,17 @@ class SettingsState(State):
 class SettingIndex(object):
     """An enumeration that represents the available Settings within
     the Settings Screen.
+
+    Literals:
+        SCALE: The index of the setting that stores the current window
+            magnification scale.
+        SHOW_BOXES: the index of the Setting that determines whether
+            collision boxes should be shown during battle.
+        PLAYER_NUM: The index of the Setting that determines which
+            player's controls are currently being edited by the Key
+            Binding List.
+        BINDING_LIST: An additional index that signifies that the
+            Key Binding List has focus, rather than the Setting List.
     """
     SCALE = 0
     SHOW_BOXES = 1
@@ -374,40 +388,44 @@ class SettingList(object):
     """Contains all of the Setting objects that will be displayed in
     and that can be modified from the Settings Screen.
 
-    :type X: int
+    Class Constants:
+        X: The x-position of the top of the list relative to the game
+            screen.
+        Y: The y-position of the top of the list relative to the game
+            screen.
+        SETTING_DISTANCE: The vertical distance between Setting text
+            graphics, in pixels.
+
+    Attributes:
+        settings: A list containing all of the Settings in this State.
+        binding_list: A KeyBindingList that controls all of the Key
+            Bindings for both players.
+        active_setting: An integer for the index of the currently-
+            selected Setting.
     """
     X = 21
 
     Y = 17
     """:rtype : int"""
 
-    WIDTH = 350
-    """:rtype : int"""
-
-    HEIGHT = 90
-    """:rtype : int"""
-
     SETTING_DISTANCE = 15
     """:rtype : int"""
 
+    # Initialization
     def __init__(self, p1_bindings, p2_bindings):
         """Declare and initialize instance variables.
 
         @type p1_bindings: dict of (String, String)
         @type p2_bindings: dict of (String, String)
         """
-        self.binding_list = KeyBindingList(self, p1_bindings, p2_bindings)
-        """:rtype : KeyBindingList"""
-
         self.settings = self.create_all_settings()
         """:rtype : list of Setting"""
 
+        self.binding_list = KeyBindingList(self, p1_bindings, p2_bindings)
+        """:rtype : KeyBindingList"""
+
         self.active_setting = 0
         """:rtype : int"""
-
-        self.surf = Surface((self.WIDTH, self.HEIGHT), pygame.SRCALPHA, 32)
-
-        self.surf = self.surf.convert_alpha()
 
     def create_all_settings(self):
         """Returns a list containing all of the Settings within the
@@ -431,6 +449,7 @@ class SettingList(object):
 
         return setting_list
 
+    # Changing Selection
     def set_selected_setting(self, setting_index):
         """Set the focus to one of the Settings within the list.
         Indexes outside of the list range will automatically default to
@@ -489,6 +508,7 @@ class SettingList(object):
         """
         self.settings[self.active_setting].scroll_options(is_backwards)
 
+    # Drawing
     def draw(self, parent_surf):
         """Draw all Settings onto the specified Surface.
 
@@ -499,6 +519,7 @@ class SettingList(object):
         for setting_text in self.settings:
             setting_text.draw(parent_surf)
 
+    # Retrieving Data
     def get_screen_scale(self):
         """Returns the window magnification as chosen through the
         Window Scale Setting.
@@ -554,8 +575,6 @@ class Setting(object):
     """
     OPTION_DISTANCE = 20
     OPTION_X = 200
-    WIDTH = 350
-    HEIGHT = 20
 
     def __init__(self, x, y, name, *options):
         """Declare and initialize instance variables.
@@ -577,8 +596,6 @@ class Setting(object):
         self.text = UnderlineText(self.x, self.y, name)
         self.options = self.create_options(options)
         self.options[0].add_underline()
-        self.surf = Surface((self.WIDTH, self.HEIGHT), pygame.SRCALPHA, 32)
-        self.surf = self.surf.convert_alpha()
 
     def create_options(self, option_strings):
         """Create and return a list of UnderlineText objects that
@@ -661,8 +678,6 @@ class KeyBindingList(object):
                             relative to the parent Surface.
         Y                   The y-position of the main Surface,
                             relative to the parent Surface.
-        WIDTH               The width of the main Surface, in pixels.
-        HEIGHT              The height of the main Surface, in pixels.
         TEXT_DISTANCE       The vertical distance, in pixels, between
                             the top edges of the text graphic for each
                             Key Binding.
@@ -700,13 +715,9 @@ class KeyBindingList(object):
                             down to show more bindings.
         top_binding         The index of the key binding currently
                             shown
-        surf                The Surface upon which all of the
-                            KeyBinding text will be displayed.
     """
     X = 52
     Y = 115
-    WIDTH = 319
-    HEIGHT = 115
     TEXT_DISTANCE = 23
     BINDINGS_ON_SCREEN = 4
     UP_ARROW_PATH = "images/settings_arrow_up.png"
@@ -743,10 +754,6 @@ class KeyBindingList(object):
         self.down_arrow = Animation(self.DOWN_ARROW_PATH,
             (self.X + self.ARROW_X, self.Y + self.DOWN_ARROW_Y),
             self.ARROW_FRAMES, self.ARROW_DURATION)
-
-        self.surf = Surface((self.WIDTH, self.HEIGHT),
-                            pygame.SRCALPHA, 32)
-        self.surf.convert_alpha()
 
     def load_bindings(self, p1_bindings, p2_bindings):
         """Create all KeyBinding objects in a list and return them.
@@ -975,8 +982,6 @@ class KeyBinding(object):
         TEXT_SPACING    The horizontal distance, in pixels, between each
                         of the UnderlineText objects.
         KEY_TEXT_X      The x-position of the text for the key's name.
-        WIDTH           The width of the main Surface, in pixels.
-        HEIGHT          The height of the main Surface, in pixels.
 
     Attributes:
         x               The x-position of the main
@@ -990,13 +995,9 @@ class KeyBinding(object):
                         and display the input name.
         key_text        The UnderlineText object that will render
                         and display the current player's binding.
-        surf            The main Surface that will combine all
-                        of the UnderlineText Surfaces.
     """
     TEXT_SPACING = 15
     KEY_TEXT_X = 175
-    WIDTH = 318
-    HEIGHT = 18
 
     def __init__(self, x, y, input_name, p1_binding, p2_binding):
         self.x = x
@@ -1007,9 +1008,6 @@ class KeyBinding(object):
         self.input_text = UnderlineText(self.x, self.y, input_name)
         self.key_text = UnderlineText(self.x + self.KEY_TEXT_X, self.y,
                                       p1_binding)
-        self.surf = Surface((self.WIDTH, self.HEIGHT),
-                            pygame.SRCALPHA, 32)
-        self.surf.convert_alpha()
 
     def rebind(self, player_num, new_key):
         """Change the binding key for the specified player.
