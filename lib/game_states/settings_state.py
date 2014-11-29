@@ -117,6 +117,13 @@ class SettingsState(State):
 
     def load_state(self):
         """Prepare this State to be run for the first time."""
+        loaded = self.state_pass.settings
+        scale_setting = self.setting_list.settings[SettingIndex.SCALE]
+        display_setting = self.setting_list.settings[SettingIndex.SHOW_BOXES]
+
+        scale_setting.set_selected_option(loaded.screen_scale - 1)
+        display_setting.set_selected_option(int(loaded.show_box_display))
+
         self.reset_state()
 
     def reset_state(self):
@@ -172,8 +179,8 @@ class SettingsState(State):
 
         if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
             self.is_leaving_state = False
-            self.save_settings_to_file()
             self.update_game_settings()
+            self.save_settings_to_file()
 
             self.state_pass.will_reset_state = False
             self.state_pass.enter_transition_on = False
@@ -437,10 +444,11 @@ class SettingList(object):
 
         scale = Setting(self.X, self.Y, "Window Scale", "1x", "2x", "3x")
         box_display = Setting(self.X,
-            self.Y + Setting.HEIGHT + self.SETTING_DISTANCE,
+            self.Y + scale.get_height() + self.SETTING_DISTANCE,
             "Collision Box Display", "ON", "OFF")
         binding_player = Setting(self.X,
-            self.Y + (Setting.HEIGHT * 2) + (self.SETTING_DISTANCE * 2),
+            self.Y + (box_display.get_height() * 2) +
+            (self.SETTING_DISTANCE * 2),
             "Set Key Bindings for...", "Player 1", "Player 2")
 
         setting_list.append(scale)
@@ -619,6 +627,24 @@ class Setting(object):
             new_x += option_list[i].get_width() + self.OPTION_DISTANCE
         return option_list
 
+
+    def set_selected_option(self, option_num):
+        """Set the currently-enabled option for this Setting.
+
+         Args:
+            option_num: An integer for the index of the desired option.
+
+        Raises:
+            An IndexError if option_num is out of bounds with the options
+            list.
+        """
+        if option_num > len(self.options) - 1:
+            raise IndexError
+
+        self.options[self.selected_option].erase_underline()
+        self.selected_option = option_num
+        self.options[self.selected_option].add_underline()
+
     def scroll_options(self, is_backwards=False):
         """Based on player input, enable the next or previous option
         for this Setting.
@@ -629,18 +655,18 @@ class Setting(object):
         """
         # The underlines will also be switched to show which option is
         # now enabled.
-        self.options[self.selected_option].erase_underline()
+        last_option = len(self.options) - 1
 
-        if is_backwards == False:
-            self.selected_option += 1
-            if self.selected_option > len(self.options) - 1:
-                self.selected_option = 0
+        if is_backwards:
+            if self.selected_option <= 0:
+                self.set_selected_option(last_option)
+            else:
+                self.set_selected_option(self.selected_option - 1)
         else:
-            self.selected_option -= 1
-            if self.selected_option < 0:
-                self.selected_option = len(self.options) - 1
-
-        self.options[self.selected_option].add_underline()
+            if self.selected_option >= last_option - 1:
+                self.set_selected_option(0)
+            else:
+                self.set_selected_option(self.selected_option + 1)
 
     def add_underline(self):
         """Draws an underline underneath the Setting name."""
@@ -649,6 +675,12 @@ class Setting(object):
     def erase_underline(self):
         """Re-renders the Setting name without the underline."""
         self.text.erase_underline()
+
+    def get_height(self):
+        """Return the height of the Setting name text graphic in
+        pixels.
+        """
+        return self.text.get_height()
 
     def draw(self, parent_surf):
         """Draw the Setting text and all of its options onto the
@@ -770,7 +802,6 @@ class KeyBindingList(object):
         for input_name in INPUT_NAMES:
             p1_key = p1_bindings[input_name]
             p2_key = p2_bindings[input_name]
-            input_name = self.format_input_text(input_name)
 
             new_binding = KeyBinding(self.X, self.Y + text_y, input_name,
                                      p1_key, p2_key)
@@ -781,25 +812,6 @@ class KeyBindingList(object):
             text_y += self.TEXT_DISTANCE
 
         return binding_list
-
-    def format_input_text(self, xml_string):
-        """Convert an input name read from an XML file into a word
-        or words with spaces and proper capitalization.
-
-        Args:
-            xml_string: The String read from an XML Element. It should
-                describe one of the possible in-game inputs.
-                (e.g. 'forward', 'start', 'light_punch')
-
-        Returns:
-            A String with spaces between words, which have been
-            capitalized.
-
-        @type xml_string: String
-        """
-        new_string = xml_string.replace('_', ' ')
-        new_string = new_string.title()
-        return new_string
 
     # Changing Selection
     def set_selected_binding(self, binding_index):
@@ -1005,9 +1017,29 @@ class KeyBinding(object):
         self.input_name = input_name
         self.p1_binding = p1_binding
         self.p2_binding = p2_binding
-        self.input_text = UnderlineText(self.x, self.y, input_name)
+        self.input_text = UnderlineText(self.x, self.y,
+                                        self.format_input_text(input_name))
         self.key_text = UnderlineText(self.x + self.KEY_TEXT_X, self.y,
                                       p1_binding)
+
+    def format_input_text(self, xml_string):
+        """Convert an input name read from an XML file into a word
+        or words with spaces and proper capitalization.
+
+        Args:
+            xml_string: The String read from an XML Element. It should
+                describe one of the possible in-game inputs.
+                (e.g. 'forward', 'start', 'light_punch')
+
+        Returns:
+            A String with spaces between words, which have been
+            capitalized.
+
+        @type xml_string: String
+        """
+        new_string = xml_string.replace('_', ' ')
+        new_string = new_string.title()
+        return new_string
 
     def rebind(self, player_num, new_key):
         """Change the binding key for the specified player.
@@ -1055,6 +1087,10 @@ class KeyBinding(object):
         self.y = new_y
         self.input_text.y = new_y
         self.key_text.y = new_y
+
+    def get_height(self):
+        """Return the height of the input text graphic, in pixels."""
+        return self.key_text.get_height()
 
     def draw(self, parent_surf):
         """Draws the text graphics for this key binding onto the
@@ -1178,6 +1214,10 @@ class UnderlineText(object):
     def get_width(self):
         """Return the horizontal length of the text Surface."""
         return self.surf.get_width()
+
+    def get_height(self):
+        """Return the vertical length of the text graphic in pixels."""
+        return self.surf.get_height()
 
     def draw(self, parent_surf):
         """Draws the text Surface onto the specified Surface.
