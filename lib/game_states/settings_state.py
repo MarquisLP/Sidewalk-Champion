@@ -627,7 +627,6 @@ class Setting(object):
             new_x += option_list[i].get_width() + self.OPTION_DISTANCE
         return option_list
 
-
     def set_selected_option(self, option_num):
         """Set the currently-enabled option for this Setting.
 
@@ -663,7 +662,7 @@ class Setting(object):
             else:
                 self.set_selected_option(self.selected_option - 1)
         else:
-            if self.selected_option >= last_option - 1:
+            if self.selected_option >= last_option:
                 self.set_selected_option(0)
             else:
                 self.set_selected_option(self.selected_option + 1)
