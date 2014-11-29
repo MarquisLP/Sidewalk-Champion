@@ -547,7 +547,7 @@ class SettingList(object):
         currently selected for editing.
         """
         player_num_setting = self.settings[SettingIndex.PLAYER_NUM]
-        player_num = player_num_setting.selected_option
+        player_num = player_num_setting.selected_option + 1
         return player_num
 
 
