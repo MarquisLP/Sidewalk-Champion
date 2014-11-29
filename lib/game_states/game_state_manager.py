@@ -1,5 +1,4 @@
 import sys
-import pygame
 from pygame.locals import *
 from lib.globals import *
 from lib.game_states.state import *
@@ -17,44 +16,51 @@ class GameStateManager(object):
     data between them.
 
     Attributes:
-        character_list      Contains all of the CharacterData objects
-                            for every playable Character listed in the
-                            characters/character_list.txt file.
-        stage_list          Contains all of the StageData objects for
-                            every playable Stage listed in the
-                            stages/stage_list.txt file.
-        screen              The PyGame display Surface that represents
-                            the game screen.
-        clock               A timer provided by the PyGame time module.
-                            It records the time elapsed between updates
-                            in milliseconds.
-        active_state        The State object that will be updated
-                            and displayed.
-        active_state_id     The index of the currently-active State
-                            within state_list. Note that all of these
-                            indexes are labelled by the StateIDs enum.
-        previous_state_id   The index of the previously-active State
-                            within state_list.
-        state_pass          A StatePass object containing info to pass
-                            between States as they are loaded.
-        state_list          A List of all the State objects present
-                            within the game.
+        character_list: Contains all of the CharacterData objects for
+            every playable Character listed in the
+            characters/character_list.txt file.
+        stage_list: Contains all of the StageData objects for every
+            playable Stage listed in the stages/stage_list.txt file.
+        screen: The PyGame display Surface that represents the game
+            screen.
+        clock: A timer provided by the PyGame time module. It records
+            the time elapsed between updates in milliseconds.
+        active_state: The State object that will be updated and
+            displayed.
+        active_state_id: The index of the currently-active State within
+            state_list. Note that all of these indexes are labelled by
+            the StateIDs enum.
+        previous_state_id: The index of the previously-active State
+            within state_list.
+        state_pass: A StatePass object containing info to pass between
+            States as they are loaded.
+        state_list: A List of all the State objects present within the
+            game.
+        zoom_one_surf: A Surface with dimensions equivalent to the
+            native resolution of the game. (See SCREEN_SIZE in
+            globals.py.)
+        zoom_two_surf: A Surface with dimensions twice as large as the
+            native resolution.
+        zoom_three_surf: A Surface with dimensions three times as large
+            as the native resolution.
+        scaled_surf: A Surface with dimensions that match the current
+            window magnification rate. (The rate is defined by
+            screen_scale in state_pass.settings.)
     """
     # Initialization
     def __init__(self, screen, clock, all_characters, all_stages,
                  settings_data):
         """Initialize instance variables.
 
-        Keyword arguments:
-            screen          The PyGame Surface object that will serve
-                            as the game window.
-            all_characters  A list containing CharacterData objects for
-                            all of the playable characters.
-            all_stages      A list containing StageData objects for all
-                            of the playable stages.
-            settings_data   A SettingsData object for various options
-                            that can be set by the players via the
-                            Settings screen.   
+        Args:
+            screen: The PyGame Surface object that will serve
+                as the game window.
+            all_characters: A list containing CharacterData objects for
+                all of the playable characters.
+            all_stages: A list containing StageData objects for all
+                of the playable stages.
+            settings_data: A SettingsData object for various options
+                that can be set by the players via the Settings screen.
         """
         self.character_list = all_characters
         self.stage_list = all_stages
@@ -66,6 +72,7 @@ class GameStateManager(object):
         self.active_state_id = StateIDs.TITLE
         self.previous_state = None
         self.previous_state_id = StateIDs.TITLE
+        self.create_scaled_surfaces()
 
         self.set_update_timer()
 
@@ -79,6 +86,21 @@ class GameStateManager(object):
         state_list = [title_state, settings_state]
 
         return state_list
+
+    def create_scaled_surfaces(self):
+        """Create three Surfaces with dimensions that reflect each of
+        the possible window magnification rates: 1x, 2x, and 3x.
+
+        Another Surface, called scaled_surf, will reference whichever
+        one of these Surfaces needs to be used; scaled_surf will be
+        the one that is actually drawn to the screen.
+        """
+        self.zoom_one_surf = Surface((SCREEN_SIZE[0], SCREEN_SIZE[1]))
+        self.zoom_two_surf = Surface((SCREEN_SIZE[0] * 2,
+                                      SCREEN_SIZE[1] * 2))
+        self.zoom_three_surf = Surface((SCREEN_SIZE[0] * 3,
+                                        SCREEN_SIZE[1] * 3))
+        self.scaled_surf = self.zoom_one_surf
 
     def set_update_timer(self):
         """Create the update timer.
@@ -96,10 +118,9 @@ class GameStateManager(object):
         and loading may also be performed depending on the values
         within state_pass.
 
-        Keyword arguments:
-            next_state_id       The index of the next State to run.
-                                This index refers to the State's
-                                position within state_list.
+        Args:
+            next_state_id: The index of the next State to run. This
+                index refers to the State's position within state_list.
         """
         self.previous_state_id = self.active_state_id
         self.previous_state = self.state_list[self.previous_state_id]
@@ -125,10 +146,10 @@ class GameStateManager(object):
         return seconds
 
     def scale_screen(self, scale):
-        """Resize the screen when the screen scale changes.
+        """Resize the screen whenever the screen scale changes.
 
         Keyword arguments:
-            scale       The magnification rate.
+            scale: The magnification rate.
         """
         scaled_size = (SCREEN_SIZE[0] * scale,
                     SCREEN_SIZE[1] * scale)
@@ -138,24 +159,32 @@ class GameStateManager(object):
 
     def scale_surface(self, surf, scale):
         """Magnify the specified Surface according to the specified
-       magnification rate and return the modified Surface.
+       magnification rate and draw it onto the appropriately-scaled
+       Surface.
 
-        Keyword arguments:
-            surf        The Surface to resize.
-            scale       The magnification rate.
+        Args:
+            surf: The Surface to resize.
+            scale: An integer for the magnification rate.
         """
         new_size = (SCREEN_SIZE[0] * scale,
                     SCREEN_SIZE[1] * scale)
-        scaled_surf = pygame.transform.scale(surf, new_size)
 
-        return scaled_surf
+        if scale == 1:
+            self.scaled_surf = self.zoom_one_surf
+        elif scale == 2:
+            self.scaled_surf = self.zoom_two_surf
+        else:
+            self.scaled_surf = self.zoom_three_surf
+
+        scaled_surf = pygame.transform.scale(surf, new_size,
+                                             self.scaled_surf)
 
     def update_state(self, state_id):
         """Update the specified State.
 
-        Keyword arguments:
-            state_id        The index of the State to update within
-                            state_list.
+        Args:
+            state_id: The index of the State to update within
+                state_list.
         """
         time = self.get_seconds_elapsed()
         updated_state = self.state_list[state_id]
@@ -173,19 +202,19 @@ class GameStateManager(object):
     def draw_state(self, state_id):
         """Draw the specified state's surface onto the screen and
         update the screen as a whole.
+
         The State Surface will also be scaled according to screen_scale
         within state_pass.
 
-        Keyword arguments:
-            state_id        The index of the State for drawing within
-                            state_list.
+        Args:
+            state_id: The index of the State for drawing within
+                state_list.
         """
         scale = self.state_pass.settings.screen_scale
         drawn_state = self.state_list[state_id]
 
-        scaled_surface = self.scale_surface(drawn_state.state_surface,
-                                            scale)
-        self.screen.blit(scaled_surface, drawn_state.screen_offset())
+        self.scale_surface(drawn_state.state_surface, scale)
+        self.screen.blit(self.scaled_surf, drawn_state.screen_offset())
 
     def run_game(self):
         """Run the main game loop."""
