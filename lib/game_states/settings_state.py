@@ -252,12 +252,18 @@ class SettingsState(State):
                     self.binding_list.erase_selected_key()
                     self.is_editing_binding = True
             # Edit Setting values.
-            else:
+            elif input_name in ['back', 'forward']:
                 if input_name == 'back':
                     self.setting_list.scroll_setting_options(
                         is_backwards=True)
-                elif input_name == 'forward':
+                else:
                     self.setting_list.scroll_setting_options()
+                # Change which player's key bindings are displayed
+                # if requested.
+                active_setting = self.setting_list.active_setting
+                if active_setting == SettingIndex.PLAYER_NUM:
+                    new_player = self.setting_list.get_binding_player()
+                    self.binding_list.change_player(new_player)
 
             # Leave the Settings Screen.
             if input_name == 'cancel':
@@ -952,6 +958,16 @@ class KeyBindingList(object):
         return binding_list
 
     # Drawing
+    def change_player(self, player_num):
+        """Display the key bindings for one of the players.
+
+        Args:
+            player_num: An integer of 1 or 2, for player 1 and 2
+                respectively. Any other value will default to 2.
+        """
+        for binding in self.bindings:
+            binding.change_player(player_num)
+
     def draw(self, parent_surf):
         """Draw onto a Surface, four Key Bindings within range of the
         currently-selected one.
@@ -1057,12 +1073,17 @@ class KeyBinding(object):
 
         self.key_text.change_text(new_key)
 
-    def change_player(self):
-        """Display the key binding for the other player."""
-        if self.key_text.text == self.p1_binding:
-            self.key_text.change_text(self.p2_binding)
-        else:
+    def change_player(self, player_num):
+        """Display the key binding for one of the players.
+
+        Args:
+            player_num: An integer of 1 or 2, for player 1 and 2
+                respectively. Any other value will default to 2.
+        """
+        if player_num == 1:
             self.key_text.change_text(self.p1_binding)
+        else:
+            self.key_text.change_text(self.p2_binding)
 
     def add_underline(self):
         """Draw an underline on the input name text."""
