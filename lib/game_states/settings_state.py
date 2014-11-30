@@ -921,12 +921,46 @@ class KeyBindingList(object):
         """Change the value of the currently-selected key binding
         for one of the players.
 
+        If the specified key is already bound, the rebinding operation
+        will not be performed.
+
         Args:
             player_num: Either 1 or 2, for player 1 and 2 respectively.
                 Any other value will default to 2.
             new_key: The name of the new key to set in the key binding.
         """
-        self.bindings[self.current_binding].rebind(player_num, new_key)
+        if player_num == 1:
+            last_key = self.bindings[self.current_binding].p1_binding
+        else:
+            last_key = self.bindings[self.current_binding].p2_binding
+
+        if self.key_is_bound(new_key) and new_key != last_key:
+            # Redraw the name of the key that was previously bound.
+            self.bindings[self.current_binding].rebind(player_num, last_key)
+        else:
+            self.bindings[self.current_binding].rebind(player_num, new_key)
+
+    def key_is_bound(self, key_name):
+        """Determine whether the specified key is already bound to
+        one of the player's controls.
+
+        Args:
+            key_name: A String for the name of the key that will be
+                checked.
+
+        Returns:
+            True if the key exists within one of the player's key
+            binding dicts; false is returned otherwise.
+        """
+        bound_keys = []
+        for binding in self.bindings:
+            bound_keys.append(binding.p1_binding)
+            bound_keys.append(binding.p2_binding)
+
+        if key_name in bound_keys:
+            return True
+        else:
+            return False
 
     def erase_selected_key(self):
         """Erase the key name text for the currently-selected
