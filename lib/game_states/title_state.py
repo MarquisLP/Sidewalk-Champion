@@ -103,10 +103,6 @@ class TitleState(State):
                             will move onto the next set of options or
                             the appropriate Game State.
                             Setting this to 0 will end the animation.
-        player1_keys        The key bindings for Player 1, according to
-                            the Dict of the same name in state_pass.
-        player2_keys        The key bindings for Player 2, according to
-                            the Dict of the same name in state_pass.
         battle_rounds_index The index of the selected Number of Battle
                             Rounds option, in accordance with the 
                             POSSIBLE_ROUNDS list.
@@ -167,10 +163,6 @@ class TitleState(State):
         self.has_pressed_start = False
         self.has_chosen_battle = False
         self.confirmation_timer = 0
-
-        # Key Bindings
-        self.player1_keys = self.state_pass.settings.player1_keys
-        self.player2_keys = self.state_pass.settings.player2_keys
 
         # Battle Setup
         self.battle_rounds_index = 1    # Initially 3 rounds.
@@ -346,13 +338,16 @@ class TitleState(State):
         Keyword arguments:
             key_name        The name of the key that was pressed.
         """
-        for i in range(0, len(self.player1_keys)):
-            if key_name == self.player1_keys.values()[i]:
-                return self.player1_keys.keys()[i]
+        player1_keys = self.state_pass.settings.player1_keys
+        player2_keys = self.state_pass.settings.player2_keys
 
-        for i in range(0, len(self.player2_keys)):
-            if key_name == self.player2_keys.values()[i]:
-                return self.player2_keys.keys()[i]
+        for i in range(0, len(player1_keys)):
+            if key_name == player1_keys.values()[i]:
+                return player1_keys.keys()[i]
+
+        for i in range(0, len(player2_keys)):
+            if key_name == player2_keys.values()[i]:
+                return player2_keys.keys()[i]
 
         return ''
 
