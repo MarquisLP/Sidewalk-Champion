@@ -11,7 +11,7 @@ A customizable fighting game written with Python and the PyGame library.
 * Cross-platform performance.
 
 ## Licence
-See UNLICENSE.txt.
+See [UNLICENSE.txt](UNLICENSE.txt).
 
 ## How to Build
 1. Make sure you have Python 2.7 and PyGame installed on your system.
