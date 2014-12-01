@@ -1,10 +1,25 @@
 Sidewalk-Champion
 =================
+A customizable fighting game written with Python and the PyGame library.
 
-A fully-customizable fighting game written with Python and the PyGame library.
+![Title Screenie](screenshots/title_screen.png)
+![Character Editor Screenie](screenshots/edit_collision_boxes.png)
 
-Please note that we use the Google Python Style Guide for writing documentation.
-https://google-styleguide.googlecode.com/svn/trunk/pyguide.html
-I won't (and can't) force you to comply to those guidelines, but if you don't do so you'll probably receive a bit of nagging for your dissidence.
+## Features
+* A fighting game engine modelled after classic 2D fighters, such as Street Fighter 3.
+* Simple and intuitive GUI tools for creating characters, stages, and projectiles.
+* Cross-platform performance.
 
-More information and documentation will be arriving soon.
+## Licence
+See UNLICENSE.txt.
+
+## How to Build
+1. Make sure you have Python 2.7 and PyGame installed on your system.
+2. Download the project as a ZIP archive and extract the contents.
+3. Open the source files with your text editor or IDE of choice.
+4. To run the game itself, run Sidewalk_Champion.py in the root folder.
+
+## How to Contribute
+As we still have a long road of development ahead of us, contributions of any kind will (usually) be accepted with open arms. Simply fork the project over, make your edits, and send us a pull request.
+
+Please note that we use the [Google Python Style Guide](https://google-styleguide.googlecode.com/svn/trunk/pyguide.html) for writing documentation. I won't (and can't) force you to comply to those guidelines, but if you don't you'll probably receive a bit of nagging for your dissidence.
