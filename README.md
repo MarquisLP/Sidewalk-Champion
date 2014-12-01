@@ -10,7 +10,7 @@ A customizable fighting game written with Python and the PyGame library.
 * Simple and intuitive GUI tools for creating characters, stages, and projectiles.
 * Cross-platform performance.
 
-## Licence
+## License
 See [UNLICENSE.txt](UNLICENSE.txt).
 
 ## How to Build
