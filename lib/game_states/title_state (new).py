@@ -19,10 +19,9 @@ class Option(object):
     recolored or hidden to indicate player selection or confirmation.
 
     Class Constants:
-        NORMAL_COLOR: A String name for the regular color of Option
-            text.
-        HIGHLIGHT_COLOR: A String name for the color of Option text
-            when it is highlighted by the users.
+        NORMAL_COLOR: A String name for the regular color of an Option.
+        HIGHLIGHT_COLOR: A String name for the color of an Option when
+            it is selected by the users.
         FONT_PATH: A String for the file path to the font file that
             will be used in rendering graphical text for Options.
         FONT_SIZE: An integer size of the font used in rendering Option
@@ -65,7 +64,8 @@ class Option(object):
         self.surf = self.render_text(text, self.NORMAL_COLOR)
 
     def render_text(self, text, color_name):
-        """Create a new Surface with the specified Option text.
+        """Create a new Surface with the specified text, using the
+        font specifications defined by this class.
 
         Args:
             text: The String of text that will be drawn.
