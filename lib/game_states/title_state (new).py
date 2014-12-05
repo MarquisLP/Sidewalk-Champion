@@ -101,3 +101,38 @@ class Option(object):
         """
         if self.is_visible:
             parent_surf.blit(self.surf, (self.x, self.y))
+
+
+class BattleSetting(Option):
+    """One of the parameters required for setting up a battle.
+
+    Aside from being a selectable Option, it also contains its own list
+    of numerical values that the players can scroll through.
+
+    Class Constants:
+        VALUE_X: The integer coordinate for the x-position of value
+            text relative to the screen.
+        LEFT_ARROW_PATH: A String for the file path to the scroll left
+            arrow image.
+        ARROW_DISTANCE: An integer for the horizontal distance between
+            each scroll arrow and the text for the selected value.
+        ARROW_Y_OFFSET: The integer distance, in pixels, between the
+            the top of the text graphic and the top of each scroll
+            arrow.
+
+    Attributes:
+        values: A list of integer values that can be set for this
+            BattleSetting.
+        selected_value: An integer for the index of the
+            currently-selected value.
+        value_surf: A PyGame Surface that contains the text graphic
+            for the currently-selected value.
+        scroll_left_arrow: A Graphic that displays the image of the
+            'scroll values left' arrow.
+        scroll_right_arrow: A Graphic that displays the image of the
+            'scroll values right' arrow.
+    """
+    VALUE_X = 248
+    LEFT_ARROW_PATH = 'images/battle_setup_arrow_left.png'
+    ARROW_DISTANCE = 7
+    ARROW_Y_OFFSET = 5
