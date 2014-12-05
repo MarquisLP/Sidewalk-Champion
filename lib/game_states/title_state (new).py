@@ -7,6 +7,7 @@ from pygame.font import Font
 from pygame.color import Color
 from lib.globals import SCREEN_SIZE
 from lib.globals import FRAME_RATE
+from lib.graphics import Graphic
 from lib.graphics import Animation
 from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
@@ -136,3 +137,28 @@ class BattleSetting(Option):
     LEFT_ARROW_PATH = 'images/battle_setup_arrow_left.png'
     ARROW_DISTANCE = 7
     ARROW_Y_OFFSET = 5
+
+    def __init__(self, text, x, y, *values):
+        """Declare and initialize instance variables.
+
+        Args:
+            text: The String that describes this BattleSetting.
+            x: The integer coordinate for the text's x-position relative
+                to the screen.
+            y: The integer coordinate for the text's y-position relative
+                to the screen.
+            values: All of the integer values that can be set for this
+                BattleSetting.
+        """
+        super(BattleSetting, self).__init__(text, x, y)
+        self.values = values
+        self.selected_value = self.values[0]
+        self.value_surf = self.render_text(self.selected_value,
+                                           self.NORMAL_COLOR)
+        self.scroll_left_arrow = Graphic(self.LEFT_ARROW_PATH,
+            (self.VALUE_X - self.ARROW_DISTANCE,
+             self.y + self.ARROW_Y_OFFSET))
+        self.scroll_right_arrow = Graphic(self.LEFT_ARROW_PATH,
+            (self.VALUE_X + self.value_surf.get_width() + self.ARROW_DISTANCE,
+            self.y + self.ARROW_Y_OFFSET))
+        self.scroll_right_arrow.flip(is_horizontal=True)
