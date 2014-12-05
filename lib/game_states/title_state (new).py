@@ -52,6 +52,10 @@ class Option(object):
 
         Args:
             text: The String that describes this option.
+            x: An integer value for the Option text's x-coordinate
+                relative to the screen.
+            y: An integer value for the Option text's y-coordinate
+                relative to the screen.
         """
         self.text = text
         self.x = x
