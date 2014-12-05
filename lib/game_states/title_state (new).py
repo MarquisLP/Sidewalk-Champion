@@ -3,6 +3,8 @@ from __builtin__ import range
 import pygame
 from pygame.locals import *
 from pygame.mixer import Sound
+from pygame.font import Font
+from pygame.color import Color
 from lib.globals import SCREEN_SIZE
 from lib.globals import FRAME_RATE
 from lib.graphics import Animation
@@ -29,6 +31,10 @@ class Option(object):
     Attributes:
         text: The text String that describes this Option. It will be
             written on the screen.
+        x: An integer value for the Option text's x-coordinate relative
+            to the screen.
+        y: An integer value for the Option text's y-coordinate relative
+            to the screen.
         is_visible: A Boolean indicating whether the text will be
             drawn onto its parent Surface.
         font: The PyGame Font object that stores the font used in
@@ -41,5 +47,53 @@ class Option(object):
     FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
     FONT_SIZE = 18
 
-    def __init__(self):
-        pass
+    def __init__(self, text, x, y):
+        """Declare and initialize instance variables.
+
+        Args:
+            text: The String that describes this option.
+        """
+        self.text = text
+        self.x = x
+        self.y = y
+        self.is_visible = True
+        self.font = Font(self.FONT_PATH, self.FONT_SIZE)
+        self.surf = self.render_text(text, self.NORMAL_COLOR)
+
+    def render_text(self, text, color_name):
+        """Create a new Surface with the specified Option text.
+
+        Args:
+            text: The String of text that will be drawn.
+            color_name: A String containing the name or hex code of the
+                color of the text.
+
+        Returns:
+            A Surface with the text drawn onto it.
+        """
+        text_color = Color(color_name)
+        return self.font.render(text, True, text_color)
+
+    def highlight(self):
+        """Redraw the text with an alternate color."""
+        self.surf = self.render_text(self.text, self.HIGHLIGHT_COLOR)
+
+    def unhighlight(self):
+        """Redraw the text with normal coloration."""
+        self.surf = self.render_text(self.text, self.NORMAL_COLOR)
+
+    def get_height(self):
+        """Return the integer height of the text graphic."""
+        return self.surf.get_height()
+
+    def draw(self, parent_surf):
+        """Draw the text onto a Surface.
+
+        The text will only be shown if the is_visible attribute is set
+        to True.
+
+        Args:
+            parent_surf: The Surface upon which the text will be drawn.
+        """
+        if self.is_visible:
+            parent_surf.blit(self.surf, (self.x, self.y))
