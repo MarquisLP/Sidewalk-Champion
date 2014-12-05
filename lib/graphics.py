@@ -4,6 +4,7 @@ from __builtin__ import True, False
 from pygame.locals import *
 from pygame import Surface
 from pygame import image
+from pygame import transform
 from pygame import color
 from pygame import Rect
 
@@ -78,6 +79,18 @@ class Graphic(object):
         """Return the y-coordinate of the Graphic's bottom edge."""
         bottom_edge = self.rect.y + self.rect.height
         return bottom_edge
+
+    def flip(self, is_horizontal=False, is_vertical=False):
+        """Flip this graphic horizontally, vertically, or both.
+
+        Args:
+            is_horizontal: A Boolean indicating whether to flip the
+                Graphic's image horizontally.
+            is_vertical: A Boolean indicating whether to flip the
+                Graphic's image vertically.
+        """
+        self.image = transform.flip(self.image, is_horizontal,
+                                    is_vertical)
 
     def draw(self, surf):
         """Draw the Graphic onto the specified Surface.
