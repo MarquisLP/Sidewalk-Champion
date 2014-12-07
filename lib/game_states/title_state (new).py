@@ -167,15 +167,15 @@ class BattleSetting(Option):
         """Select the previous value for this BattleSetting."""
         if self.selected_value > 0:
             self.selected_value -= 1
-            self.value_surf = self.render_text(self.selected_value,
-                                               self.HIGHLIGHT_COLOR)
+            self.value_surf = self.render_text(
+                self.values[self.selected_value], self.HIGHLIGHT_COLOR)
 
     def scroll_values_right(self):
         """Select the next value for this BattleSetting."""
         if self.selected_value < len(self.values) - 1:
             self.selected_value += 1
-            self.value_surf = self.render_text(self.selected_value,
-                                               self.HIGHLIGHT_COLOR)
+            self.value_surf = self.render_text(
+                self.values[self.selected_value], self.HIGHLIGHT_COLOR)
 
     def highlight(self):
         """Redraw the text with an alternate color."""
