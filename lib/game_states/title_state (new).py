@@ -162,3 +162,17 @@ class BattleSetting(Option):
             (self.VALUE_X + self.value_surf.get_width() + self.ARROW_DISTANCE,
             self.y + self.ARROW_Y_OFFSET))
         self.scroll_right_arrow.flip(is_horizontal=True)
+
+    def scroll_values_left(self):
+        """Select the previous value for this BattleSetting."""
+        if self.selected_value > 0:
+            self.selected_value -= 1
+            self.value_surf = self.render_text(self.selected_value,
+                                               self.HIGHLIGHT_COLOR)
+
+    def scroll_values_right(self):
+        """Select the next value for this BattleSetting."""
+        if self.selected_value < len(self.values) - 1:
+            self.selected_value += 1
+            self.value_surf = self.render_text(self.selected_value,
+                                               self.HIGHLIGHT_COLOR)
