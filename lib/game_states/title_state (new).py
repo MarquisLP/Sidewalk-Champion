@@ -188,7 +188,18 @@ class BattleSetting(Option):
         super(BattleSetting, self).unhighlight()
         self.value_surf = self.render_text(
             self.values[self.value_index], self.NORMAL_COLOR)
-        
+
     def get_value(self):
         """Return the selected value."""
         return self.values[self.value_index]
+    
+    def draw(self, parent_surf):
+        """Draw the text onto a Surface.
+
+        Args:
+            parent_surf: The Surface upon which the BattleSetting text
+                will be drawn.
+        """
+        super(BattleSetting, self).draw(parent_surf)
+        parent_surf.blit(self.value_surf, (self.VALUE_X,
+                                           self.y + self.ARROW_Y_OFFSET))
