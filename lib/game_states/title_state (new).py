@@ -188,3 +188,7 @@ class BattleSetting(Option):
         super(BattleSetting, self).unhighlight()
         self.value_surf = self.render_text(
             self.values[self.value_index], self.NORMAL_COLOR)
+        
+    def get_value(self):
+        """Return the selected value."""
+        return self.values[self.value_index]
