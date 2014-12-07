@@ -124,8 +124,8 @@ class BattleSetting(Option):
     Attributes:
         values: A list of integer values that can be set for this
             BattleSetting.
-        selected_value: An integer for the index of the
-            currently-selected value.
+        value_index: An integer for the index of the currently-selected
+            value.
         value_surf: A PyGame Surface that contains the text graphic
             for the currently-selected value.
         scroll_left_arrow: A Graphic that displays the image of the
@@ -152,8 +152,8 @@ class BattleSetting(Option):
         """
         super(BattleSetting, self).__init__(text, x, y)
         self.values = values
-        self.selected_value = 0
-        self.value_surf = self.render_text(self.selected_value,
+        self.value_index = 0
+        self.value_surf = self.render_text(self.value_index,
                                            self.NORMAL_COLOR)
         self.scroll_left_arrow = Graphic(self.LEFT_ARROW_PATH,
             (self.VALUE_X - self.ARROW_DISTANCE,
@@ -165,26 +165,26 @@ class BattleSetting(Option):
 
     def scroll_values_left(self):
         """Select the previous value for this BattleSetting."""
-        if self.selected_value > 0:
-            self.selected_value -= 1
+        if self.value_index > 0:
+            self.value_index -= 1
             self.value_surf = self.render_text(
-                self.values[self.selected_value], self.HIGHLIGHT_COLOR)
+                self.values[self.value_index], self.HIGHLIGHT_COLOR)
 
     def scroll_values_right(self):
         """Select the next value for this BattleSetting."""
-        if self.selected_value < len(self.values) - 1:
-            self.selected_value += 1
+        if self.value_index < len(self.values) - 1:
+            self.value_index += 1
             self.value_surf = self.render_text(
-                self.values[self.selected_value], self.HIGHLIGHT_COLOR)
+                self.values[self.value_index], self.HIGHLIGHT_COLOR)
 
     def highlight(self):
         """Redraw the text with an alternate color."""
         super(BattleSetting, self).highlight()
         self.value_surf = self.render_text(
-            self.values[self.selected_value], self.HIGHLIGHT_COLOR)
+            self.values[self.value_index], self.HIGHLIGHT_COLOR)
 
     def unhighlight(self):
         """Redraw the text with normal coloration."""
         super(BattleSetting, self).unhighlight()
         self.value_surf = self.render_text(
-            self.values[self.selected_value], self.NORMAL_COLOR)
+            self.values[self.value_index], self.NORMAL_COLOR)
