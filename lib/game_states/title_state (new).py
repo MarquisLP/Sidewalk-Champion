@@ -192,7 +192,7 @@ class BattleSetting(Option):
     def get_value(self):
         """Return the selected value."""
         return self.values[self.value_index]
-    
+
     def draw(self, parent_surf):
         """Draw the text onto a Surface.
 
@@ -203,3 +203,19 @@ class BattleSetting(Option):
         super(BattleSetting, self).draw(parent_surf)
         parent_surf.blit(self.value_surf, (self.VALUE_X,
                                            self.y + self.ARROW_Y_OFFSET))
+
+    def draw_scroll_arrows(self, parent_surf):
+        """Draw the scroll value arrows onto a Surface.
+
+        The left arrow will only be shown if there are values preceding
+        the one that is selected. Likewise, the right arrow will only
+        be shown if there are subsequent values.
+
+        Args:
+            parent_surf: The Surface upon which the arrows will be
+                drawn.
+        """
+        if self.value_index > 0:
+            self.scroll_left_arrow.draw(parent_surf)
+        if self.value_index < len(self.values) - 1:
+            self.scroll_right_arrow.draw(parent_surf)
