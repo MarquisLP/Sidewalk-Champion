@@ -13,6 +13,40 @@ from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
 
 
+class OptionList(object):
+    """Contains various Options that the players can scroll through and
+    confirm.
+
+    This is an abstract class; subclasses should implement their own
+    ways of responding to a confirmed Option.
+
+    Class Constants:
+        CONFIRM_DURATION: The time, in update frames, to flash a
+            confirmed Option's text before performing the appropriate
+            operation.
+
+    Attributes:
+        state: The TitleState instance that this OptionList belongs to.
+        options: A list of Options.
+        selected_option: The index of the Option currently being
+            highlighted by the players.
+        x: An integer coordinate for the OptionList's x-position
+            relative to the screen.
+        y: An integer coordinate for the OptionList's y-position
+            relative to the screen.
+        sfx_confirm: A PyGame Sound that plays when the players confirm
+            an option.
+        sfx_cancel: A PyGame Sound that plays when the players leave
+            this OptionList or otherwise cancel a decision.
+        sfx_scroll: A PyGame Sound that plays when the players scroll
+            through the list of Options.
+        confirm_timer: An integer counter that keeps track of how long
+            a confirmed Option has been flashing. Setting it to -1 will
+            stop the timer.
+    """
+    pass
+
+
 class Option(object):
     """An option that the players can select within the Title State.
 
