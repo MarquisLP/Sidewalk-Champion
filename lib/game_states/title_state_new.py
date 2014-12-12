@@ -70,6 +70,15 @@ class OptionList(object):
         self.option_index = 0
         self.confirm_timer = -1
 
+    def handle_input(self, input_name):
+        """Respond to player input.
+
+        Args:
+            input_name: A String for the name of input that was entered.
+                (e.g. 'start', 'forward')
+        """
+        raise NotImplementedError
+
     def update_text(self):
         """Update the text within this list during each update cycle.
 
@@ -102,6 +111,12 @@ class OptionList(object):
         for option_text in self.options:
             option_text.unhighlight()
         self.options[index].highlight()
+
+    def respond_to_confirm(self):
+        """Perform an operation based on the Option that was just
+        confirmed.
+        """
+        raise NotImplementedError
 
 
 class Option(object):
