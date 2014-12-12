@@ -21,9 +21,13 @@ class OptionList(object):
     ways of responding to a confirmed Option.
 
     Class Constants:
-        CONFIRM_DURATION: The time, in update frames, to flash a
-            confirmed Option's text before performing the appropriate
-            operation.
+        CONFIRM_DURATION: An integer for the time, in update frames, to
+            flash a confirmed Option's text before performing the
+            appropriate operation.
+        TEXT_FLASH_SPEED: An integer for the speed, in update frames, at
+            which Option text will flash upon being selected and
+            confirmed. For example, a value of 5 means that the text
+            will change its visibility every 5 update cycles.
 
     Attributes:
         state: The TitleState instance that this OptionList belongs to.
@@ -45,6 +49,7 @@ class OptionList(object):
             stop the timer.
     """
     CONFIRM_DURATION = 80
+    TEXT_FLASH_SPEED = 5
 
     def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
