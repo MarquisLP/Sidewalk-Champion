@@ -44,7 +44,26 @@ class OptionList(object):
             a confirmed Option has been flashing. Setting it to -1 will
             stop the timer.
     """
-    pass
+    CONFIRM_DURATION = 80
+
+    def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
+        """Declare and initialize instance variables.
+
+        Args:
+            state: The TitleState instance that this object belongs to.
+            sfx_confirm: A PyGame Sound for confirming an option.
+            sfx_cancel: A PyGame Sound for cancelling a decision.
+            sfx_scroll: A PyGame Sound for scrolling through the list.
+        """
+        self.options = []
+        self.state = state
+        self.x = 0
+        self.y = 0
+        self.sfx_confirm = sfx_confirm
+        self.sfx_cancel = sfx_cancel
+        self.sfx_scroll = sfx_scroll
+        self.selected_option = 0
+        self.confirm_timer = -1
 
 
 class Option(object):
