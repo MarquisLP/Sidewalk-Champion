@@ -74,8 +74,8 @@ class OptionList(object):
         """Respond to player input.
 
         Args:
-            input_name: A String for the name of input that was entered.
-                (e.g. 'start', 'forward')
+            input_name: A String for the name of the input that was
+                entered. (e.g. 'start', 'forward')
         """
         raise NotImplementedError
 
