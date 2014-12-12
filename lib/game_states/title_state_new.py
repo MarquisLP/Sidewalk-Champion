@@ -45,8 +45,8 @@ class OptionList(object):
         sfx_scroll: A PyGame Sound that plays when the players scroll
             through the list of Options.
         confirm_timer: An integer counter that keeps track of how long
-            a confirmed Option has been flashing. Setting it to -1 will
-            stop the timer.
+            a confirmed Option has been flashing. Setting it to -1 or
+            less will stop the timer.
     """
     CONFIRM_DURATION = 80
     TEXT_FLASH_SPEED = 5
@@ -69,6 +69,25 @@ class OptionList(object):
         self.sfx_scroll = sfx_scroll
         self.option_index = 0
         self.confirm_timer = -1
+
+    def update_text(self):
+        """Update the text within this list during each update cycle.
+
+        If the confirmation timer is set to a value more than -1, the
+        currently-selected option will be shown flashing on-screen.
+        Once the timer is finished, the game will respond by performing
+        the appropriate operation based on whichever option was chosen.
+        """
+        if self.confirm_timer > -1:
+            self.confirm_timer += 1
+
+            if self.confirm_timer % self.TEXT_FLASH_SPEED == 0:
+                self.options[self.option_index].is_visible = (
+                    not self.options[self.option_index].is_visible)
+
+            if self.confirm_timer >= self.CONFIRM_DURATION:
+                self.confirm_timer = -1         # Turn off the timer.
+                #self.respond_to_confirm()
 
 
 class Option(object):
