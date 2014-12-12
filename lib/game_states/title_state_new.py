@@ -89,6 +89,20 @@ class OptionList(object):
                 self.confirm_timer = -1         # Turn off the timer.
                 #self.respond_to_confirm()
 
+    def highlight_option(self, index):
+        """Highlight one of the Options in this list.
+
+        All other Options will be unhighlighted to emphasize focus on
+        that single Option.
+
+        Args:
+            index: An integer for the index of an Option within this
+                object's options list.
+        """
+        for option_text in self.options:
+            option_text.unhighlight()
+        self.options[index].highlight()
+
 
 class Option(object):
     """An option that the players can select within the Title State.
