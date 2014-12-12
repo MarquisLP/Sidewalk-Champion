@@ -28,7 +28,7 @@ class OptionList(object):
     Attributes:
         state: The TitleState instance that this OptionList belongs to.
         options: A list of Options.
-        selected_option: The index of the Option currently being
+        option_index: The index of the Option currently being
             highlighted by the players.
         x: An integer coordinate for the OptionList's x-position
             relative to the screen.
@@ -62,7 +62,7 @@ class OptionList(object):
         self.sfx_confirm = sfx_confirm
         self.sfx_cancel = sfx_cancel
         self.sfx_scroll = sfx_scroll
-        self.selected_option = 0
+        self.option_index = 0
         self.confirm_timer = -1
 
 
