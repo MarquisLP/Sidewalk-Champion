@@ -104,7 +104,7 @@ class OptionList(object):
         """
         if self.confirm_timer > -1:
             self.flash_text()
-        
+
     def highlight_option(self, index):
         """Highlight one of the Options in this list.
 
@@ -133,7 +133,7 @@ class OptionList(object):
 
         if self.confirm_timer >= self.CONFIRM_DURATION:
             self.confirm_timer = -1         # Turn off the timer.
-            #self.respond_to_confirm()
+            self.respond_to_confirm()
     
     def respond_to_confirm(self):
         """Perform an operation based on the Option that was just
