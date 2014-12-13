@@ -79,25 +79,21 @@ class OptionList(object):
         """
         raise NotImplementedError
 
-    def update_text(self):
+    def update_text(self, time):
         """Update the text within this list during each update cycle.
 
-        If the confirmation timer is set to a value more than -1, the
-        currently-selected option will be shown flashing on-screen.
-        Once the timer is finished, the game will respond by performing
-        the appropriate operation based on whichever option was chosen.
+        Text flash for the currently-selected Option will be enabled
+        if the confirmation timer is set a value higher than -1.
+        In other cases, an animation will be shown based on the value
+        of the animation variable.
+        
+        Args:
+            time: A float for the amount of time elapsed, in seconds,
+                since the last update cycle.
         """
         if self.confirm_timer > -1:
-            self.confirm_timer += 1
-
-            if self.confirm_timer % self.TEXT_FLASH_SPEED == 0:
-                self.options[self.option_index].is_visible = (
-                    not self.options[self.option_index].is_visible)
-
-            if self.confirm_timer >= self.CONFIRM_DURATION:
-                self.confirm_timer = -1         # Turn off the timer.
-                #self.respond_to_confirm()
-
+            self.flash_text()
+        
     def highlight_option(self, index):
         """Highlight one of the Options in this list.
 
@@ -112,6 +108,22 @@ class OptionList(object):
             option_text.unhighlight()
         self.options[index].highlight()
 
+    def flash_text(self):
+        """Flash the name of an Option.
+        
+        Once it is finished, the game will respond with the appropriate
+        operation based on whichever Option was selected.
+        """
+        self.confirm_timer += 1
+
+        if self.confirm_timer % self.TEXT_FLASH_SPEED == 0:
+            self.options[self.option_index].is_visible = (
+                not self.options[self.option_index].is_visible)
+
+        if self.confirm_timer >= self.CONFIRM_DURATION:
+            self.confirm_timer = -1         # Turn off the timer.
+            #self.respond_to_confirm()
+    
     def respond_to_confirm(self):
         """Perform an operation based on the Option that was just
         confirmed.
