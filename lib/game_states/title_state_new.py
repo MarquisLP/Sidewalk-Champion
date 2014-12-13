@@ -28,6 +28,8 @@ class OptionList(object):
             which Option text will flash upon being selected and
             confirmed. For example, a value of 5 means that the text
             will change its visibility every 5 update cycles.
+        TEXT_SLIDE_SPEED: The speed at which to slide Options in and out
+            of the screen, in pixels per second.
 
     Attributes:
         state: The TitleState instance that this OptionList belongs to.
@@ -47,9 +49,13 @@ class OptionList(object):
         confirm_timer: An integer counter that keeps track of how long
             a confirmed Option has been flashing. Setting it to -1 or
             less will stop the timer.
+        animation: An integer value indicating whether an animation
+            should be performed and if so, which. Refer to the
+            ListAnimation enum for the possible values.
     """
     CONFIRM_DURATION = 80
     TEXT_FLASH_SPEED = 5
+    TEXT_SLIDE_SPEED = 300
 
     def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
@@ -69,6 +75,7 @@ class OptionList(object):
         self.sfx_scroll = sfx_scroll
         self.option_index = 0
         self.confirm_timer = -1
+        self.animation = ListAnimation.NONE
 
     def handle_input(self, input_name):
         """Respond to player input.
