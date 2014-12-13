@@ -52,6 +52,9 @@ class OptionList(object):
         animation: An integer value indicating whether an animation
             should be performed and if so, which. Refer to the
             ListAnimation enum for the possible values.
+        next_list: An integer for the index of the next OptionList that
+            will be shown after this one. Refer to the TitleOptionList
+            enum for possible values.
     """
     CONFIRM_DURATION = 80
     TEXT_FLASH_SPEED = 5
@@ -76,6 +79,7 @@ class OptionList(object):
         self.option_index = 0
         self.confirm_timer = -1
         self.animation = ListAnimation.NONE
+        self.next_list = TitleOptionList.MAIN_OPTIONS
 
     def handle_input(self, input_name):
         """Respond to player input.
@@ -138,7 +142,24 @@ class OptionList(object):
         raise NotImplementedError
 
 
-class ListAnimation:
+class TitleOptionList(object):
+    """An enum containing the indices of all of the OptionLists within
+    TitleState.
+
+    Attributes:
+        PRESS_START: An integer for the index of the 'press start'
+            prompt.
+        MAIN_OPTIONS: An integer for the index of the list containing
+            the actual Title Screen options. (e.g. Battle, Settings)
+        BATTLE_SETUP: An integer for the index of the list where the
+            parameters for the next battle can be set.
+    """
+    PRESS_START = 0
+    MAIN_OPTIONS = 1
+    BATTLE_SETUP = 2
+
+
+class ListAnimation(object):
     """An enumeration for the different animations that an OptionList
     can perform.
 
