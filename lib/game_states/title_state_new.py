@@ -11,7 +11,7 @@ from lib.graphics import Graphic
 from lib.graphics import Animation
 from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
-# Stop copying me
+
 
 class OptionList(object):
     """Contains various Options that the players can scroll through and
