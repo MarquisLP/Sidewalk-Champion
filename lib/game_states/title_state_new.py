@@ -11,7 +11,7 @@ from lib.graphics import Graphic
 from lib.graphics import Animation
 from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
-
+# Stop copying me
 
 class OptionList(object):
     """Contains various Options that the players can scroll through and
@@ -118,6 +118,37 @@ class OptionList(object):
         if len(self.options) > 1:
             for i in xrange(1, len(self.options), 2):
                 self.options[i].x = SCREEN_SIZE + self.x
+
+    def show_all(self, time):
+        """Animate the OptionList revealing itself on-screen.
+        
+        The animation consists of sliding the Options in from either
+        edge of the screen. The direction of the slide alternates
+        between Options. (e.g. The first Option slides in from the left
+        while the second Option comes from the right.)
+        
+        Args:
+            time: A float for the time elapsed, in seconds, since the
+                last update cycle.
+        """
+        if self.options[0].x == self.x:
+            self.prepare_to_show_all()
+        else:
+            distance = int(self.TEXT_SLIDE_SPEED * time)
+            
+            for i in xrange(0, len(self.options), 2):
+                self.options[i].x += distance
+                # Prevent the Option from sliding past its final position.
+                if self.options[i].x > self.x:
+                    self.options[i] = self.x
+            if len(self.options) > 1:
+                for i in xrange(1, len(self.options), 2):
+                    self.options[i].x -= distance
+                    if self.options[i].x < self.x:
+                        self.options[i] = self.x
+                    
+            if self.options[0].x >= self.x:
+                self.animation = ListAnimation.NONE
 
     def highlight_option(self, index):
         """Highlight one of the Options in this list.
