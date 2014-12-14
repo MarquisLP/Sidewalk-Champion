@@ -105,6 +105,20 @@ class OptionList(object):
         if self.confirm_timer > -1:
             self.flash_text()
 
+    def prepare_to_show_all(self):
+        """Position all of the Options in this list for the start of the
+        'show all' animation.
+        
+        The first, third, etc. Options will start from the left edge of
+        the screen, while every other Option will start from the right.
+        """
+        for i in xrange(0, len(self.options), 2):
+            self.options[i].x = -1 * self.x
+            
+        if len(self.options) > 1:
+            for i in xrange(1, len(self.options), 2):
+                self.options[i].x = SCREEN_SIZE + self.x
+
     def highlight_option(self, index):
         """Highlight one of the Options in this list.
 
