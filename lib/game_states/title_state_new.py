@@ -174,7 +174,7 @@ class OptionList(object):
         self.highlight_option(self.option_index)
 
     def scroll_down(self):
-        """Select the previous Option in the list."""
+        """Select the next Option in the list."""
         if self.option_index >= len(self.options) - 1:
             self.option_index = 0
         else:
