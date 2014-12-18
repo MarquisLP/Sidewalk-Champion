@@ -164,6 +164,24 @@ class OptionList(object):
             option_text.unhighlight()
         self.options[index].highlight()
 
+    def scroll_up(self):
+        """Select the previous Option in the list."""
+        if self.option_index <= 0:
+            self.option_index = len(self.options) - 1
+        else:
+            self.option_index -= 1
+
+        self.highlight_option(self.option_index)
+
+    def scroll_down(self):
+        """Select the previous Option in the list."""
+        if self.option_index >= len(self.options) - 1:
+            self.option_index = 0
+        else:
+            self.option_index += 1
+
+        self.highlight_option(self.option_index)
+
     def flash_text(self):
         """Flash the name of an Option.
         
