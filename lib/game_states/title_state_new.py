@@ -150,6 +150,41 @@ class OptionList(object):
             if self.options[0].x >= self.x:
                 self.animation = ListAnimation.NONE
 
+    def hide_all(self, time):
+        """Animate the OptionList hiding itself from the screen.
+
+        The animation consists of sliding the Options out to either
+        edge of the screen. The direction of the slide alternates
+        between Options. (e.g. The first Option slides out to the left
+        while the second Option goes over to the right.)
+
+        Args:
+            time: A float for the time elapsed, in seconds, since the
+                last update cycle.
+        """
+        distance = self.TEXT_SLIDE_SPEED * time
+
+        for i in xrange(0, len(self.options), 2):
+            self.options[i].x -= distance
+        if len(self.options) > 1:
+            for i in xrange(1, len(self.options), 2):
+                self.options[i].x += distance
+
+        if self.is_offscreen():
+            self.animation = ListAnimation.NONE
+
+    def is_offscreen(self):
+        """Return a Boolean indicating whether all of the Options in
+        this list are outside of the game window's viewable drawing
+        region.
+        """
+        for option in self.options:
+            right_edge = option.x + option.get_width()
+            if not (option.x + right_edge <= 0 or option.x >= SCREEN_SIZE):
+                return False
+
+        return True
+
     def highlight_option(self, index):
         """Highlight one of the Options in this list.
 
@@ -312,6 +347,10 @@ class Option(object):
     def unhighlight(self):
         """Redraw the text with normal coloration."""
         self.surf = self.render_text(self.text, self.NORMAL_COLOR)
+
+    def get_width(self):
+        """Return the integer width of the text graphic."""
+        return self.surf.get_width()
 
     def get_height(self):
         """Return the integer height of the text graphic."""
