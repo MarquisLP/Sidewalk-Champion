@@ -105,6 +105,11 @@ class OptionList(object):
         if self.confirm_timer > -1:
             self.flash_text()
 
+        if self.animation == ListAnimation.SHOW:
+            self.show_all(time)
+        elif self.animation == ListAnimation.NONE:
+            self.hide_all(time)
+
     def prepare_to_show_all(self):
         """Position all of the Options in this list for the start of the
         'show all' animation.
