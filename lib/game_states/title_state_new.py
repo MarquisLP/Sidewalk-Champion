@@ -166,7 +166,8 @@ class OptionList(object):
                 self.animation = ListAnimation.NONE
 
     def hide_all(self, time):
-        """Animate the OptionList hiding itself from the screen.
+        """Hide this OptionList on-screen and then send processing over
+        to the next queued OptionList.
 
         The animation consists of sliding the Options out to either
         edge of the screen. The direction of the slide alternates
@@ -187,6 +188,7 @@ class OptionList(object):
 
         if self.is_offscreen():
             self.animation = ListAnimation.NONE
+            #self.state.change_options(self.next_list)
 
     def is_offscreen(self):
         """Return a Boolean indicating whether all of the Options in
