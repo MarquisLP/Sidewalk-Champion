@@ -140,12 +140,12 @@ class OptionList(object):
                 self.options[i].x += distance
                 # Prevent the Option from sliding past its final position.
                 if self.options[i].x > self.x:
-                    self.options[i] = self.x
+                    self.options[i].x = self.x
             if len(self.options) > 1:
                 for i in xrange(1, len(self.options), 2):
                     self.options[i].x -= distance
                     if self.options[i].x < self.x:
-                        self.options[i] = self.x
+                        self.options[i].x = self.x
                     
             if self.options[0].x >= self.x:
                 self.animation = ListAnimation.NONE
