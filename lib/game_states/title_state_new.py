@@ -222,6 +222,15 @@ class OptionList(object):
 
         self.highlight_option(self.option_index)
 
+    def confirm_option(self):
+        """Confirm the currently-selected Option and perform the
+        appropriate operation.
+
+        The Option will flash on-screen to indicate the confirmation.
+        """
+        self.sfx_confirm.play()
+        self.confirm_timer = 0
+
     def flash_text(self):
         """Flash the name of an Option.
         
