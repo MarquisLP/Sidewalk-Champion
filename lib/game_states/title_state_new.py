@@ -110,6 +110,16 @@ class OptionList(object):
         elif self.animation == ListAnimation.NONE:
             self.hide_all(time)
 
+    def draw(self, parent_surf):
+        """Draw all of the Options in this list onto a Surface.
+
+        Args:
+            parent_surf: The Surface upon which the Option will be drawn
+                to.
+        """
+        for option in self.options:
+            option.draw(parent_surf)
+
     def prepare_to_show_all(self):
         """Position all of the Options in this list for the start of the
         'show all' animation.
