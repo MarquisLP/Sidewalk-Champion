@@ -283,6 +283,27 @@ class TitleOptionList(object):
     BATTLE_SETUP = 2
 
 
+class PressStartPrompt(OptionList):
+    """The prompt that says "PRESS START" on the Title Screen, right
+    after the introductory animation.
+
+    Pressing Start will bring the players to another OptionList with the
+    main Title Screen Options.
+
+    Class Constants:
+        X: An integer for the x-position of the prompt relative to the
+            screen.
+        Y: An integer for the y-position of the prompt relative to the
+            screen.
+        WAIT_SPEED_FLASH: An integer for the speed of the prompt's
+            flash, in update cycles, while it is waiting for the
+            players' input.
+    """
+    X = 135
+    Y = 150
+    WAIT_SPEED_FLASH = 45
+
+
 class ListAnimation(object):
     """An enumeration for the different animations that an OptionList
     can perform.
