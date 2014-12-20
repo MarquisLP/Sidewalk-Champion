@@ -301,7 +301,23 @@ class PressStartPrompt(OptionList):
     """
     X = 135
     Y = 150
-    WAIT_SPEED_FLASH = 45
+    WAIT_FLASH_SPEED = 45
+
+    def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
+        """Declare and initialize instance variables.
+
+        Args:
+            state: The TitleState instance that this object belongs to.
+            sfx_confirm: A PyGame Sound for confirming an option.
+            sfx_cancel: A PyGame Sound for cancelling a decision.
+            sfx_scroll: A PyGame Sound for scrolling through the list.
+        """
+        super(PressStartPrompt, self).__init__(state, sfx_confirm,
+                                               sfx_cancel, sfx_scroll)
+        self.x = self.X
+        self.y = self.Y
+        self.next_list = TitleOptionList.MAIN_OPTIONS
+        self.options.append(Option("PRESS START", self.x, self.y))
 
 
 class ListAnimation(object):
