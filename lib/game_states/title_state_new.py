@@ -340,6 +340,30 @@ class PressStartPrompt(OptionList):
         self.options.append(Option("PRESS START", self.x, self.y))
         self.idle_flash_timer = 0
 
+    def update(self, time):
+        """Update the processes within this prompt.
+
+        Aside from confirmation flashing and show/hide animations,
+        the 'Press Start' prompt will also flash at a slower speed
+        while waiting for the players' input.
+
+        Args:
+            time: A float for the amount of time elapsed, in seconds,
+                since the last update cycle.
+        """
+        if self.confirm_timer <= -1 and self.animation == ListAnimation.NONE:
+            self.flash_idly()
+        else:
+            super(PressStartPrompt, self).update(time)
+
+    def flash_idly(self):
+        """Flash the prompt at a slower speed for waiting."""
+        self.idle_flash_timer += 1
+
+        if self.idle_flash_timer >= self.WAIT_FLASH_SPEED:
+            self.options[0].is_visible = not self.options[0].is_visible
+            self.idle_flash_timer = 0
+
 
 class Option(object):
     """An option that the players can select within the Title State.
