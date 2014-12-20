@@ -90,11 +90,13 @@ class OptionList(object):
         """
         raise NotImplementedError
 
-    def update_text(self, time):
-        """Update the text within this list during each update cycle.
+    def update(self, time):
+        """Update the processes within this OptionList.
 
-        Text flash for the currently-selected Option will be enabled
-        if the confirmation timer is set a value higher than -1.
+        Text flash for the currently-selected Option will be performed
+        if the confirmation timer is set to a value higher than -1.
+        Once it has flashed long enough, the operation described by
+        the selected Option will be performed.
         In other cases, an animation will be shown based on the value
         of the animation variable.
         
@@ -104,6 +106,9 @@ class OptionList(object):
         """
         if self.confirm_timer > -1:
             self.flash_text()
+            if self.confirm_timer >= self.CONFIRM_DURATION:
+                self.confirm_timer = -1     # End the flash.
+                self.respond_to_confirm()
 
         if self.animation == ListAnimation.SHOW:
             self.show_all(time)
@@ -244,20 +249,12 @@ class OptionList(object):
         self.confirm_timer = 0
 
     def flash_text(self):
-        """Flash the name of an Option.
-        
-        Once it is finished, the game will respond with the appropriate
-        operation based on whichever Option was selected.
-        """
+        """Flash the name of an Option."""
         self.confirm_timer += 1
 
         if self.confirm_timer % self.TEXT_FLASH_SPEED == 0:
             self.options[self.option_index].is_visible = (
                 not self.options[self.option_index].is_visible)
-
-        if self.confirm_timer >= self.CONFIRM_DURATION:
-            self.confirm_timer = -1         # Turn off the timer.
-            self.respond_to_confirm()
     
     def respond_to_confirm(self):
         """Perform an operation based on the Option that was just
@@ -324,6 +321,7 @@ class PressStartPrompt(OptionList):
         self.next_list = TitleOptionList.MAIN_OPTIONS
         self.options.append(Option("PRESS START", self.x, self.y))
         self.idle_flash_timer = 0
+
 
 class ListAnimation(object):
     """An enumeration for the different animations that an OptionList
