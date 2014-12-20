@@ -46,8 +46,8 @@ class OptionList(object):
             this OptionList or otherwise cancel a decision.
         sfx_scroll: A PyGame Sound that plays when the players scroll
             through the list of Options.
-        flash_timer: An integer counter that keeps track of how long
-            the selected Option has been flashing. Setting it to -1 or
+        confirm_timer: An integer counter that keeps track of how long
+            a confirmed Option has been flashing. Setting it to -1 or
             less will stop the timer.
         animation: An integer value indicating whether an animation
             should be performed and if so, which. Refer to the
@@ -77,7 +77,7 @@ class OptionList(object):
         self.sfx_cancel = sfx_cancel
         self.sfx_scroll = sfx_scroll
         self.option_index = 0
-        self.flash_timer = -1
+        self.confirm_timer = -1
         self.animation = ListAnimation.NONE
         self.next_list = TitleOptionList.MAIN_OPTIONS
 
@@ -102,7 +102,7 @@ class OptionList(object):
             time: A float for the amount of time elapsed, in seconds,
                 since the last update cycle.
         """
-        if self.flash_timer > -1:
+        if self.confirm_timer > -1:
             self.flash_text()
 
         if self.animation == ListAnimation.SHOW:
@@ -241,7 +241,7 @@ class OptionList(object):
         The Option will flash on-screen to indicate the confirmation.
         """
         self.sfx_confirm.play()
-        self.flash_timer = 0
+        self.confirm_timer = 0
 
     def flash_text(self):
         """Flash the name of an Option.
@@ -249,14 +249,14 @@ class OptionList(object):
         Once it is finished, the game will respond with the appropriate
         operation based on whichever Option was selected.
         """
-        self.flash_timer += 1
+        self.confirm_timer += 1
 
-        if self.flash_timer % self.TEXT_FLASH_SPEED == 0:
+        if self.confirm_timer % self.TEXT_FLASH_SPEED == 0:
             self.options[self.option_index].is_visible = (
                 not self.options[self.option_index].is_visible)
 
-        if self.flash_timer >= self.CONFIRM_DURATION:
-            self.flash_timer = -1         # Turn off the timer.
+        if self.confirm_timer >= self.CONFIRM_DURATION:
+            self.confirm_timer = -1         # Turn off the timer.
             self.respond_to_confirm()
     
     def respond_to_confirm(self):
@@ -298,6 +298,11 @@ class PressStartPrompt(OptionList):
         WAIT_SPEED_FLASH: An integer for the speed of the prompt's
             flash, in update cycles, while it is waiting for the
             players' input.
+
+    Attributes:
+        idle_flash_timer: An integer counter that keeps track of how
+            many update cycles have flashed since the last time the
+            prompt's visibility was toggled.
     """
     X = 135
     Y = 150
@@ -318,7 +323,7 @@ class PressStartPrompt(OptionList):
         self.y = self.Y
         self.next_list = TitleOptionList.MAIN_OPTIONS
         self.options.append(Option("PRESS START", self.x, self.y))
-
+        self.idle_flash_timer = 0
 
 class ListAnimation(object):
     """An enumeration for the different animations that an OptionList
