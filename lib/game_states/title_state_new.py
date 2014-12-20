@@ -105,7 +105,7 @@ class OptionList(object):
                 since the last update cycle.
         """
         if self.confirm_timer > -1:
-            self.flash_text()
+            self.flash_confirmed_option()
             if self.confirm_timer >= self.CONFIRM_DURATION:
                 self.confirm_timer = -1     # End the flash.
                 self.respond_to_confirm()
@@ -248,8 +248,8 @@ class OptionList(object):
         self.sfx_confirm.play()
         self.confirm_timer = 0
 
-    def flash_text(self):
-        """Flash the name of an Option."""
+    def flash_confirmed_option(self):
+        """Flash the name of the confirmed Option."""
         self.confirm_timer += 1
 
         if self.confirm_timer % self.TEXT_FLASH_SPEED == 0:
