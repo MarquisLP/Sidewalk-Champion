@@ -316,7 +316,8 @@ class PressStartPrompt(OptionList):
     Attributes:
         idle_flash_timer: An integer counter that keeps track of how
             many update cycles have flashed since the last time the
-            prompt's visibility was toggled.
+            prompt's visibility was toggled. Setting it to -1 or less
+            will stop the idle flashing.
     """
     X = 135
     Y = 150
