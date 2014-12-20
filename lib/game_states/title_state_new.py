@@ -280,6 +280,23 @@ class TitleOptionList(object):
     BATTLE_SETUP = 2
 
 
+class ListAnimation(object):
+    """An enumeration for the different animations that an OptionList
+    can perform.
+
+    Attributes:
+        NONE: An integer value indicating that no animation should be
+            shown.
+        SHOW: An integer value indicating that the slide-in animation
+            should be shown.
+        HIDE: An integer value indicating that the slide-out animation
+            should be shown.
+    """
+    NONE = 0
+    SHOW = 1
+    HIDE = 2
+
+
 class PressStartPrompt(OptionList):
     """The prompt that says "PRESS START" on the Title Screen, right
     after the introductory animation.
@@ -321,23 +338,6 @@ class PressStartPrompt(OptionList):
         self.next_list = TitleOptionList.MAIN_OPTIONS
         self.options.append(Option("PRESS START", self.x, self.y))
         self.idle_flash_timer = 0
-
-
-class ListAnimation(object):
-    """An enumeration for the different animations that an OptionList
-    can perform.
-
-    Attributes:
-        NONE: An integer value indicating that no animation should be
-            shown.
-        SHOW: An integer value indicating that the slide-in animation
-            should be shown.
-        HIDE: An integer value indicating that the slide-out animation
-            should be shown.
-    """
-    NONE = 0
-    SHOW = 1
-    HIDE = 2
 
 
 class Option(object):
