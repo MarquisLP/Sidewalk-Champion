@@ -379,6 +379,26 @@ class PressStartPrompt(OptionList):
             self.idle_flash_timer = 0
 
 
+class MainOptionIndex(object):
+    """An enumeration for the index of each Option within the list of
+    the Main Title Screen Options.
+
+    Attributes:
+        BATTLE: An integer for the index of the Option for setting up a
+            new battle.
+        TRAINING: An integer for the index of Option for launching
+            Training Mode.
+        SETTINGS: An integer for the index of Option that will call the
+            Settings Screen.
+        EXIT: An integer for the index of the Option that will close
+            the game.
+    """
+    BATTLE = 0
+    TRAINING = 1
+    SETTINGS = 2
+    EXIT = 3
+
+
 class Option(object):
     """An option that the players can select within the Title State.
 
