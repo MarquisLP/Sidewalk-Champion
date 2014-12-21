@@ -356,6 +356,16 @@ class PressStartPrompt(OptionList):
         else:
             super(PressStartPrompt, self).update(time)
 
+    def handle_input(self, input_name):
+        """Go to the Main Options when the players press Start.
+
+        Args:
+            input_name: A String for the name of the input pressed.
+        """
+        if input_name == "start":
+            self.idle_flash_timer = -1
+            self.confirm_timer = 0
+
     def flash_idly(self):
         """Flash the prompt at a slower speed for waiting."""
         self.idle_flash_timer += 1
