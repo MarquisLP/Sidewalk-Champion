@@ -364,7 +364,7 @@ class PressStartPrompt(OptionList):
         """
         if input_name == "start":
             self.idle_flash_timer = -1
-            self.confirm_timer = 0
+            self.confirm_option()
 
     def respond_to_confirm(self):
         """Hide the prompt and then go to the Main Options list."""
