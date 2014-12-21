@@ -379,6 +379,27 @@ class PressStartPrompt(OptionList):
             self.idle_flash_timer = 0
 
 
+class MainOptionList(OptionList):
+    """An OptionList containing the 'main' Options one would expect to
+    find on the game's Title Screen. They are:
+        1. Battle - Set up a 2-player battle. This will call the
+            BattleSetupList.
+        2. Training - Launch Training Mode.
+        3. Settings - Open the Settings screen.
+        4. Exit - Close the game window.
+
+    Class Constants:
+        X: The x-position of the Options relative to the screen.
+        Y: The y-position of the top Option relative to the screen.
+
+    Attributes:
+        state_pass: The StatePass object containing data that will be
+            transferred between all Game States.
+    """
+    X = 155
+    Y = 97
+
+
 class MainOptionIndex(object):
     """An enumeration for the index of each Option within the list of
     the Main Title Screen Options.
