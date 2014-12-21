@@ -366,6 +366,10 @@ class PressStartPrompt(OptionList):
             self.idle_flash_timer = -1
             self.confirm_timer = 0
 
+    def respond_to_confirm(self):
+        """Hide the prompt and then go to the Main Options list."""
+        self.animation = ListAnimation.HIDE
+
     def flash_idly(self):
         """Flash the prompt at a slower speed for waiting."""
         self.idle_flash_timer += 1
