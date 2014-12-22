@@ -448,6 +448,47 @@ class MainOptionList(OptionList):
         elif input_name == 'start':
             self.confirm_option()
 
+    def respond_to_confirm(self):
+        """Perform the appropriate operation based on whichever Option
+        was just confirmed.
+        """
+        if self.option_index == MainOptionIndex.BATTLE:
+            self.go_to_battle()
+        elif self.option_index == MainOptionIndex.TRAINING:
+            self.go_to_training()
+        elif self.option_index == MainOptionIndex.SETTINGS:
+            self.go_to_settings()
+        elif self.option_index == MainOptionIndex.EXIT:
+            self.exit_game()
+
+    def go_to_battle(self):
+        """Set up a new battle.
+
+        This will bring the players to the BattleSetupList.
+        """
+        self.next_list = TitleOptionList.BATTLE_SETUP
+        self.animation = ListAnimation.HIDE
+
+    def go_to_training(self):
+        """Launch Training Mode.
+
+        This will immediately bring the players to the Character Select
+        screen.
+        """
+        self.state.state_pass.battle_rounds = 0
+        self.state.state_pass.time_limit = 0
+        #self.state.change_state(StateIDs.SELECT_CHARACTER)
+
+    def go_to_settings(self):
+        """Open the Settings Screen."""
+        #self.state.change_state(StateIDs.SETTINGS)
+        pass
+
+    def exit_game(self):
+        """Close the game window."""
+        pygame.quit()
+        sys.exit()
+
 
 class MainOptionIndex(object):
     """An enumeration for the index of each Option within the list of
