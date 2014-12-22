@@ -510,6 +510,34 @@ class MainOptionIndex(object):
     EXIT = 3
 
 
+class BattleSetupList(OptionList):
+    """An OptionList that allows the players to specify parameters for
+    an upcoming battle.
+
+    These parameters include:
+        1. Rounds - The total number of rounds in the upcoming battle.
+            (e.g. 3 rounds for the best 2 out of 3.)
+        2. Time Limit - The amount of time, in seconds, allotted for
+            each round in the upcoming battle.
+
+    In addition to these two BattleSettings, a third Option, "Begin",
+    allows the players to confirm the chosen parameters and proceed to
+    the Character Select Screen.
+
+    Class Constants:
+        X: The x-position of the first BattleSetting relative to the
+            screen.
+        Y: The y-position of the first BattleSetting relative to the
+            screen.
+
+    Attributes:
+        state_pass: The StatePass object containing data that will be
+            passed between all Game States.
+    """
+    X = 130
+    Y = 97
+
+
 class Option(object):
     """An option that the players can select within the Title State.
 
