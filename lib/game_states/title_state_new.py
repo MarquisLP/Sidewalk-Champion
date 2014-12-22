@@ -21,6 +21,8 @@ class OptionList(object):
     ways of responding to a confirmed Option.
 
     Class Constants:
+        OPTION_DISTANCE: The vertical distance, in pixels, between
+            two Options.
         CONFIRM_DURATION: An integer for the time, in update frames, to
             flash a confirmed Option's text before performing the
             appropriate operation.
@@ -56,6 +58,7 @@ class OptionList(object):
             will be shown after this one. Refer to the TitleOptionList
             enum for possible values.
     """
+    OPTION_DISTANCE = 8
     CONFIRM_DURATION = 80
     TEXT_FLASH_SPEED = 5
     TEXT_SLIDE_SPEED = 300
