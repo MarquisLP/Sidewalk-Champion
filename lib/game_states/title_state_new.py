@@ -63,19 +63,22 @@ class OptionList(object):
     TEXT_FLASH_SPEED = 5
     TEXT_SLIDE_SPEED = 300
 
-    def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
+    def __init__(self, state, x, y, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
 
         Args:
             state: The TitleState instance that this object belongs to.
+            x: An integer for the x-position of the first Option,
+                relative to the screen.
+            y: An integer for the y-position of the first Option,
+                relative to the screen.
             sfx_confirm: A PyGame Sound for confirming an option.
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        self.options = []
         self.state = state
-        self.x = 0
-        self.y = 0
+        self.x = x
+        self.y = y
         self.sfx_confirm = sfx_confirm
         self.sfx_cancel = sfx_cancel
         self.sfx_scroll = sfx_scroll
@@ -83,6 +86,12 @@ class OptionList(object):
         self.confirm_timer = -1
         self.animation = ListAnimation.NONE
         self.next_list = TitleOptionList.MAIN_OPTIONS
+        self.options = []
+        self.create_options()
+
+    def create_options(self):
+        """Create all of the Options within this OptionList."""
+        raise NotImplementedError
 
     def handle_input(self, input_name):
         """Respond to player input.
@@ -335,13 +344,15 @@ class PressStartPrompt(OptionList):
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(PressStartPrompt, self).__init__(state, sfx_confirm,
-                                               sfx_cancel, sfx_scroll)
-        self.x = self.X
-        self.y = self.Y
+        super(PressStartPrompt, self).__init__(state, self.X, self.Y,
+                                               sfx_confirm, sfx_cancel,
+                                               sfx_scroll)
         self.next_list = TitleOptionList.MAIN_OPTIONS
-        self.options.append(Option("PRESS START", self.x, self.y))
         self.idle_flash_timer = 0
+
+    def create_options(self):
+        """Create the prompt."""
+        self.options.append(Option("PRESS START", self.x, self.y))
 
     def update(self, time):
         """Update the processes within this prompt.
