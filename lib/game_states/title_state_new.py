@@ -538,6 +538,25 @@ class BattleSetupList(OptionList):
     Y = 97
 
 
+class BattleSetupIndex(object):
+    """An enumeration for the index of each Option within the
+    BattleSetupList.
+
+    Attributes:
+        ROUNDS: An integer for the index of the BattleSetting that sets
+            the number of rounds for the upcoming battle.
+        TIME_LIMIT: An integer for the index of the BattleSetting that
+            sets the number time limit per round for the upcoming
+            battle.
+        BEGIN: An integer for the index of the Option that will allow
+            the players to confirm battle settings and proceed to the
+            Character Select Screen.
+    """
+    ROUNDS = 0
+    TIME_LIMIT = 1
+    BEGIN = 2
+
+
 class Option(object):
     """An option that the players can select within the Title State.
 
