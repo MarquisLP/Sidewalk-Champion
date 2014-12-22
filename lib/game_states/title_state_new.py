@@ -435,6 +435,19 @@ class MainOptionList(OptionList):
             self.options.append(Option(names[i], self.x, y))
             y += self.options[i].get_height() + self.OPTION_DISTANCE
 
+    def handle_input(self, input_name):
+        """Respond to input from the players.
+
+        Args:
+            input_name: A String for the name of the input pressed.
+        """
+        if input_name == 'up':
+            self.scroll_up()
+        elif input_name == 'down':
+            self.scroll_down()
+        elif input_name == 'start':
+            self.confirm_option()
+
 
 class MainOptionIndex(object):
     """An enumeration for the index of each Option within the list of
