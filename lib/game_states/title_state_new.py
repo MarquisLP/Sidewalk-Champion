@@ -413,6 +413,28 @@ class MainOptionList(OptionList):
     X = 155
     Y = 97
 
+    def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
+        """Declare and initialize instance variables.
+
+        Args:
+            state: The TitleState instance that this object belongs to.
+            sfx_confirm: A PyGame Sound for confirming an option.
+            sfx_cancel: A PyGame Sound for cancelling a decision.
+            sfx_scroll: A PyGame Sound for scrolling through the list.
+        """
+        super(MainOptionList, self).__init__(state, self.X, self.Y,
+                                             sfx_confirm, sfx_cancel,
+                                             sfx_scroll)
+
+    def create_options(self):
+        """Create all of the Main Options and add them to the list."""
+        names = ['Battle', 'Training', 'Settings', 'Exit']
+        y = self.y
+
+        for i in xrange(0, len(names)):
+            self.options.append(Option(names[i], self.x, y))
+            y += self.options[i].get_height() + self.OPTION_DISTANCE
+
 
 class MainOptionIndex(object):
     """An enumeration for the index of each Option within the list of
