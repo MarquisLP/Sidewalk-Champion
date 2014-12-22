@@ -566,6 +566,51 @@ class BattleSetupList(OptionList):
 
         self.options.extend([rounds, time_limit, begin])
 
+    def handle_input(self, input_name):
+        """Respond to input from the players.
+
+        Args:
+            input_name: A String for the name of input pressed.
+        """
+        if input_name == 'up':
+            self.scroll_up()
+        elif input_name == 'down':
+            self.scroll_down()
+        elif input_name == 'left':
+            self.scroll_setting_values_left()
+        elif input_name == 'right':
+            self.scroll_setting_values_right()
+        elif (input_name == 'start' and
+              self.option_index == BattleSetupIndex.BEGIN):
+            self.confirm_option()
+        elif input_name == 'cancel':
+            self.cancel_setup()
+
+    def scroll_setting_values_left(self):
+        """Select the previous value in the currently-selected
+        BattleSetting.
+
+        If the selected Option is not a BattleSetting, nothing will
+        occur.
+        """
+        if type(self.options[self.option_index]) == BattleSetting:
+            self.options[self.option_index].scroll_values_left()
+
+    def scroll_setting_values_right(self):
+        """Select the next value in the currently-selected
+        BattleSetting.
+
+        If the selected Option is not a BattleSetting, nothing will
+        occur.
+        """
+        if type(self.options[self.option_index]) == BattleSetting:
+            self.options[self.option_index].scroll_values_right()
+
+    def cancel_setup(self):
+        """Hide the setup list and return to the list of Main Options."""
+        self.next_list = TitleOptionList.MAIN_OPTIONS
+        self.animation = ListAnimation.HIDE
+
 
 class BattleSetupIndex(object):
     """An enumeration for the index of each Option within the
