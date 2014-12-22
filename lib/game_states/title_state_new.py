@@ -537,6 +537,35 @@ class BattleSetupList(OptionList):
     X = 130
     Y = 97
 
+    def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
+        """Declare and initialize instance variables.
+
+        Args:
+            state: The TitleState instance that this object belongs to.
+            sfx_confirm: A PyGame Sound for confirming an option.
+            sfx_cancel: A PyGame Sound for cancelling a decision.
+            sfx_scroll: A PyGame Sound for scrolling through the list.
+        """
+        super(BattleSetupList, self).__init__(state, self.X, self.Y,
+                                              sfx_confirm, sfx_cancel,
+                                              sfx_scroll)
+        self.state_pass = state.state_pass
+
+    def create_options(self):
+        """Create the two BattleSettings, as well as the 'Begin'
+        Option, and add them to the list.
+        """
+        y = self.y
+        rounds = BattleSetting('Rounds', self.x, y, 1, 3, 5)
+
+        y += rounds.get_height() + self.OPTION_DISTANCE
+        time_limit = BattleSetting('Time Limit', self.x, y, 30, 60, 99)
+
+        y += time_limit.get_height() + self.OPTION_DISTANCE
+        begin = Option('Begin', self.x, y)
+
+        self.options.extend([rounds, time_limit, begin])
+
 
 class BattleSetupIndex(object):
     """An enumeration for the index of each Option within the
