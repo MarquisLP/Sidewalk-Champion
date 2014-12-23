@@ -79,6 +79,6 @@ if pygame_modules_have_loaded():
                 if event.type == USEREVENT:
                     milliseconds = clock.tick()
                     seconds = milliseconds / 1000.0
-                    update(screen, seconds)
+                    update(game_screen, seconds)
 
     main()
