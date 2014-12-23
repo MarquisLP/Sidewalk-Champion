@@ -944,8 +944,7 @@ class BattleSetting(Option):
                 will be drawn.
         """
         super(BattleSetting, self).draw(parent_surf)
-        parent_surf.blit(self.value_surf, (self.VALUE_X,
-                                           self.y + self.ARROW_Y_OFFSET))
+        parent_surf.blit(self.value_surf, (self.VALUE_X, self.y))
 
     def draw_scroll_arrows(self, parent_surf):
         """Draw the scroll value arrows onto a Surface.
