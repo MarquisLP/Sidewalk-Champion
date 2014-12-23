@@ -878,7 +878,7 @@ class BattleSetting(Option):
     """
     VALUE_X = 248
     LEFT_ARROW_PATH = 'images/battle_setup_arrow_left.png'
-    ARROW_DISTANCE = 7
+    ARROW_DISTANCE = 10
     ARROW_Y_OFFSET = 5
 
     def __init__(self, text, x, y, *values):
@@ -896,7 +896,7 @@ class BattleSetting(Option):
         super(BattleSetting, self).__init__(text, x, y)
         self.values = values
         self.value_index = 0
-        self.value_surf = self.render_text(str(self.value_index),
+        self.value_surf = self.render_text(str(self.values[0]),
                                            self.NORMAL_COLOR)
         self.scroll_left_arrow = Graphic(self.LEFT_ARROW_PATH,
             (self.VALUE_X - self.ARROW_DISTANCE,
