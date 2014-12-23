@@ -13,6 +13,40 @@ from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
 
 
+class IntroAnimator(object):
+    """This class is in charge of animating the Title Screen's
+    introductory animation.
+
+    Class Constants:
+        BG_OFFSET: A float for the distance of the background from the
+            bottom of the screen, in pixels, when the animation starts.
+        BG_SCROLL_SPEED: A float for the speed, in pixels per second,
+            at which the background will be scrolled up.
+        VOICE_PATH: A String for the file path of the voice clip where
+            the announcer states the title of the game.
+        VOICE_DELAY: An integer for the number of update cycles that
+            will take place between fading in the logo and playing the
+            voice clip.
+        VOICE_DURATION: An integer for the duration of the voice clip,
+            in update cycles.
+
+    Attributes:
+        state: The TitleState instance that this object will manipulate.
+        voice: A PyGame Sound with the announcer stating the game's
+            title.
+        voice_timer: An integer counter that keeps track of how many
+            update cycles have passed since the voice clip started
+            playing.
+        voice_has_played: A Boolean indicating whether the voice clip
+            has already played.
+    """
+    BG_OFFSET = 50.0
+    BG_SCROLL_SPEED = 70.0
+    VOICE_PATH = 'audio/announcer-title.wav'
+    VOICE_DELAY = 15
+    VOICE_DURATION = 115
+
+
 class OptionList(object):
     """Contains various Options that the players can scroll through and
     confirm.
