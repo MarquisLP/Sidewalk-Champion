@@ -482,10 +482,15 @@ class MainOptionList(OptionList):
         """
         self.state.state_pass.battle_rounds = 0
         self.state.state_pass.time_limit = 0
+
+        self.state.state_pass.will_reset_state = True
+        self.state.state_pass.enter_transition_on = True
         #self.state.change_state(StateIDs.SELECT_CHARACTER)
 
     def go_to_settings(self):
         """Open the Settings Screen."""
+        self.state.state_pass.will_reset_state = False
+        self.state.state_pass.enter_transition_on = True
         #self.state.change_state(StateIDs.SETTINGS)
         pass
 
