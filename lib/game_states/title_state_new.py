@@ -46,6 +46,18 @@ class IntroAnimator(object):
     VOICE_DELAY = 15
     VOICE_DURATION = 115
 
+    def __init__(self, state):
+        """Declare and initialize instance variables.
+
+        Args:
+            state: The TitleState instance that this object will
+                manipulate.
+        """
+        self.state = state
+        self.voice = Sound(self.VOICE_PATH)
+        self.voice_timer = 0
+        self.voice_has_played = False
+
 
 class OptionList(object):
     """Contains various Options that the players can scroll through and
