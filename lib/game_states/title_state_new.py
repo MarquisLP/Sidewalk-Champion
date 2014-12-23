@@ -48,6 +48,7 @@ class IntroAnimator(object):
     VOICE_PATH = 'audio/announcer-title.wav'
     VOICE_DELAY = 15
     VOICE_DURATION = 115
+    MUSIC_PATH = 'audio/title_theme.wav'
 
     def __init__(self, state):
         """Declare and initialize instance variables.
@@ -90,12 +91,14 @@ class IntroAnimator(object):
             self.voice.play()
 
         self.state.bg.exact_pos = (0.0, 0.0)
+        pygame.mixer.music.play()
         self.state.logo.is_animated = True
         self.is_running = False
 
     def reset(self):
         """Prepare the animation to be shown."""
         pygame.mixer.stop()
+        pygame.mixer.music.load(self.MUSIC_PATH)
         self.is_running = True
         self.voice_timer = 0
         self.voice_has_played = False
