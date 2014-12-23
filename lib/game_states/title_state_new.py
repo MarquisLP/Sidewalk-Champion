@@ -84,6 +84,15 @@ class IntroAnimator(object):
         old_alpha = self.state.logo.image.get_alpha()
         self.state.logo.image.set_alpha(old_alpha + self.FADE_LOGO_RATE)
 
+    def skip_intro(self):
+        """Skip to the end of animation immediately."""
+        if not self.voice_has_played:
+            self.voice.play()
+
+        self.state.bg.exact_pos = (0.0, 0.0)
+        self.state.logo.is_animated = True
+        self.is_running = False
+
     def reset(self):
         """Prepare the animation to be shown."""
         pygame.mixer.stop()
