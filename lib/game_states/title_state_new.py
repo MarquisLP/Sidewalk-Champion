@@ -44,6 +44,7 @@ class IntroAnimator(object):
     """
     BG_OFFSET = 50.0
     BG_SCROLL_SPEED = 70.0
+    FADE_LOGO_RATE = 7
     VOICE_PATH = 'audio/announcer-title.wav'
     VOICE_DELAY = 15
     VOICE_DURATION = 115
@@ -81,7 +82,7 @@ class IntroAnimator(object):
     def fade_in_logo(self):
         """Gradually increase the opacity of the game logo."""
         old_alpha = self.state.logo.image.get_alpha()
-        self.state.logo.image.set_alpha(old_alpha + 7)
+        self.state.logo.image.set_alpha(old_alpha + self.FADE_LOGO_RATE)
 
     def reset(self):
         """Prepare the animation to be shown."""
