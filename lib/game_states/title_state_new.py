@@ -78,6 +78,11 @@ class IntroAnimator(object):
             distance = 0.0 - self.state.bg.exact_pos[1]
             self.state.bg.move(0, distance)
 
+    def fade_in_logo(self):
+        """Gradually increase the opacity of the game logo."""
+        old_alpha = self.state.logo.image.get_alpha()
+        self.state.logo.image.set_alpha(old_alpha + 7)
+
     def reset(self):
         """Prepare the animation to be shown."""
         pygame.mixer.stop()
