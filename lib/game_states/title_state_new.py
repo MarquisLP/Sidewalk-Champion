@@ -896,7 +896,7 @@ class BattleSetting(Option):
         super(BattleSetting, self).__init__(text, x, y)
         self.values = values
         self.value_index = 0
-        self.value_surf = self.render_text(self.value_index,
+        self.value_surf = self.render_text(str(self.value_index),
                                            self.NORMAL_COLOR)
         self.scroll_left_arrow = Graphic(self.LEFT_ARROW_PATH,
             (self.VALUE_X - self.ARROW_DISTANCE,
@@ -911,26 +911,26 @@ class BattleSetting(Option):
         if self.value_index > 0:
             self.value_index -= 1
             self.value_surf = self.render_text(
-                self.values[self.value_index], self.HIGHLIGHT_COLOR)
+                str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
 
     def scroll_values_right(self):
         """Select the next value for this BattleSetting."""
         if self.value_index < len(self.values) - 1:
             self.value_index += 1
             self.value_surf = self.render_text(
-                self.values[self.value_index], self.HIGHLIGHT_COLOR)
+                str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
 
     def highlight(self):
         """Redraw the text with an alternate color."""
         super(BattleSetting, self).highlight()
         self.value_surf = self.render_text(
-            self.values[self.value_index], self.HIGHLIGHT_COLOR)
+            str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
 
     def unhighlight(self):
         """Redraw the text with normal coloration."""
         super(BattleSetting, self).unhighlight()
         self.value_surf = self.render_text(
-            self.values[self.value_index], self.NORMAL_COLOR)
+            str(self.values[self.value_index]), self.NORMAL_COLOR)
 
     def get_value(self):
         """Return the selected value."""
