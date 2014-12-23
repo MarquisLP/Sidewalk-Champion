@@ -32,6 +32,8 @@ class IntroAnimator(object):
 
     Attributes:
         state: The TitleState instance that this object will manipulate.
+        is_running: A Boolean indicating whether the animation is
+            currently being shown.
         voice: A PyGame Sound with the announcer stating the game's
             title.
         voice_timer: An integer counter that keeps track of how many
@@ -54,6 +56,7 @@ class IntroAnimator(object):
                 manipulate.
         """
         self.state = state
+        self.is_running = True
         self.voice = Sound(self.VOICE_PATH)
         self.voice_timer = 0
         self.voice_has_played = False
@@ -62,6 +65,7 @@ class IntroAnimator(object):
     def reset(self):
         """Prepare the animation to be shown."""
         pygame.mixer.stop()
+        self.is_running = True
         self.voice_timer = 0
         self.voice_has_played = False
         self.state.bg.move(0, self.BG_OFFSET)
