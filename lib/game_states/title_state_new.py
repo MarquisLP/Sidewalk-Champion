@@ -616,6 +616,25 @@ class BattleSetupList(OptionList):
         self.next_list = TitleOptionList.MAIN_OPTIONS
         self.animation = ListAnimation.HIDE
 
+    def respond_to_confirm(self):
+        """Proceed to the Character Select Screen with the chosen
+        battle parameters.
+        """
+        self.update_battle_settings()
+        self.state.state_pass.will_reset_state = True
+        self.state.state_pass.enter_transition_on = True
+        #self.state.change_state(StateIDs.SELECT_CHARACTER)
+
+    def update_battle_settings(self):
+        """Update the battle parameters in the universal StatePass
+        object with data from this list.
+        """
+        rounds = self.options[BattleSetupIndex.ROUNDS].get_value()
+        time = self.options[BattleSetupIndex.TIME_LIMIT].get_value()
+
+        self.state.state_pass.battle_rounds = rounds
+        self.state.state_pass.time_limit = time
+
 
 class BattleSetupIndex(object):
     """An enumeration for the index of each Option within the
