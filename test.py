@@ -10,7 +10,6 @@ within the States themselves.
 """
 import sys
 import pygame
-pygame.font.init()
 from pygame.locals import *
 from lib.globals import SCREEN_SIZE
 from lib.globals import FRAME_RATE
@@ -35,7 +34,7 @@ pygame.font.init()
 pygame.mixer.init(44100)
 
 if pygame_modules_have_loaded():
-    screen = pygame.display.set_mode(SCREEN_SIZE)
+    game_screen = pygame.display.set_mode(SCREEN_SIZE)
     pygame.display.set_caption('Test')
     clock = pygame.time.Clock()
     timer_rate = int((1.0 / FRAME_RATE) * 1000)
@@ -46,18 +45,15 @@ if pygame_modules_have_loaded():
     # Yes, globals are evil, but for a confined test script they will make
     # everything much easier. This way, you can access the class(es) from all
     # three of the methods provided below.
-    
 
     def prepare_test():
         # Add in any code that needs to be run before the game loop starts.
         pass
-    
 
     def handle_input(key_name):
         # Add in code for input handling.
         # key_name provides the String name of the key that was pressed.
         pass
-
 
     def update(screen, time):
         # Add in code to be run during each update cycle.
@@ -65,9 +61,7 @@ if pygame_modules_have_loaded():
         # time provides the seconds elapsed since the last update.
         pygame.display.update()
 
-
     # Add additional methods here.
-
 
     def main():
         prepare_test()
@@ -86,6 +80,5 @@ if pygame_modules_have_loaded():
                     milliseconds = clock.tick()
                     seconds = milliseconds / 1000.0
                     update(screen, seconds)
-
 
     main()
