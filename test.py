@@ -10,36 +10,11 @@ within the States themselves.
 """
 import sys
 import pygame
+pygame.font.init()
 from pygame.locals import *
 from lib.globals import SCREEN_SIZE
 from lib.globals import FRAME_RATE
 # Import additional modules here.
-
-
-# The class(es) that will be tested should be declared and initialized
-# here in the global scope.
-# Yes, globals are evil, but for a confined test script they will make
-# everything much easier. This way, you can access the class(es) from all
-# three of the methods provided below.
-
-
-def prepare_test():
-    # Add in any code that needs to be run before the game loop starts.
-    pass
-
-
-def handle_input(key_name):
-    # Add in code for input handling.
-    # key_name will provide the String name of the key that was pressed.
-    pass
-
-
-def update():
-    # Add in code to be run during each update cycle.
-    pygame.display.update()
-
-
-# Add additional methods here.
 
 
 def pygame_modules_have_loaded():
@@ -55,19 +30,46 @@ def pygame_modules_have_loaded():
     return success
 
 
-def main():
-    # Most of the test code should be kept in handle_input and update().
-    # Modify this method only if you absolutely need to.
-    pygame.init()
-    pygame.mixer.init(44100)
+pygame.init()
+pygame.font.init()
+pygame.mixer.init(44100)
 
-    if pygame_modules_have_loaded():
-        screen = pygame.display.set_mode(SCREEN_SIZE)
-        pygame.display.set_caption('Test')
-        clock = pygame.time.Clock()
-        timer_rate = int((1.0 / FRAME_RATE) * 1000)
-        pygame.time.set_timer(USEREVENT, timer_rate)
+if pygame_modules_have_loaded():
+    screen = pygame.display.set_mode(SCREEN_SIZE)
+    pygame.display.set_caption('Test')
+    clock = pygame.time.Clock()
+    timer_rate = int((1.0 / FRAME_RATE) * 1000)
+    pygame.time.set_timer(USEREVENT, timer_rate)
+    
+    # The class(es) that will be tested should be declared and initialized
+    # here in the global scope.
+    # Yes, globals are evil, but for a confined test script they will make
+    # everything much easier. This way, you can access the class(es) from all
+    # three of the methods provided below.
+    
 
+    def prepare_test():
+        # Add in any code that needs to be run before the game loop starts.
+        pass
+    
+
+    def handle_input(key_name):
+        # Add in code for input handling.
+        # key_name provides the String name of the key that was pressed.
+        pass
+
+
+    def update(screen, time):
+        # Add in code to be run during each update cycle.
+        # screen provides the PyGame Surface for the game window.
+        # time provides the seconds elapsed since the last update.
+        pygame.display.update()
+
+
+    # Add additional methods here.
+
+
+    def main():
         prepare_test()
 
         while True:
@@ -81,7 +83,9 @@ def main():
                     handle_input(key_name)
 
                 if event.type == USEREVENT:
-                    update()
+                    milliseconds = clock.tick()
+                    seconds = milliseconds / 1000.0
+                    update(screen, seconds)
 
 
-main()
+    main()
