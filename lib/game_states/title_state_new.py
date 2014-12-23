@@ -62,6 +62,22 @@ class IntroAnimator(object):
         self.voice_has_played = False
         self.reset()
 
+    def move_background_up(self, time):
+        """Move the background up at a set speed.
+
+        The background will not move past the top edge of the screen.
+
+        Args:
+            time: A float for the amount of time, in seconds, elapsed
+                since the last update cycle.
+        """
+        distance = -1 * self.BG_SCROLL_SPEED * time
+        self.state.bg.move(0, distance)
+
+        if self.state.bg.exact_pos[1] < 0.0:
+            distance = 0.0 - self.state.bg.exact_pos[1]
+            self.state.bg.move(0, distance)
+
     def reset(self):
         """Prepare the animation to be shown."""
         pygame.mixer.stop()
