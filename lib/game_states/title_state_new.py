@@ -121,11 +121,13 @@ class OptionList(object):
             if self.confirm_timer >= self.CONFIRM_DURATION:
                 self.confirm_timer = -1     # End the flash.
                 self.respond_to_confirm()
-
-        if self.animation == ListAnimation.SHOW:
+        elif self.animation == ListAnimation.SHOW:
             self.show_all(time)
-        elif self.animation == ListAnimation.NONE:
+        elif self.animation == ListAnimation.HIDE:
             self.hide_all(time)
+        elif not self.state.is_accepting_input:
+            self.state.is_accepting_input = True
+
 
     def draw(self, parent_surf):
         """Draw all of the Options in this list onto a Surface.
@@ -144,6 +146,8 @@ class OptionList(object):
         The first, third, etc. Options will start from the left edge of
         the screen, while every other Option will start from the right.
         """
+        self.state.is_accepting_input = False
+
         for i in xrange(0, len(self.options), 2):
             self.options[i].x = -1 * self.x
             
@@ -258,6 +262,7 @@ class OptionList(object):
         The Option will flash on-screen to indicate the confirmation.
         """
         self.sfx_confirm.play()
+        self.state.is_accepting_input = False
         self.confirm_timer = 0
 
     def flash_confirmed_option(self):
