@@ -781,8 +781,8 @@ class Option(object):
         surf: The text graphic will be rendered onto this PyGame
             Surface.
     """
-    NORMAL_COLOR = 'white'
-    HIGHLIGHT_COLOR = 'dark gray'
+    NORMAL_COLOR = 'dark gray'
+    HIGHLIGHT_COLOR = 'white'
     FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
     FONT_SIZE = 18
 
