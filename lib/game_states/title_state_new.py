@@ -57,6 +57,14 @@ class IntroAnimator(object):
         self.voice = Sound(self.VOICE_PATH)
         self.voice_timer = 0
         self.voice_has_played = False
+        self.reset()
+
+    def reset(self):
+        """Prepare the animation to be shown."""
+        pygame.mixer.stop()
+        self.voice_timer = 0
+        self.voice_has_played = False
+        self.state.bg.move(0, self.BG_OFFSET)
 
 
 class OptionList(object):
