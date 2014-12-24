@@ -111,7 +111,7 @@ class OptionList(object):
     confirm.
 
     This is an abstract class; subclasses should implement their own
-    ways of responding to a confirmed Option.
+    unique Options as well as ways of responding to them.
 
     Class Constants:
         OPTION_DISTANCE: The vertical distance, in pixels, between
@@ -146,9 +146,9 @@ class OptionList(object):
         animation: An integer value indicating whether an animation
             should be performed and if so, which. Refer to the
             ListAnimation enum for the possible values.
-        next_list: An integer for the index of the next OptionList that
-            will be shown after this one. Refer to the TitleOptionList
-            enum for possible values.
+        next_state: The index of the next Game State will be run. Refer
+            to the StateIDs enum for possible choices. A value of -1
+            means that processing should remain in the Title State.
     """
     OPTION_DISTANCE = 8
     CONFIRM_DURATION = 80
@@ -175,7 +175,7 @@ class OptionList(object):
         self.option_index = 0
         self.confirm_timer = -1
         self.animation = ListAnimation.NONE
-        self.next_list = TitleOptionList.MAIN_OPTIONS
+        self.next_state = -1
         self.options = []
         self.create_options()
 
@@ -418,7 +418,6 @@ class PressStartPrompt(OptionList):
         super(PressStartPrompt, self).__init__(self.X, self.Y,
                                                sfx_confirm, sfx_cancel,
                                                sfx_scroll)
-        self.next_list = TitleOptionList.MAIN_OPTIONS
         self.idle_flash_timer = 0
 
     def create_options(self):
@@ -536,7 +535,6 @@ class MainOptionList(OptionList):
 
         This will bring the players to the BattleSetupList.
         """
-        self.next_list = TitleOptionList.BATTLE_SETUP
         self.animation = ListAnimation.HIDE
 
     def go_to_training(self):
@@ -652,7 +650,6 @@ class BattleSetupList(OptionList):
 
     def cancel_setup(self):
         """Hide the setup list and return to the list of Main Options."""
-        self.next_list = TitleOptionList.MAIN_OPTIONS
         self.animation = ListAnimation.HIDE
 
     def respond_to_confirm(self):
