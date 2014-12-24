@@ -31,7 +31,6 @@ class IntroAnimator(object):
             in update cycles.
 
     Attributes:
-        state: The TitleState instance that this object will manipulate.
         is_running: A Boolean indicating whether the animation is
             currently being shown.
         voice: A PyGame Sound with the announcer stating the game's
@@ -50,59 +49,66 @@ class IntroAnimator(object):
     VOICE_DURATION = 115
     MUSIC_PATH = 'audio/title_theme.wav'
 
-    def __init__(self, state):
-        """Declare and initialize instance variables.
-
-        Args:
-            state: The TitleState instance that this object will
-                manipulate.
-        """
-        self.state = state
-        self.is_running = True
+    def __init__(self):
+        """Declare and initialize instance variables."""
+        self.is_running = False
         self.voice = Sound(self.VOICE_PATH)
         self.voice_timer = 0
         self.voice_has_played = False
-        self.reset()
 
-    def move_background_up(self, time):
+    def move_background_up(self, bg, time):
         """Move the background up at a set speed.
 
         The background will not move past the top edge of the screen.
 
         Args:
+            bg: The Title Screen's background Animation.
             time: A float for the amount of time, in seconds, elapsed
                 since the last update cycle.
         """
         distance = -1 * self.BG_SCROLL_SPEED * time
-        self.state.bg.move(0, distance)
+        bg.move(0, distance)
 
-        if self.state.bg.exact_pos[1] < 0.0:
-            distance = 0.0 - self.state.bg.exact_pos[1]
-            self.state.bg.move(0, distance)
+        if bg.exact_pos[1] < 0.0:
+            distance = 0.0 - bg.exact_pos[1]
+            bg.move(0, distance)
 
-    def fade_in_logo(self):
-        """Gradually increase the opacity of the game logo."""
-        old_alpha = self.state.logo.image.get_alpha()
-        self.state.logo.image.set_alpha(old_alpha + self.FADE_LOGO_RATE)
+    def fade_in_logo(self, logo):
+        """Gradually increase the opacity of the game logo.
 
-    def skip_intro(self):
-        """Skip to the end of animation immediately."""
+        Args:
+            logo: The game logo Animation.
+        """
+        old_alpha = logo.image.get_alpha()
+        logo.image.set_alpha(old_alpha + self.FADE_LOGO_RATE)
+
+    def skip_intro(self, bg, logo):
+        """Skip to the end of animation immediately.
+
+        Args:
+            bg: The Title Screen's background Animation.
+            logo: The game logo Animation.
+        """
         if not self.voice_has_played:
             self.voice.play()
 
-        self.state.bg.exact_pos = (0.0, 0.0)
+        bg.exact_pos = (0.0, 0.0)
         pygame.mixer.music.play()
-        self.state.logo.is_animated = True
+        logo.is_animated = True
         self.is_running = False
 
-    def reset(self):
-        """Prepare the animation to be shown."""
+    def reset(self, bg):
+        """Prepare the animation to be shown.
+
+        Args:
+            bg: The Title Screen's background Animation.
+        """
         pygame.mixer.stop()
         pygame.mixer.music.load(self.MUSIC_PATH)
-        self.is_running = True
         self.voice_timer = 0
         self.voice_has_played = False
-        self.state.bg.move(0, self.BG_OFFSET)
+        bg.exact_pos = (0.0, self.BG_OFFSET)
+        self.is_running = True
 
 
 # Option Lists
