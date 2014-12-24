@@ -793,7 +793,7 @@ class BattleSetting(Option):
         scroll_right_arrow: A Graphic that displays the image of the
             'scroll values right' arrow.
     """
-    VALUE_X = 248
+    VALUE_DISTANCE = 118
     LEFT_ARROW_PATH = 'images/battle_setup_arrow_left.png'
     ARROW_DISTANCE = 7
     ARROW_Y_OFFSET = 5
@@ -815,12 +815,12 @@ class BattleSetting(Option):
         self.value_index = 0
         self.value_surf = self.render_text(str(self.values[0]),
                                            self.NORMAL_COLOR)
+        value_x = self.x + self.VALUE_DISTANCE
         self.scroll_left_arrow = Graphic(self.LEFT_ARROW_PATH,
-            (self.VALUE_X - self.ARROW_DISTANCE,
-             self.y + self.ARROW_Y_OFFSET))
+            (value_x - self.ARROW_DISTANCE, self.y + self.ARROW_Y_OFFSET))
         self.scroll_left_arrow.move(-1 * self.scroll_left_arrow.rect[2], 0)
         self.scroll_right_arrow = Graphic(self.LEFT_ARROW_PATH,
-            (self.VALUE_X + self.value_surf.get_width() + self.ARROW_DISTANCE,
+            (value_x + self.value_surf.get_width() + self.ARROW_DISTANCE,
             self.y + self.ARROW_Y_OFFSET))
         self.scroll_right_arrow.flip(is_horizontal=True)
 
@@ -873,7 +873,8 @@ class BattleSetting(Option):
                 will be drawn.
         """
         super(BattleSetting, self).draw(parent_surf)
-        parent_surf.blit(self.value_surf, (self.VALUE_X, self.y))
+        parent_surf.blit(self.value_surf, (self.x + self.VALUE_DISTANCE,
+                                           self.y))
         self.draw_scroll_arrows(parent_surf)
 
     def draw_scroll_arrows(self, parent_surf):
