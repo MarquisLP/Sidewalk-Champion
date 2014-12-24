@@ -314,12 +314,16 @@ class OptionList(object):
         this list are outside of the game window's viewable drawing
         region.
         """
-        for option in self.options:
-            right_edge = option.x + option.get_width()
-            if not (option.x + right_edge <= 0 or option.x >= SCREEN_SIZE):
-                return False
+        if self.animation == ListAnimation.HIDE:
+            for option in self.options:
+                right_edge = option.x + option.get_width()
+                if not (option.x + right_edge <= 0 or
+                        option.x >= SCREEN_SIZE):
+                    return False
 
-        return True
+            return True
+        else:
+            return False
 
     def highlight_option(self, index):
         """Highlight one of the Options in this list.
