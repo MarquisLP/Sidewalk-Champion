@@ -361,6 +361,7 @@ class OptionList(object):
         else:
             self.option_index -= 1
 
+        self.sfx_scroll.play()
         self.highlight_option(self.option_index)
 
     def scroll_down(self):
@@ -370,6 +371,7 @@ class OptionList(object):
         else:
             self.option_index += 1
 
+        self.sfx_scroll.play()
         self.highlight_option(self.option_index)
 
     def confirm_option(self):
@@ -654,7 +656,8 @@ class BattleSetupList(OptionList):
         occur.
         """
         if type(self.options[self.option_index]) == BattleSetting:
-            self.options[self.option_index].scroll_values_left()
+            self.options[self.option_index].scroll_values_left(
+                self.sfx_scroll)
 
     def scroll_setting_values_right(self):
         """Select the next value in the currently-selected
@@ -664,7 +667,8 @@ class BattleSetupList(OptionList):
         occur.
         """
         if type(self.options[self.option_index]) == BattleSetting:
-            self.options[self.option_index].scroll_values_right()
+            self.options[self.option_index].scroll_values_right(
+                self.sfx_scroll)
 
     def cancel_setup(self):
         """Hide the setup list and return to the list of Main Options."""
@@ -833,19 +837,29 @@ class BattleSetting(Option):
             self.y + self.ARROW_Y_OFFSET))
         self.scroll_right_arrow.flip(is_horizontal=True)
 
-    def scroll_values_left(self):
-        """Select the previous value for this BattleSetting."""
+    def scroll_values_left(self, scroll_sound):
+        """Select the previous value for this BattleSetting.
+
+        Args:
+            scroll_sound: A PyGame Sound for scrolling through choices.
+        """
         if self.value_index > 0:
             self.value_index -= 1
             self.value_surf = self.render_text(
                 str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
+            scroll_sound.play()
 
-    def scroll_values_right(self):
-        """Select the next value for this BattleSetting."""
+    def scroll_values_right(self, scroll_sound):
+        """Select the next value for this BattleSetting.
+
+        Args:
+            scroll_sound: A PyGame Sound for scrolling through choices.
+        """
         if self.value_index < len(self.values) - 1:
             self.value_index += 1
             self.value_surf = self.render_text(
                 str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
+            scroll_sound.play()
 
     def highlight(self):
         """Redraw the text with an alternate color."""
