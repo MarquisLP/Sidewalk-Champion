@@ -206,6 +206,9 @@ class OptionList(object):
             time: A float for the amount of time elapsed, in seconds,
                 since the last update cycle.
         """
+        if self.is_offscreen():
+            self.animation = ListAnimation.SHOW
+
         if self.confirm_timer > -1:
             self.flash_confirmed_option()
             if self.confirm_timer >= self.CONFIRM_DURATION:
@@ -292,9 +295,6 @@ class OptionList(object):
         if len(self.options) > 1:
             for i in xrange(1, len(self.options), 2):
                 self.options[i].x += distance
-
-        if self.is_offscreen():
-            self.animation = ListAnimation.SHOW
 
     def is_animating(self):
         """Determine whether this OptionList is currently performing an
