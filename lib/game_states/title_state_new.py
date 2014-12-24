@@ -153,7 +153,7 @@ class OptionList(object):
     OPTION_DISTANCE = 8
     CONFIRM_DURATION = 80
     TEXT_FLASH_SPEED = 5
-    TEXT_SLIDE_SPEED = 500
+    TEXT_SLIDE_SPEED = 800
 
     def __init__(self, x, y, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
