@@ -296,6 +296,19 @@ class OptionList(object):
         if self.is_offscreen():
             self.animation = ListAnimation.SHOW
 
+    def is_animating(self):
+        """Determine whether this OptionList is currently performing an
+        animation.
+
+        Returns:
+            True if an Option is flashing or either of the slide in/out
+            animations are being performed; False otherwise.
+        """
+        if self.confirm_timer > -1 or self.animation != ListAnimation.NONE:
+            return True
+        else:
+            return False
+
     def is_offscreen(self):
         """Return a Boolean indicating whether all of the Options in
         this list are outside of the game window's viewable drawing
