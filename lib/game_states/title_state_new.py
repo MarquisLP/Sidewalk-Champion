@@ -155,7 +155,8 @@ class OptionList(object):
     TEXT_FLASH_SPEED = 5
     TEXT_SLIDE_SPEED = 800
 
-    def __init__(self, x, y, sfx_confirm, sfx_cancel, sfx_scroll):
+    def __init__(self, x, y, sfx_confirm, sfx_cancel, sfx_scroll,
+                 sfx_slide):
         """Declare and initialize instance variables.
 
         Args:
@@ -172,6 +173,7 @@ class OptionList(object):
         self.sfx_confirm = sfx_confirm
         self.sfx_cancel = sfx_cancel
         self.sfx_scroll = sfx_scroll
+        self.sfx_slide = sfx_slide
         self.option_index = 0
         self.confirm_timer = -1
         self.animation = ListAnimation.NONE
@@ -295,6 +297,9 @@ class OptionList(object):
             time: A float for the time elapsed, in seconds, since the
                 last update cycle.
         """
+        if self.options[0].x == self.x:
+            self.sfx_slide.play()
+
         distance = self.TEXT_SLIDE_SPEED * time
 
         for i in xrange(0, len(self.options), 2):
@@ -322,9 +327,13 @@ class OptionList(object):
         region.
         """
         if self.animation == ListAnimation.HIDE:
-            for option in self.options:
-                right_edge = option.x + option.get_width()
-                if not (right_edge <= 0 or option.x >= SCREEN_SIZE):
+            for i in range(0, len(self.options), 2):
+                right_edge = self.options[i].x + self.options[i].get_width()
+                if right_edge > 0:
+                    return False
+
+            for i in range(1, len(self.options), 2):
+                if self.options[i].x < SCREEN_SIZE[0]:
                     return False
 
             return True
@@ -413,7 +422,7 @@ class PressStartPrompt(OptionList):
     Y = 150
     WAIT_FLASH_SPEED = 45
 
-    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll):
+    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll, sfx_slide):
         """Declare and initialize instance variables.
 
         Args:
@@ -423,7 +432,7 @@ class PressStartPrompt(OptionList):
         """
         super(PressStartPrompt, self).__init__(self.X, self.Y,
                                                sfx_confirm, sfx_cancel,
-                                               sfx_scroll)
+                                               sfx_scroll, sfx_slide)
         self.idle_flash_timer = 0
 
     def create_options(self):
@@ -490,7 +499,7 @@ class MainOptionList(OptionList):
     X = 155
     Y = 104
 
-    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll):
+    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll, sfx_slide):
         """Declare and initialize instance variables.
 
         Args:
@@ -500,7 +509,7 @@ class MainOptionList(OptionList):
         """
         super(MainOptionList, self).__init__(self.X, self.Y,
                                              sfx_confirm, sfx_cancel,
-                                             sfx_scroll)
+                                             sfx_scroll, sfx_slide)
         self.animation = ListAnimation.SHOW
 
     def create_options(self):
@@ -589,7 +598,7 @@ class BattleSetupList(OptionList):
     X = 130
     Y = 117
 
-    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll):
+    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll, sfx_slide):
         """Declare and initialize instance variables.
 
         Args:
@@ -599,7 +608,7 @@ class BattleSetupList(OptionList):
         """
         super(BattleSetupList, self).__init__(self.X, self.Y,
                                               sfx_confirm, sfx_cancel,
-                                              sfx_scroll)
+                                              sfx_scroll, sfx_slide)
         self.animation = ListAnimation.SHOW
 
     def create_options(self):
