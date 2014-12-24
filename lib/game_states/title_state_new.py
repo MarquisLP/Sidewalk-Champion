@@ -488,7 +488,7 @@ class MainOptionList(OptionList):
             transferred between all Game States.
     """
     X = 155
-    Y = 97
+    Y = 104
 
     def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
