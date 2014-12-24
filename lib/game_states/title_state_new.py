@@ -543,10 +543,10 @@ class MainOptionList(OptionList):
         This will immediately bring the players to the Character Select
         screen.
         """
-        pass
+        self.next_state = StateIDs.SELECT_CHARACTER
 
     def go_to_settings(self):
-        pass
+        self.next_state = StateIDs.SETTINGS
 
     def exit_game(self):
         """Close the game window."""
@@ -656,7 +656,7 @@ class BattleSetupList(OptionList):
         """Proceed to the Character Select Screen with the chosen
         battle parameters.
         """
-        pass
+        self.next_state = StateIDs.SELECT_CHARACTER
 
 
 # Option Classes
