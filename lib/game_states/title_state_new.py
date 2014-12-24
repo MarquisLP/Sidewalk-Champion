@@ -494,6 +494,7 @@ class MainOptionList(OptionList):
         super(MainOptionList, self).__init__(self.X, self.Y,
                                              sfx_confirm, sfx_cancel,
                                              sfx_scroll)
+        self.animation = ListAnimation.SHOW
 
     def create_options(self):
         """Create all of the Main Options and add them to the list."""
@@ -592,6 +593,7 @@ class BattleSetupList(OptionList):
         super(BattleSetupList, self).__init__(self.X, self.Y,
                                               sfx_confirm, sfx_cancel,
                                               sfx_scroll)
+        self.animation = ListAnimation.SHOW
 
     def create_options(self):
         """Create the two BattleSettings, as well as the 'Begin'
