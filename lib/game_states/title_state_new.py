@@ -236,13 +236,19 @@ class OptionList(object):
         The first, third, etc. Options will start from the left edge of
         the screen, while every other Option will start from the right.
         """
+        offset_from_center = (SCREEN_SIZE[0] / 2) - self.x
+
+        biggest_width = 0
+        for i in xrange(0, len(self.options), 2):
+            if self.options[i].get_width > biggest_width:
+                biggest_width = self.options[i].get_width()
 
         for i in xrange(0, len(self.options), 2):
-            self.options[i].x = -1 * self.x
+            self.options[i].x = 0 - (offset_from_center * 2) - biggest_width
             
         if len(self.options) > 1:
             for i in xrange(1, len(self.options), 2):
-                self.options[i].x = SCREEN_SIZE + self.x
+                self.options[i].x = SCREEN_SIZE[0] + biggest_width
 
     def show_all(self, time):
         """Animate the OptionList revealing itself on-screen.
