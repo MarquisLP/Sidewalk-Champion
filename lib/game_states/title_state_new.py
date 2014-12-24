@@ -447,6 +447,7 @@ class PressStartPrompt(OptionList):
         """
         if input_name == "start":
             self.idle_flash_timer = -1
+            self.options[0].is_visible = True
             self.confirm_option()
 
     def respond_to_confirm(self):
