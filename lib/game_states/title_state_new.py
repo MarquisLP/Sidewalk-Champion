@@ -317,8 +317,7 @@ class OptionList(object):
         if self.animation == ListAnimation.HIDE:
             for option in self.options:
                 right_edge = option.x + option.get_width()
-                if not (option.x + right_edge <= 0 or
-                        option.x >= SCREEN_SIZE):
+                if not (right_edge <= 0 or option.x >= SCREEN_SIZE):
                     return False
 
             return True
