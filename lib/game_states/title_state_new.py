@@ -105,6 +105,7 @@ class IntroAnimator(object):
         self.state.bg.move(0, self.BG_OFFSET)
 
 
+# Option Lists
 class OptionList(object):
     """Contains various Options that the players can scroll through and
     confirm.
@@ -380,40 +381,6 @@ class OptionList(object):
         raise NotImplementedError
 
 
-class TitleOptionList(object):
-    """An enum containing the indices of all of the OptionLists within
-    TitleState.
-
-    Attributes:
-        PRESS_START: An integer for the index of the 'press start'
-            prompt.
-        MAIN_OPTIONS: An integer for the index of the list containing
-            the actual Title Screen options. (e.g. Battle, Settings)
-        BATTLE_SETUP: An integer for the index of the list where the
-            parameters for the next battle can be set.
-    """
-    PRESS_START = 0
-    MAIN_OPTIONS = 1
-    BATTLE_SETUP = 2
-
-
-class ListAnimation(object):
-    """An enumeration for the different animations that an OptionList
-    can perform.
-
-    Attributes:
-        NONE: An integer value indicating that no animation should be
-            shown.
-        SHOW: An integer value indicating that the slide-in animation
-            should be shown.
-        HIDE: An integer value indicating that the slide-out animation
-            should be shown.
-    """
-    NONE = 0
-    SHOW = 1
-    HIDE = 2
-
-
 class PressStartPrompt(OptionList):
     """The prompt that says "PRESS START" on the Title Screen, right
     after the introductory animation.
@@ -589,26 +556,6 @@ class MainOptionList(OptionList):
         sys.exit()
 
 
-class MainOptionIndex(object):
-    """An enumeration for the index of each Option within the list of
-    the Main Title Screen Options.
-
-    Attributes:
-        BATTLE: An integer for the index of the Option for setting up a
-            new battle.
-        TRAINING: An integer for the index of Option for launching
-            Training Mode.
-        SETTINGS: An integer for the index of Option that will call the
-            Settings Screen.
-        EXIT: An integer for the index of the Option that will close
-            the game.
-    """
-    BATTLE = 0
-    TRAINING = 1
-    SETTINGS = 2
-    EXIT = 3
-
-
 class BattleSetupList(OptionList):
     """An OptionList that allows the players to specify parameters for
     an upcoming battle.
@@ -715,25 +662,7 @@ class BattleSetupList(OptionList):
         pass
 
 
-class BattleSetupIndex(object):
-    """An enumeration for the index of each Option within the
-    BattleSetupList.
-
-    Attributes:
-        ROUNDS: An integer for the index of the BattleSetting that sets
-            the number of rounds for the upcoming battle.
-        TIME_LIMIT: An integer for the index of the BattleSetting that
-            sets the number time limit per round for the upcoming
-            battle.
-        BEGIN: An integer for the index of the Option that will allow
-            the players to confirm battle settings and proceed to the
-            Character Select Screen.
-    """
-    ROUNDS = 0
-    TIME_LIMIT = 1
-    BEGIN = 2
-
-
+# Option Classes
 class Option(object):
     """An option that the players can select within the Title State.
 
@@ -956,3 +885,77 @@ class BattleSetting(Option):
             self.scroll_left_arrow.draw(parent_surf)
         if self.value_index < len(self.values) - 1:
             self.scroll_right_arrow.draw(parent_surf)
+
+
+# Enumerations
+class TitleOptionList(object):
+    """An enum containing the indices of all of the OptionLists within
+    TitleState.
+
+    Attributes:
+        PRESS_START: An integer for the index of the 'press start'
+            prompt.
+        MAIN_OPTIONS: An integer for the index of the list containing
+            the actual Title Screen options. (e.g. Battle, Settings)
+        BATTLE_SETUP: An integer for the index of the list where the
+            parameters for the next battle can be set.
+    """
+    PRESS_START = 0
+    MAIN_OPTIONS = 1
+    BATTLE_SETUP = 2
+
+
+class ListAnimation(object):
+    """An enumeration for the different animations that an OptionList
+    can perform.
+
+    Attributes:
+        NONE: An integer value indicating that no animation should be
+            shown.
+        SHOW: An integer value indicating that the slide-in animation
+            should be shown.
+        HIDE: An integer value indicating that the slide-out animation
+            should be shown.
+    """
+    NONE = 0
+    SHOW = 1
+    HIDE = 2
+
+
+class MainOptionIndex(object):
+    """An enumeration for the index of each Option within the list of
+    the Main Title Screen Options.
+
+    Attributes:
+        BATTLE: An integer for the index of the Option for setting up a
+            new battle.
+        TRAINING: An integer for the index of Option for launching
+            Training Mode.
+        SETTINGS: An integer for the index of Option that will call the
+            Settings Screen.
+        EXIT: An integer for the index of the Option that will close
+            the game.
+    """
+    BATTLE = 0
+    TRAINING = 1
+    SETTINGS = 2
+    EXIT = 3
+
+
+class BattleSetupIndex(object):
+    """An enumeration for the index of each Option within the
+    BattleSetupList.
+
+    Attributes:
+        ROUNDS: An integer for the index of the BattleSetting that sets
+            the number of rounds for the upcoming battle.
+        TIME_LIMIT: An integer for the index of the BattleSetting that
+            sets the number time limit per round for the upcoming
+            battle.
+        BEGIN: An integer for the index of the Option that will allow
+            the players to confirm battle settings and proceed to the
+            Character Select Screen.
+    """
+    ROUNDS = 0
+    TIME_LIMIT = 1
+    BEGIN = 2
