@@ -627,9 +627,9 @@ class BattleSetupList(OptionList):
             self.scroll_up()
         elif input_name == 'down':
             self.scroll_down()
-        elif input_name == 'left':
+        elif input_name == 'back':
             self.scroll_setting_values_left()
-        elif input_name == 'right':
+        elif input_name == 'forward':
             self.scroll_setting_values_right()
         elif (input_name == 'start' and
               self.option_index == BattleSetupIndex.BEGIN):
