@@ -126,7 +126,6 @@ class OptionList(object):
             of the screen, in pixels per second.
 
     Attributes:
-        state: The TitleState instance that this OptionList belongs to.
         options: A list of Options.
         option_index: The index of the Option currently being
             highlighted by the players.
@@ -168,7 +167,6 @@ class OptionList(object):
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        self.state = state
         self.x = x
         self.y = y
         self.sfx_confirm = sfx_confirm
@@ -217,9 +215,6 @@ class OptionList(object):
             self.show_all(time)
         elif self.animation == ListAnimation.HIDE:
             self.hide_all(time)
-        elif not self.state.is_accepting_input:
-            self.state.is_accepting_input = True
-
 
     def draw(self, parent_surf):
         """Draw all of the Options in this list onto a Surface.
@@ -234,11 +229,10 @@ class OptionList(object):
     def prepare_to_show_all(self):
         """Position all of the Options in this list for the start of the
         'show all' animation.
-        
+
         The first, third, etc. Options will start from the left edge of
         the screen, while every other Option will start from the right.
         """
-        self.state.is_accepting_input = False
 
         for i in xrange(0, len(self.options), 2):
             self.options[i].x = -1 * self.x
@@ -300,8 +294,7 @@ class OptionList(object):
                 self.options[i].x += distance
 
         if self.is_offscreen():
-            self.animation = ListAnimation.NONE
-            #self.state.change_options(self.next_list)
+            self.animation = ListAnimation.SHOW
 
     def is_offscreen(self):
         """Return a Boolean indicating whether all of the Options in
@@ -354,7 +347,6 @@ class OptionList(object):
         The Option will flash on-screen to indicate the confirmation.
         """
         self.sfx_confirm.play()
-        self.state.is_accepting_input = False
         self.confirm_timer = 0
 
     def flash_confirmed_option(self):
@@ -572,18 +564,9 @@ class MainOptionList(OptionList):
         This will immediately bring the players to the Character Select
         screen.
         """
-        self.state.state_pass.battle_rounds = 0
-        self.state.state_pass.time_limit = 0
-
-        self.state.state_pass.will_reset_state = True
-        self.state.state_pass.enter_transition_on = True
-        #self.state.change_state(StateIDs.SELECT_CHARACTER)
+        pass
 
     def go_to_settings(self):
-        """Open the Settings Screen."""
-        self.state.state_pass.will_reset_state = False
-        self.state.state_pass.enter_transition_on = True
-        #self.state.change_state(StateIDs.SETTINGS)
         pass
 
     def exit_game(self):
@@ -651,7 +634,6 @@ class BattleSetupList(OptionList):
         super(BattleSetupList, self).__init__(state, self.X, self.Y,
                                               sfx_confirm, sfx_cancel,
                                               sfx_scroll)
-        self.state_pass = state.state_pass
 
     def create_options(self):
         """Create the two BattleSettings, as well as the 'Begin'
@@ -717,20 +699,7 @@ class BattleSetupList(OptionList):
         """Proceed to the Character Select Screen with the chosen
         battle parameters.
         """
-        self.update_battle_settings()
-        self.state.state_pass.will_reset_state = True
-        self.state.state_pass.enter_transition_on = True
-        #self.state.change_state(StateIDs.SELECT_CHARACTER)
-
-    def update_battle_settings(self):
-        """Update the battle parameters in the universal StatePass
-        object with data from this list.
-        """
-        rounds = self.options[BattleSetupIndex.ROUNDS].get_value()
-        time = self.options[BattleSetupIndex.TIME_LIMIT].get_value()
-
-        self.state.state_pass.battle_rounds = rounds
-        self.state.state_pass.time_limit = time
+        pass
 
 
 class BattleSetupIndex(object):
