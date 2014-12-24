@@ -830,7 +830,6 @@ class BattleSetting(Option):
             self.value_index -= 1
             self.value_surf = self.render_text(
                 str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
-            self.update_right_arrow_position()
 
     def scroll_values_right(self):
         """Select the next value for this BattleSetting."""
@@ -838,16 +837,6 @@ class BattleSetting(Option):
             self.value_index += 1
             self.value_surf = self.render_text(
                 str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
-            self.update_right_arrow_position()
-
-    def update_right_arrow_position(self):
-        """Ensure that the scroll right arrow is a set distance away
-        from the right edge of the value Surface.
-        """
-        new_x = (self.VALUE_X + self.value_surf.get_width() +
-                 self.ARROW_DISTANCE)
-        distance = new_x - self.scroll_right_arrow.exact_pos[0]
-        self.scroll_right_arrow.move(distance, 0)
 
     def highlight(self):
         """Redraw the text with an alternate color."""
@@ -888,10 +877,17 @@ class BattleSetting(Option):
             parent_surf: The Surface upon which the arrows will be
                 drawn.
         """
+        value_x = self.x + self.VALUE_DISTANCE
+        left_arrow_x = (value_x - self.scroll_left_arrow.rect[2]
+                        - self.ARROW_DISTANCE)
+        right_arrow_x = (value_x + self.value_surf.get_width()
+                         + self.ARROW_DISTANCE)
+        y = self.y + self.ARROW_Y_OFFSET
+
         if self.value_index > 0:
-            self.scroll_left_arrow.draw(parent_surf)
+            self.scroll_left_arrow.draw(parent_surf, left_arrow_x, y)
         if self.value_index < len(self.values) - 1:
-            self.scroll_right_arrow.draw(parent_surf)
+            self.scroll_right_arrow.draw(parent_surf, right_arrow_x, y)
 
 
 # Enumerations

@@ -101,6 +101,20 @@ class Graphic(object):
         """
         surf.blit(self.image, self.rect)
 
+    def draw(self, surf, x, y):
+        """Draw the Graphic onto a specified Surface at a specific
+        location.
+
+        Args:
+            surf: The Surface where this Graphic will be drawn
+                to.
+            x: The x-position of the Graphic relative to the parent
+                Surface.
+            y: The y-position of the Graphic relative to the parent
+                Surface.
+        """
+        surf.blit(self.image, (x, y))
+
     def move(self, dx, dy):
         """Move the Graphic some distance across the screen.
 
