@@ -151,7 +151,7 @@ class OptionList(object):
             means that processing should remain in the Title State.
     """
     OPTION_DISTANCE = 8
-    CONFIRM_DURATION = 80
+    CONFIRM_DURATION = 60
     TEXT_FLASH_SPEED = 5
     TEXT_SLIDE_SPEED = 800
 
