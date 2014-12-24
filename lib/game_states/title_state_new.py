@@ -154,11 +154,10 @@ class OptionList(object):
     TEXT_FLASH_SPEED = 5
     TEXT_SLIDE_SPEED = 300
 
-    def __init__(self, state, x, y, sfx_confirm, sfx_cancel, sfx_scroll):
+    def __init__(self, x, y, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
 
         Args:
-            state: The TitleState instance that this object belongs to.
             x: An integer for the x-position of the first Option,
                 relative to the screen.
             y: An integer for the y-position of the first Option,
@@ -441,16 +440,15 @@ class PressStartPrompt(OptionList):
     Y = 150
     WAIT_FLASH_SPEED = 45
 
-    def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
+    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
 
         Args:
-            state: The TitleState instance that this object belongs to.
             sfx_confirm: A PyGame Sound for confirming an option.
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(PressStartPrompt, self).__init__(state, self.X, self.Y,
+        super(PressStartPrompt, self).__init__(self.X, self.Y,
                                                sfx_confirm, sfx_cancel,
                                                sfx_scroll)
         self.next_list = TitleOptionList.MAIN_OPTIONS
@@ -519,16 +517,15 @@ class MainOptionList(OptionList):
     X = 155
     Y = 97
 
-    def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
+    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
 
         Args:
-            state: The TitleState instance that this object belongs to.
             sfx_confirm: A PyGame Sound for confirming an option.
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(MainOptionList, self).__init__(state, self.X, self.Y,
+        super(MainOptionList, self).__init__(self.X, self.Y,
                                              sfx_confirm, sfx_cancel,
                                              sfx_scroll)
 
@@ -639,16 +636,15 @@ class BattleSetupList(OptionList):
     X = 130
     Y = 97
 
-    def __init__(self, state, sfx_confirm, sfx_cancel, sfx_scroll):
+    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
 
         Args:
-            state: The TitleState instance that this object belongs to.
             sfx_confirm: A PyGame Sound for confirming an option.
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(BattleSetupList, self).__init__(state, self.X, self.Y,
+        super(BattleSetupList, self).__init__(self.X, self.Y,
                                               sfx_confirm, sfx_cancel,
                                               sfx_scroll)
 
