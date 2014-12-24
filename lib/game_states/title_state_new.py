@@ -107,7 +107,7 @@ class IntroAnimator(object):
         pygame.mixer.music.load(self.MUSIC_PATH)
         self.voice_timer = 0
         self.voice_has_played = False
-        bg.exact_pos = (0.0, self.BG_OFFSET)
+        bg.exact_pos = (0.0, SCREEN_SIZE[1] + self.BG_OFFSET)
         self.is_running = True
 
 
