@@ -178,6 +178,7 @@ class OptionList(object):
         self.next_state = -1
         self.options = []
         self.create_options()
+        self.highlight_option(0)
 
     def create_options(self):
         """Create all of the Options within this OptionList."""
