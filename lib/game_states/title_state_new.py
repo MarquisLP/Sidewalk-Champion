@@ -587,7 +587,7 @@ class BattleSetupList(OptionList):
             passed between all Game States.
     """
     X = 130
-    Y = 97
+    Y = 117
 
     def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll):
         """Declare and initialize instance variables.
