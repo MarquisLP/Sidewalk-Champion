@@ -130,17 +130,23 @@ class IntroAnimator(object):
         logo.is_animated = True
         self.is_running = False
 
-    def reset(self, bg):
+    def reset(self, bg, logo):
         """Prepare the animation to be shown.
+
+        This method must be called before the first call to update()
+        to ensure that all components are ready for use.
+        If not, bad things will happen... (maybe)
 
         Args:
             bg: The Title Screen's background Animation.
+            logo: The game logo Animation.
         """
         pygame.mixer.stop()
         pygame.mixer.music.load(self.MUSIC_PATH)
         self.voice_timer = 0
         self.voice_has_played = False
         bg.exact_pos = (0.0, SCREEN_SIZE[1] + self.BG_OFFSET)
+        logo.image.set_alpha(0)
         self.is_running = True
 
 
