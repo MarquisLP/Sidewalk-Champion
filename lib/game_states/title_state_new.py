@@ -45,7 +45,7 @@ class IntroAnimator(object):
     FADE_LOGO_RATE = 7
     VOICE_PATH = 'audio/announcer-title.wav'
     FADE_DELAY = 15
-    VOICE_DURATION = 115
+    VOICE_DURATION = 105
     MUSIC_PATH = 'audio/title_theme.wav'
 
     def __init__(self):
