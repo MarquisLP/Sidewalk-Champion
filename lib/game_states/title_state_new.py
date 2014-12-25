@@ -44,8 +44,8 @@ class IntroAnimator(object):
     BG_SCROLL_SPEED = 70.0
     FADE_LOGO_RATE = 7
     VOICE_PATH = 'audio/announcer-title.wav'
-    FADE_DELAY = 15
-    VOICE_DURATION = 105
+    FADE_DELAY = 7
+    VOICE_DURATION = 118
     MUSIC_PATH = 'audio/title_theme.wav'
 
     def __init__(self):
