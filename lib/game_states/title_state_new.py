@@ -56,6 +56,40 @@ class IntroAnimator(object):
         self.voice_timer = 0
         self.voice_has_played = False
 
+    def update(self, time, bg, logo):
+        """Update the animation's processes.
+
+        The animation will proceed as follows:
+            1. Scroll the background up from the bottom edge until it
+               fills the screen.
+            2. Fade in the logo.
+            3. As it fades in, play the voice clip.
+            4. Once the voice clip finishes, play the title theme and
+               activate the logo's animation.
+
+        Args:
+            time: A float for the time elapsed, in seconds, since the
+                last update cycle.
+            bg: The Title Screen's background Animation.
+            logo: The game logo Animation.
+        """
+        if bg.exact_pos[1] > 0.0:
+            self.move_background_up(bg, time)
+        elif logo.image.get_alpha() < 255:
+            self.fade_in_logo(logo)
+
+        if (logo.image.get_alpha() >= self.VOICE_DELAY
+                and (not self.voice_has_played)):
+            self.voice.play()
+            self.voice_has_played = True
+        elif (self.voice_has_played and
+              self.voice_timer < self.VOICE_DURATION):
+            self.voice_timer += 1
+        elif self.voice_timer >= self.VOICE_DURATION:
+            pygame.mixer.music.play(-1)
+            logo.is_animated = True
+            self.is_running = False
+
     def move_background_up(self, bg, time):
         """Move the background up at a set speed.
 
