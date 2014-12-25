@@ -125,8 +125,9 @@ class IntroAnimator(object):
         if not self.voice_has_played:
             self.voice.play()
 
-        bg.exact_pos = (0.0, 0.0)
+        bg.move(0, -1 * bg.rect[1])
         pygame.mixer.music.play()
+        logo.image.set_alpha(255)
         logo.is_animated = True
         self.is_running = False
 
