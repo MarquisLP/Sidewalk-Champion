@@ -24,9 +24,8 @@ class IntroAnimator(object):
             at which the background will be scrolled up.
         VOICE_PATH: A String for the file path of the voice clip where
             the announcer states the title of the game.
-        VOICE_DELAY: An integer for the number of update cycles that
-            will take place between fading in the logo and playing the
-            voice clip.
+        FADE_DELAY: An integer for the alpha value that the logo
+            Animation must attain before the voice clip is played.
         VOICE_DURATION: An integer for the duration of the voice clip,
             in update cycles.
 
@@ -45,7 +44,7 @@ class IntroAnimator(object):
     BG_SCROLL_SPEED = 70.0
     FADE_LOGO_RATE = 7
     VOICE_PATH = 'audio/announcer-title.wav'
-    VOICE_DELAY = 15
+    FADE_DELAY = 15
     VOICE_DURATION = 115
     MUSIC_PATH = 'audio/title_theme.wav'
 
@@ -78,7 +77,7 @@ class IntroAnimator(object):
         elif logo.image.get_alpha() < 255:
             self.fade_in_logo(logo)
 
-        if (logo.image.get_alpha() >= self.VOICE_DELAY
+        if (logo.image.get_alpha() >= self.FADE_DELAY
                 and (not self.voice_has_played)):
             self.voice.play()
             self.voice_has_played = True
