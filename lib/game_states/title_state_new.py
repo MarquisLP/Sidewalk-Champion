@@ -484,7 +484,7 @@ class PressStartPrompt(OptionList):
 
     def create_options(self):
         """Create the prompt."""
-        self.options.append(Option("PRESS START", self.x, self.y))
+        self.options.append(Option("Press Start", self.x, self.y))
 
     def update(self, time):
         """Update the processes within this prompt.
