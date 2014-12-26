@@ -352,6 +352,7 @@ class IntroAnimator(object):
         self.voice_timer = 0
         self.voice_has_played = False
         bg.exact_pos = (0.0, SCREEN_SIZE[1] + self.BG_OFFSET)
+        logo.is_animated = False
         logo.image.set_alpha(0)
         self.is_running = True
 
