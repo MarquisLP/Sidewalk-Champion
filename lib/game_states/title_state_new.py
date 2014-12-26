@@ -92,7 +92,6 @@ class TitleState(State):
         self.logo = Animation(self.LOGO_PATH, (self.LOGO_X, self.LOGO_Y),
                               self.LOGO_FRAMES, self.LOGO_DURATION)
         self.intro_animator = IntroAnimator()
-        self.intro_animator.reset(self.background, self.logo)
 
         confirm = Sound(self.SFX_CONFIRM_PATH)
         cancel = Sound(self.SFX_CANCEL_PATH)
@@ -103,6 +102,8 @@ class TitleState(State):
         battle_setup = BattleSetupList(confirm, cancel, scroll, slide)
         self.option_lists = [prompt, main_options, battle_setup]
         self.current_options = TitleOptionList.PRESS_START
+        
+        self.reset_state()
 
     def load_state(self):
         self.is_loaded = True
@@ -150,7 +151,7 @@ class TitleState(State):
             self.intro_animator.skip_intro(self.background, self.logo)
         else:
             active_list = self.option_lists[self.current_options]
-            if not active_list.is_animating:
+            if not active_list.is_animating():
                 input_name = self.get_input_name(pygame.key.name(event.key))
                 active_list.handle_input(input_name)
 
