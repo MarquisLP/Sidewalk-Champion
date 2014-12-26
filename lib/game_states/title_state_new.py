@@ -104,6 +104,15 @@ class TitleState(State):
         self.option_lists = [prompt, main_options, battle_setup]
         self.current_options = TitleOptionList.PRESS_START
 
+    def load_state(self):
+        self.is_loaded = True
+
+    def reset_state(self):
+        """Prepare this State to be shown again."""
+        self.intro_animator.reset(self.background, self.logo)
+        for option_list in self.option_lists:
+            option_list.reset()
+
 
 class IntroAnimator(object):
     """This class is in charge of animating the Title Screen's
