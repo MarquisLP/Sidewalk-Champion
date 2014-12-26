@@ -780,6 +780,14 @@ class BattleSetupList(OptionList):
         self.prepare_to_show_all()
         self.animation = ListAnimation.SHOW
 
+    def get_rounds(self):
+        """Return the number of rounds in the upcoming battle."""
+        return self.options[BattleSetupIndex.ROUNDS].get_value()
+
+    def get_time_limit(self):
+        """Return the time limit per round in the upcoming battle."""
+        return self.options[BattleSetupIndex.TIME_LIMIT].get_value()
+
     def scroll_setting_values_left(self):
         """Select the previous value in the currently-selected
         BattleSetting.
