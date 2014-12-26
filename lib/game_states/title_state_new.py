@@ -123,6 +123,17 @@ class TitleState(State):
         elif self.current_options == TitleOptionList.MAIN_OPTIONS:
             self.current_options = TitleOptionList.BATTLE_SETUP
 
+    def update_battle_settings(self):
+        """Set the battle parameters within the StatePass object using
+        values from the BattleSetupList.
+        """
+        battle_setup = self.option_lists[TitleOptionList.BATTLE_SETUP]
+        rounds = battle_setup.get_rounds()
+        time_limit = battle_setup.get_time_limit()
+
+        self.state_pass.battle_rounds = rounds
+        self.state_pass.time_limit = time_limit
+
 
 class IntroAnimator(object):
     """This class is in charge of animating the Title Screen's
