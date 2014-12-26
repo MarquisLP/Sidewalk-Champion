@@ -131,6 +131,8 @@ class TitleState(State):
             elif updated_options.is_offscreen():
                 self.change_options()
 
+        self.draw_state()
+
     def draw_state(self):
         """Draw all graphics onto the State Surface."""
         self.background.draw(self.state_surface)
