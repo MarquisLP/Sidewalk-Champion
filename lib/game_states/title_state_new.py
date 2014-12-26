@@ -113,6 +113,16 @@ class TitleState(State):
         for option_list in self.option_lists:
             option_list.reset()
 
+    def change_options(self):
+        """Switch to another Option List, based on whichever list was
+        previously shown.
+        """
+        if self.current_options in [TitleOptionList.PRESS_START,
+                                    TitleOptionList.BATTLE_SETUP]:
+            self.current_options = TitleOptionList.MAIN_OPTIONS
+        elif self.current_options == TitleOptionList.MAIN_OPTIONS:
+            self.current_options = TitleOptionList.BATTLE_SETUP
+
 
 class IntroAnimator(object):
     """This class is in charge of animating the Title Screen's
