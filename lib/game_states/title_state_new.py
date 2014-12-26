@@ -131,6 +131,13 @@ class TitleState(State):
             elif updated_options.is_offscreen():
                 self.change_options()
 
+    def draw_state(self):
+        """Draw all graphics onto the State Surface."""
+        self.background.draw(self.state_surface)
+        self.logo.draw(self.state_surface)
+        if not self.intro_animator.is_running:
+            self.option_lists[self.current_options].draw(self.state_surface)
+
     def change_options(self):
         """Switch to another Option List, based on whichever list was
         previously shown.
