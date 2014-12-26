@@ -92,28 +92,23 @@ class Graphic(object):
         self.image = transform.flip(self.image, is_horizontal,
                                     is_vertical)
 
-    def draw(self, surf):
-        """Draw the Graphic onto the specified Surface.
-
-        Keyword arguments:
-            surf        The Surface where this Graphic will be drawn
-                        to.
-        """
-        surf.blit(self.image, self.rect)
-
-    def draw(self, surf, x, y):
-        """Draw the Graphic onto a specified Surface at a specific
-        location.
+    def draw(self, surf, x=None, y=None):
+        """Draw the Graphic onto a specified Surface.
 
         Args:
             surf: The Surface where this Graphic will be drawn
                 to.
-            x: The x-position of the Graphic relative to the parent
-                Surface.
-            y: The y-position of the Graphic relative to the parent
-                Surface.
+            x: Optional. The x-position of the Graphic relative to the
+                parent Surface. If this is not given, the position
+                passed to init() will be used instead.
+            y: Optional. The y-position of the Graphic relative to the
+                parent Surface. If this is not given, the position
+                passed to init() will be used instead.
         """
-        surf.blit(self.image, (x, y))
+        if x is None or y is None:
+            surf.blit(self.image, self.rect)
+        else:
+            surf.blit(self.image, (x, y))
 
     def move(self, dx, dy):
         """Move the Graphic some distance across the screen.
