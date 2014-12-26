@@ -13,6 +13,71 @@ from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
 
 
+class TitleState(State):
+    """The Game State that handles the Title Screen.
+
+    This State is the first to run every time the game is launched.
+    Additionally, every time this State is shown, a short introduction
+    will be played that reveals the game's title.
+
+    From here, the players can:
+        * Setup a new battle.
+        * Go to Training Mode.
+        * Open the Settings Screen.
+        * Exit the game window.
+
+    Class Constants:
+        BG_PATH: A String for the file path to the background image's
+            sprite sheet.
+        BG_FRAMES: An integer for the amount of animation frames in the
+            background image's sprite sheet.
+        BG_DURATION: An integer for the duration of each frame in the
+            background image's animation, in update cycles.
+        LOGO_PATH: A String for the file path to the game logo's sprite
+            sheet.
+        LOGO_X: an integer for the game logo's x-position relative to
+            the screen.
+        LOGO_Y: an integer for the game logo's y-position relative to
+            the screen.
+        LOGO_FRAMES: An integer for the amount of animation frames in
+            the game logo's sprite sheet.
+        LOGO_DURATION: An integer for the duration of each frame in the
+            game logo's animation, in update cycles.
+        SFX_CONFIRM_PATH: A String for the file path of the sound effect
+            that plays when an Option is confirmed.
+        SFX_CANCEL_PATH: A String for the file path of the sound effect
+            that plays when a decision is cancelled.
+        SFX_SCROLL_PATH: A String for the file path of the sound effect
+            that plays when switching focus between Options.
+        SFX_SLIDE_PATH: A String for the file path of the sound effect
+            that plays during OptionLists' slide in and slide out
+            animations.
+
+        Attributes:
+            background: The Title Screen's background Animation.
+            logo: The game logo Animation.
+            intro_player: An IntroAnimator that manages and performs
+                the introductory animation.
+            option_lists: A list containing three different OptionLists.
+                This contains one instance each of PressStartPrompt,
+                MainOptionList, and BattleSetupList.
+            current_options: An integer for the index of the currently-
+                displayed Option List within the option_lists attribute.
+    """
+    BG_PATH = 'images/title_back.png'
+    BG_FRAMES = 7
+    BG_DURATION = 5
+    LOGO_PATH = 'images/logo.png'
+    LOGO_X = 12
+    LOGO_Y = 40
+    LOGO_FRAMES = 6
+    LOGO_DURATION = 5
+    SFX_CONFIRM_PATH = 'audio/confirm.wav'
+    SFX_CANCEL_PATH = 'audio/cancel.wav'
+    SFX_SCROLL_PATH = 'audio/scroll.wav'
+    SFX_SLIDE_PATH = 'audio/woosh.ogg'
+
+
 class IntroAnimator(object):
     """This class is in charge of animating the Title Screen's
     introductory animation.
