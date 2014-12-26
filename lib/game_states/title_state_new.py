@@ -102,7 +102,7 @@ class TitleState(State):
         battle_setup = BattleSetupList(confirm, cancel, scroll, slide)
         self.option_lists = [prompt, main_options, battle_setup]
         self.current_options = TitleOptionList.PRESS_START
-        
+
         self.reset_state()
 
     def load_state(self):
@@ -129,6 +129,7 @@ class TitleState(State):
             updated_options.update(time)
             if updated_options.next_state > -1:
                 self.change_state(updated_options.next_state)
+                updated_options.next_state = -1
             elif updated_options.is_offscreen():
                 self.change_options()
 
