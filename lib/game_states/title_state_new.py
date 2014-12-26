@@ -113,6 +113,24 @@ class TitleState(State):
         for option_list in self.option_lists:
             option_list.reset()
 
+    def update_state(self, time):
+        """Update all processes within this State.
+
+        Args:
+            time: An float for the time elapsed, in seconds, since the
+                last update cycle.
+        """
+        if self.intro_animator.is_running:
+            self.intro_animator.update(time, self.background, self.logo)
+        else:
+            updated_options = self.option_lists[self.current_options]
+
+            updated_options.update(time)
+            if updated_options.next_state > -1:
+                self.change_state(updated_options.next_state)
+            elif updated_options.is_offscreen():
+                self.change_options()
+
     def change_options(self):
         """Switch to another Option List, based on whichever list was
         previously shown.
