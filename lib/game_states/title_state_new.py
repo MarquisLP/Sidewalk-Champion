@@ -123,6 +123,20 @@ class TitleState(State):
         elif self.current_options == TitleOptionList.MAIN_OPTIONS:
             self.current_options = TitleOptionList.BATTLE_SETUP
 
+    def change_state(self, state_id):
+        """Switch game processing to another Game State.
+
+        Args:
+            state_id: The index of the next Game State to be run. For
+                possible values, refer to the StateIDs enum.
+        """
+        self.update_battle_settings()
+
+        self.state_pass.will_reset_state = True
+        self.state_pass.enter_transition_on = True
+
+        super(TitleState, self).change_state(state_id)
+
     def update_battle_settings(self):
         """Set the battle parameters within the StatePass object using
         values from the BattleSetupList.
