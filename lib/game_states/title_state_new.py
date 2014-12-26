@@ -278,6 +278,10 @@ class OptionList(object):
         for option in self.options:
             option.draw(parent_surf)
 
+    def reset(self):
+        """Prepare this OptionList to be shown again."""
+        raise NotImplementedError
+
     def prepare_to_show_all(self):
         """Position all of the Options in this list for the start of the
         'show all' animation.
@@ -514,6 +518,13 @@ class PressStartPrompt(OptionList):
             self.options[0].is_visible = True
             self.confirm_option()
 
+    def reset(self):
+        """Prepare the prompt to be shown again."""
+        self.x = self.X
+        self.y = self.Y
+        self.idle_flash_timer = 0
+        self.animation = ListAnimation.NONE
+
     def respond_to_confirm(self):
         """Hide the prompt and then go to the Main Options list."""
         self.animation = ListAnimation.HIDE
@@ -581,6 +592,11 @@ class MainOptionList(OptionList):
             self.scroll_down()
         elif input_name == 'start':
             self.confirm_option()
+
+    def reset(self):
+        """Prepare the OptionList to be shown again."""
+        self.prepare_to_show_all()
+        self.animation = ListAnimation.SHOW
 
     def respond_to_confirm(self):
         """Perform the appropriate operation based on whichever Option
@@ -693,6 +709,11 @@ class BattleSetupList(OptionList):
             self.confirm_option()
         elif input_name == 'cancel':
             self.cancel_setup()
+
+    def reset(self):
+        """Prepare the OptionList to be shown again."""
+        self.prepare_to_show_all()
+        self.animation = ListAnimation.SHOW
 
     def scroll_setting_values_left(self):
         """Select the previous value in the currently-selected
