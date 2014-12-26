@@ -138,6 +138,48 @@ class TitleState(State):
         if not self.intro_animator.is_running:
             self.option_lists[self.current_options].draw(self.state_surface)
 
+    def get_player_input(self, event):
+        """Respond to player input.
+
+        Args:
+            event: The PyGame Event containing key input data.
+        """
+        if self.intro_animator.is_running:
+            self.intro_animator.skip_intro(self.background, self.logo)
+        else:
+            active_list = self.option_lists[self.current_options]
+            if not active_list.is_animating:
+                input_name = self.get_input_name(pygame.key.name(event.key))
+                active_list.handle_input(input_name)
+
+    def get_input_name(self, key_name):
+        """Get the name of an in-game input command that is bound to a
+        certain keyboard key.
+
+        Examples of such input commands are start, forward, light punch,
+        etc.
+
+        Args:
+            key_name: A String for the name of the keyboard key.
+
+        Returns:
+            A String containing the name of the desired input command.
+            If the key is not bound to an input command, an empty String
+            will be returned instead.
+        """
+        p1_keys = self.state_pass.settings.player1_keys
+        p2_keys = self.state_pass.settings.player2_keys
+
+        for input_name in p1_keys.keys():
+            if key_name == p1_keys[input_name]:
+                return input_name
+
+        for input_name in p2_keys.keys():
+            if key_name == p2_keys[input_name]:
+                return input_name
+
+        return ''
+
     def change_options(self):
         """Switch to another Option List, based on whichever list was
         previously shown.
