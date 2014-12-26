@@ -77,6 +77,33 @@ class TitleState(State):
     SFX_SCROLL_PATH = 'audio/scroll.wav'
     SFX_SLIDE_PATH = 'audio/woosh.ogg'
 
+    def __init__(self, state_manager, state_pass):
+        """Declare and initialize instance variables.
+
+        Args:
+            state_manager: The GameStateManager object that manages and
+                updates this State.
+            state_pass: The StatePass object that stores info to pass
+                onto other States.
+        """
+        super(TitleState, self).__init__(state_manager, state_pass)
+        self.background = Animation(self.BG_PATH, (0, 0), self.BG_FRAMES,
+                                    self.BG_DURATION)
+        self.logo = Animation(self.LOGO_PATH, (self.LOGO_X, self.LOGO_Y),
+                              self.LOGO_FRAMES, self.LOGO_DURATION)
+        self.intro_animator = IntroAnimator()
+        self.intro_animator.reset(self.background, self.logo)
+
+        confirm = Sound(self.SFX_CONFIRM_PATH)
+        cancel = Sound(self.SFX_CANCEL_PATH)
+        scroll = Sound(self.SFX_SCROLL_PATH)
+        slide = Sound(self.SFX_SLIDE_PATH)
+        prompt = PressStartPrompt(confirm, cancel, scroll, slide)
+        main_options = MainOptionList(confirm, cancel, scroll, slide)
+        battle_setup = BattleSetupList(confirm, cancel, scroll, slide)
+        self.option_lists = [prompt, main_options, battle_setup]
+        self.current_options = TitleOptionList.PRESS_START
+
 
 class IntroAnimator(object):
     """This class is in charge of animating the Title Screen's
