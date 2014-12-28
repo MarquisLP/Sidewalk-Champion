@@ -31,8 +31,7 @@ class SettingsState(State):
             image.
         SLIDE_SFX_PATH: A string containing the file path for the
             slide-in sound effect.
-        INPUT_SFX_PATH: A string containing the file path for the
-            player input sound effect.
+
         SCROLL_SFX_PATH: A string containing the file path for the
             scroll list sound effect.
         EXIT_SFX_PATH: A string containing the file path for the
@@ -52,8 +51,6 @@ class SettingsState(State):
             another item in the SettingList or KeyBindingList.
         slide_sound: A PyGame Sound that plays when the screen slides in
             or out of the window.
-        input_sound: A PyGame Sound that will plays when the players
-            press an input button.
         is_editing_binding: A Boolean that indicates whether the next
             key press will be saved to the currently-selected Key
             Binding.
@@ -64,7 +61,6 @@ class SettingsState(State):
     BG_PATH = "images/settings_back.png"
     SLIDE_SFX_PATH = "audio/settings_slide.wav"
     SCROLL_SFX_PATH = "audio/settings_scroll.wav"
-    INPUT_SFX_PATH = "audio/settings_input.wav"
     EXIT_SFX_PATH = "audio/cancel.wav"
     SLIDE_SPEED = 500.0
 
@@ -90,7 +86,6 @@ class SettingsState(State):
         self.bg_image = Graphic(self.BG_PATH, (0.0, 0.0))
         self.slide_sound = Sound(self.SLIDE_SFX_PATH)
         self.scroll_sound = Sound(self.SCROLL_SFX_PATH)
-        self.input_sound = Sound(self.INPUT_SFX_PATH)
         self.exit_sound = Sound(self.EXIT_SFX_PATH)
         self.is_editing_binding = False
         self.is_leaving_state = False
@@ -684,7 +679,9 @@ class KeyBindingList(object):
     Class Constants:
         X                   The x-position of the main Surface,
                             relative to the parent Surface.
-        Y                   The y-position of the main Surface,
+        Y                   The y-position of the main Surface.
+        REMAP_SFX_PATH      A string containing the file path for the
+                            key remap sound effect.
                             relative to the parent Surface.
         TEXT_DISTANCE       The vertical distance, in pixels, between
                             the top edges of the text graphic for each
@@ -709,6 +706,8 @@ class KeyBindingList(object):
     Attributes:
         setting_list        The SettingList object that controls all
                             other Settings in this game state.
+        remap_sound         A PyGame Sound that plays when a key binding
+                            is remapped to different key.
         bindings            A list containing all of the KeyBinding
                             objects within the Settings State.
         current_binding     The index of the currently-selected
@@ -726,6 +725,7 @@ class KeyBindingList(object):
     """
     X = 52
     Y = 115
+    REMAP_SFX_PATH = "audio/settings_remap.wav"
     TEXT_DISTANCE = 23
     BINDINGS_ON_SCREEN = 4
     UP_ARROW_PATH = "images/settings_arrow_up.png"
@@ -749,11 +749,8 @@ class KeyBindingList(object):
                             bindings.
         """
         self.setting_list = setting_list
-        """@rtype: SettingList"""
-
+        self.remap_sound = Sound(self.REMAP_SFX_PATH)
         self.bindings = self.load_bindings(p1_bindings, p2_bindings)
-        """@rtype: list of KeyBinding"""
-
         self.current_binding = 0
         self.top_binding = 0
         self.up_arrow = Animation(self.UP_ARROW_PATH,
