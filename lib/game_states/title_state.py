@@ -97,9 +97,14 @@ class TitleState(State):
         cancel = Sound(self.SFX_CANCEL_PATH)
         scroll = Sound(self.SFX_SCROLL_PATH)
         slide = Sound(self.SFX_SLIDE_PATH)
-        prompt = PressStartPrompt(confirm, cancel, scroll, slide)
-        main_options = MainOptionList(confirm, cancel, scroll, slide)
-        battle_setup = BattleSetupList(confirm, cancel, scroll, slide)
+        ui_channel = self.state_pass.ui_channel
+        prompt = PressStartPrompt(ui_channel, confirm, cancel, scroll,
+                                  slide)
+        main_options = MainOptionList(ui_channel, confirm, cancel,
+                                      scroll, slide)
+        battle_setup = BattleSetupList(ui_channel, confirm, cancel,
+                                       scroll, slide)
+
         self.option_lists = [prompt, main_options, battle_setup]
         self.current_options = TitleOptionList.PRESS_START
 
@@ -122,7 +127,8 @@ class TitleState(State):
                 last update cycle.
         """
         if self.intro_animator.is_running:
-            self.intro_animator.update(time, self.background, self.logo)
+            self.intro_animator.update(time, self.background, self.logo,
+                                       self.state_pass.ui_channel)
         else:
             updated_options = self.option_lists[self.current_options]
 
@@ -149,7 +155,8 @@ class TitleState(State):
             event: The PyGame Event containing key input data.
         """
         if self.intro_animator.is_running:
-            self.intro_animator.skip_intro(self.background, self.logo)
+            self.intro_animator.skip_intro(self.background, self.logo,
+                                           self.state_pass.ui_channel)
         else:
             active_list = self.option_lists[self.current_options]
             if not active_list.is_animating():
