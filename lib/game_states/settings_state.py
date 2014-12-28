@@ -683,6 +683,8 @@ class KeyBindingList(object):
                             relative to the parent Surface.
         REMAP_SFX_PATH      A string containing the file path for the
                             key remap sound effect.
+        INVALID_SFX_PATH    A string containing the file path for the
+                            invalid key sound effect.
         TEXT_DISTANCE       The vertical distance, in pixels, between
                             the top edges of the text graphic for each
                             Key Binding.
@@ -708,6 +710,9 @@ class KeyBindingList(object):
                             other Settings in this game state.
         remap_sound         A PyGame Sound that plays when a key binding
                             is remapped to different key.
+        invalid_sound       A PyGame Sound that plays when the game
+                            stops the players from remapping a key that
+                            is already bound to an input.
         bindings            A list containing all of the KeyBinding
                             objects within the Settings State.
         current_binding     The index of the currently-selected
@@ -726,6 +731,7 @@ class KeyBindingList(object):
     X = 52
     Y = 115
     REMAP_SFX_PATH = "audio/settings_remap.wav"
+    INVALID_SFX_PATH = "audio/invalid.wav"
     TEXT_DISTANCE = 23
     BINDINGS_ON_SCREEN = 4
     UP_ARROW_PATH = "images/settings_arrow_up.png"
@@ -750,6 +756,7 @@ class KeyBindingList(object):
         """
         self.setting_list = setting_list
         self.remap_sound = Sound(self.REMAP_SFX_PATH)
+        self.invalid_sound = Sound(self.INVALID_SFX_PATH)
         self.bindings = self.load_bindings(p1_bindings, p2_bindings)
         self.current_binding = 0
         self.top_binding = 0
