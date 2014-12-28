@@ -4,6 +4,7 @@ from __builtin__ import True, False
 from pygame.locals import *
 from pygame import Surface
 from pygame import image
+from pygame import transform
 from pygame import color
 from pygame import Rect
 
@@ -79,14 +80,35 @@ class Graphic(object):
         bottom_edge = self.rect.y + self.rect.height
         return bottom_edge
 
-    def draw(self, surf):
-        """Draw the Graphic onto the specified Surface.
+    def flip(self, is_horizontal=False, is_vertical=False):
+        """Flip this graphic horizontally, vertically, or both.
 
-        Keyword arguments:
-            surf        The Surface where this Graphic will be drawn
-                        to.
+        Args:
+            is_horizontal: A Boolean indicating whether to flip the
+                Graphic's image horizontally.
+            is_vertical: A Boolean indicating whether to flip the
+                Graphic's image vertically.
         """
-        surf.blit(self.image, self.rect)
+        self.image = transform.flip(self.image, is_horizontal,
+                                    is_vertical)
+
+    def draw(self, surf, x=None, y=None):
+        """Draw the Graphic onto a specified Surface.
+
+        Args:
+            surf: The Surface where this Graphic will be drawn
+                to.
+            x: Optional. The x-position of the Graphic relative to the
+                parent Surface. If this is not given, the position
+                passed to init() will be used instead.
+            y: Optional. The y-position of the Graphic relative to the
+                parent Surface. If this is not given, the position
+                passed to init() will be used instead.
+        """
+        if x is None or y is None:
+            surf.blit(self.image, self.rect)
+        else:
+            surf.blit(self.image, (x, y))
 
     def move(self, dx, dy):
         """Move the Graphic some distance across the screen.
