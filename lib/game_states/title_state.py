@@ -424,6 +424,8 @@ class OptionList(object):
                 relative to the screen.
             y: An integer for the y-position of the first Option,
                 relative to the screen.
+            channel: A PyGame Channel that will be used by this
+            OptionList to play sound effects.
             sfx_confirm: A PyGame Sound for confirming an option.
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
@@ -1134,6 +1136,8 @@ class BattleSetting(Option):
         """Select the previous value for this BattleSetting.
 
         Args:
+            sound_channel: A PyGame Channel that will be used to play
+                the scroll sound effect.
             scroll_sound: A PyGame Sound for scrolling through choices.
         """
         if self.value_index > 0:
@@ -1146,6 +1150,8 @@ class BattleSetting(Option):
         """Select the next value for this BattleSetting.
 
         Args:
+            sound_channel: A PyGame Channel that will be used to play
+                the scroll sound effect.
             scroll_sound: A PyGame Sound for scrolling through choices.
         """
         if self.value_index < len(self.values) - 1:
