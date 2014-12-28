@@ -33,6 +33,8 @@ class SettingsState(State):
             slide-in sound effect.
         INPUT_SFX_PATH: A string containing the file path for the
             player input sound effect.
+        SCROLL_SFX_PATH: A string containing the file path for the
+            scroll list sound effect.
         EXIT_SFX_PATH: A string containing the file path for the
             exit screen sound effect.
         SLIDE_SPEED: An integer that sets the speed at which the State
@@ -46,6 +48,8 @@ class SettingsState(State):
         binding_list: The KeyBindingList object that controls all
             the available Key Bindings.
         bg_image: The PyGame image for the Settings Screen background.
+        scroll_sound: A PyGame Sound that plays when the players select
+            another item in the SettingList or KeyBindingList.
         slide_sound: A PyGame Sound that plays when the screen slides in
             or out of the window.
         input_sound: A PyGame Sound that will plays when the players
@@ -59,6 +63,7 @@ class SettingsState(State):
     """
     BG_PATH = "images/settings_back.png"
     SLIDE_SFX_PATH = "audio/settings_slide.wav"
+    SCROLL_SFX_PATH = "audio/settings_scroll.wav"
     INPUT_SFX_PATH = "audio/settings_input.wav"
     EXIT_SFX_PATH = "audio/cancel.wav"
     SLIDE_SPEED = 500.0
@@ -84,6 +89,7 @@ class SettingsState(State):
         self.file_manager = SettingsManager()
         self.bg_image = Graphic(self.BG_PATH, (0.0, 0.0))
         self.slide_sound = Sound(self.SLIDE_SFX_PATH)
+        self.scroll_sound = Sound(self.SCROLL_SFX_PATH)
         self.input_sound = Sound(self.INPUT_SFX_PATH)
         self.exit_sound = Sound(self.EXIT_SFX_PATH)
         self.is_editing_binding = False
