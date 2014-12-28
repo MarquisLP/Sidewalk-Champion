@@ -900,6 +900,7 @@ class BattleSetupList(OptionList):
         super(BattleSetupList, self).__init__(self.X, self.Y, channel,
                                               sfx_confirm, sfx_cancel,
                                               sfx_scroll, sfx_slide)
+        self.sfx_slide = self.sfx_cancel
         self.animation = ListAnimation.SHOW
 
     def create_options(self):
