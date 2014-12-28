@@ -58,19 +58,10 @@ class SettingsState(State):
             to another State.
     """
     BG_PATH = "images/settings_back.png"
-    """@rtype: String"""
-
     SLIDE_SFX_PATH = "audio/settings_slide.wav"
-    """@rtype: String"""
-
     INPUT_SFX_PATH = "audio/settings_input.wav"
-    """@rtype: String"""
-
     EXIT_SFX_PATH = "audio/cancel.wav"
-    """@rtype: String"""
-
     SLIDE_SPEED = 500.0
-    """@rtype: float"""
 
     # Initialization
     def __init__(self, state_manager, state_pass):
@@ -86,34 +77,17 @@ class SettingsState(State):
         @type state_pass: StatePass
         """
         super(SettingsState, self).__init__(state_manager, state_pass)
-
         p1_bindings = self.state_pass.settings.player1_keys
-
         p2_bindings = self.state_pass.settings.player2_keys
-
         self.setting_list = SettingList(p1_bindings, p2_bindings)
-        """@rtype: SettingList"""
-
         self.binding_list = self.setting_list.binding_list
-        """@rtype: KeyBindingList"""
-
         self.file_manager = SettingsManager()
-        """@rtype: SettingsManager"""
-
         self.bg_image = Graphic(self.BG_PATH, (0.0, 0.0))
-        """@rtype: Graphic"""
-
         #self.slide_sound = Sound(self.SLIDE_SFX_PATH)
-
         #self.input_sound = Sound(self.INPUT_SFX_PATH)
-
         #self.exit_sound = Sound(self.EXIT_SFX_PATH)
-
         self.is_editing_binding = False
-        """@rtype: bool"""
-
         self.is_leaving_state = False
-        """@rtype: bool"""
 
     def load_state(self):
         """Prepare this State to be run for the first time."""
@@ -417,12 +391,8 @@ class SettingList(object):
             selected Setting.
     """
     X = 21
-
     Y = 17
-    """:rtype : int"""
-
     SETTING_DISTANCE = 15
-    """:rtype : int"""
 
     # Initialization
     def __init__(self, p1_bindings, p2_bindings):
@@ -432,13 +402,8 @@ class SettingList(object):
         @type p2_bindings: dict of (String, String)
         """
         self.settings = self.create_all_settings()
-        """:rtype : list of Setting"""
-
         self.binding_list = KeyBindingList(self, p1_bindings, p2_bindings)
-        """:rtype : KeyBindingList"""
-
         self.active_setting = 0
-        """:rtype : int"""
 
     def create_all_settings(self):
         """Returns a list containing all of the Settings within the
