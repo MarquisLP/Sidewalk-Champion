@@ -83,9 +83,9 @@ class SettingsState(State):
         self.binding_list = self.setting_list.binding_list
         self.file_manager = SettingsManager()
         self.bg_image = Graphic(self.BG_PATH, (0.0, 0.0))
-        #self.slide_sound = Sound(self.SLIDE_SFX_PATH)
-        #self.input_sound = Sound(self.INPUT_SFX_PATH)
-        #self.exit_sound = Sound(self.EXIT_SFX_PATH)
+        self.slide_sound = Sound(self.SLIDE_SFX_PATH)
+        self.input_sound = Sound(self.INPUT_SFX_PATH)
+        self.exit_sound = Sound(self.EXIT_SFX_PATH)
         self.is_editing_binding = False
         self.is_leaving_state = False
 
