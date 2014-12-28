@@ -262,7 +262,7 @@ class IntroAnimator(object):
         self.voice_timer = 0
         self.voice_has_played = False
 
-    def update(self, time, bg, logo):
+    def update(self, time, bg, logo, sound_channel):
         """Update the animation's processes.
 
         The animation will proceed as follows:
@@ -278,6 +278,8 @@ class IntroAnimator(object):
                 last update cycle.
             bg: The Title Screen's background Animation.
             logo: The game logo Animation.
+            sound_channel: The PyGame Channel that will be used to
+                play the announcer's voice.
         """
         if bg.exact_pos[1] > 0.0:
             self.move_background_up(bg, time)
@@ -322,12 +324,14 @@ class IntroAnimator(object):
         old_alpha = logo.image.get_alpha()
         logo.image.set_alpha(old_alpha + self.FADE_LOGO_RATE)
 
-    def skip_intro(self, bg, logo):
+    def skip_intro(self, bg, logo, sound_channel):
         """Skip to the end of animation immediately.
 
         Args:
             bg: The Title Screen's background Animation.
             logo: The game logo Animation.
+            sound_channel: The PyGame Channel that will be used to
+                play the announcer's voice.
         """
         if not self.voice_has_played:
             self.voice.play()
@@ -384,6 +388,8 @@ class OptionList(object):
         options: A list of Options.
         option_index: The index of the Option currently being
             highlighted by the players.
+        sound_channel: A PyGame Channel that will be used by this
+            OptionList to play sound effects.
         x: An integer coordinate for the OptionList's x-position
             relative to the screen.
         y: An integer coordinate for the OptionList's y-position
@@ -409,8 +415,8 @@ class OptionList(object):
     TEXT_FLASH_SPEED = 5
     TEXT_SLIDE_SPEED = 800
 
-    def __init__(self, x, y, sfx_confirm, sfx_cancel, sfx_scroll,
-                 sfx_slide):
+    def __init__(self, x, y, channel, sfx_confirm, sfx_cancel,
+                 sfx_scroll, sfx_slide):
         """Declare and initialize instance variables.
 
         Args:
@@ -424,6 +430,7 @@ class OptionList(object):
         """
         self.x = x
         self.y = y
+        self.sound_channel = channel
         self.sfx_confirm = sfx_confirm
         self.sfx_cancel = sfx_cancel
         self.sfx_scroll = sfx_scroll
@@ -682,7 +689,8 @@ class PressStartPrompt(OptionList):
     Y = 150
     WAIT_FLASH_SPEED = 45
 
-    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll, sfx_slide):
+    def __init__(self, channel, sfx_confirm, sfx_cancel, sfx_scroll,
+                 sfx_slide):
         """Declare and initialize instance variables.
 
         Args:
@@ -690,7 +698,7 @@ class PressStartPrompt(OptionList):
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(PressStartPrompt, self).__init__(self.X, self.Y,
+        super(PressStartPrompt, self).__init__(self.X, self.Y, channel,
                                                sfx_confirm, sfx_cancel,
                                                sfx_scroll, sfx_slide)
         self.idle_flash_timer = 0
@@ -766,7 +774,8 @@ class MainOptionList(OptionList):
     X = 155
     Y = 104
 
-    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll, sfx_slide):
+    def __init__(self, channel, sfx_confirm, sfx_cancel, sfx_scroll,
+                 sfx_slide):
         """Declare and initialize instance variables.
 
         Args:
@@ -774,7 +783,7 @@ class MainOptionList(OptionList):
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(MainOptionList, self).__init__(self.X, self.Y,
+        super(MainOptionList, self).__init__(self.X, self.Y, channel,
                                              sfx_confirm, sfx_cancel,
                                              sfx_scroll, sfx_slide)
         self.animation = ListAnimation.SHOW
@@ -870,7 +879,8 @@ class BattleSetupList(OptionList):
     X = 130
     Y = 117
 
-    def __init__(self, sfx_confirm, sfx_cancel, sfx_scroll, sfx_slide):
+    def __init__(self, channel, sfx_confirm, sfx_cancel, sfx_scroll,
+                 sfx_slide):
         """Declare and initialize instance variables.
 
         Args:
@@ -878,7 +888,7 @@ class BattleSetupList(OptionList):
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(BattleSetupList, self).__init__(self.X, self.Y,
+        super(BattleSetupList, self).__init__(self.X, self.Y, channel,
                                               sfx_confirm, sfx_cancel,
                                               sfx_scroll, sfx_slide)
         self.animation = ListAnimation.SHOW
