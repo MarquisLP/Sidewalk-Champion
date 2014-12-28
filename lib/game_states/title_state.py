@@ -128,7 +128,7 @@ class TitleState(State):
         """
         if self.intro_animator.is_running:
             self.intro_animator.update(time, self.background, self.logo,
-                                       self.state_pass.ui_channel)
+                                       self.state_pass.announcer_channel)
         else:
             updated_options = self.option_lists[self.current_options]
 
@@ -156,7 +156,7 @@ class TitleState(State):
         """
         if self.intro_animator.is_running:
             self.intro_animator.skip_intro(self.background, self.logo,
-                                           self.state_pass.ui_channel)
+                self.state_pass.announcer_channel)
         else:
             active_list = self.option_lists[self.current_options]
             if not active_list.is_animating():
@@ -959,7 +959,7 @@ class BattleSetupList(OptionList):
         """
         if type(self.options[self.option_index]) == BattleSetting:
             self.options[self.option_index].scroll_values_left(
-                self.sfx_scroll)
+                self.sound_channel, self.sfx_scroll)
 
     def scroll_setting_values_right(self):
         """Select the next value in the currently-selected
@@ -970,7 +970,7 @@ class BattleSetupList(OptionList):
         """
         if type(self.options[self.option_index]) == BattleSetting:
             self.options[self.option_index].scroll_values_right(
-                self.sfx_scroll)
+                self.sound_channel, self.sfx_scroll)
 
     def cancel_setup(self):
         """Hide the setup list and return to the list of Main Options."""
