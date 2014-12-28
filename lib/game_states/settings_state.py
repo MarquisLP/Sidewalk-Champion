@@ -60,9 +60,9 @@ class SettingsState(State):
     """
     BG_PATH = "images/settings_back.png"
     SLIDE_SFX_PATH = "audio/settings_slide.wav"
-    SCROLL_SFX_PATH = "audio/settings_scroll.wav"
+    SCROLL_SFX_PATH = "audio/scroll.wav"
     EXIT_SFX_PATH = "audio/cancel.wav"
-    SLIDE_SPEED = 500.0
+    SLIDE_SPEED = 1000.0
 
     # Initialization
     def __init__(self, state_manager, state_pass):
@@ -178,12 +178,18 @@ class SettingsState(State):
         distance = (self.SLIDE_SPEED / FRAME_RATE) * scale
 
         if not is_backwards:
+            if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
+                self.state_pass.ui_channel.play(self.slide_sound)
+
             new_x = self.exact_offset[0] - distance
             self.exact_offset = (new_x, 0.0)
             # Prevent the screen from going past the left edge of the window.
             if self.exact_offset[0] <= 0.0:
                 self.exact_offset = (0.0, 0.0)
         else:
+            if self.exact_offset[0] <= 0.0:
+                self.state_pass.ui_channel.play(self.exit_sound)
+
             new_x = self.exact_offset[0] + distance
             self.exact_offset = (new_x, 0.0)
             # Prevent the screen from going past the right edge of the window.
@@ -214,6 +220,10 @@ class SettingsState(State):
         else:
             input_name = self.get_key_input(event)
             active_setting = self.setting_list.active_setting
+
+            # Play list scrolling sound effect if applicable.
+            if input_name in ['up', 'down', 'back', 'forward']:
+                self.state_pass.ui_channel.play(self.scroll_sound)
 
             # Scroll the list.
             if input_name == 'up':
