@@ -680,9 +680,9 @@ class KeyBindingList(object):
         X                   The x-position of the main Surface,
                             relative to the parent Surface.
         Y                   The y-position of the main Surface.
+                            relative to the parent Surface.
         REMAP_SFX_PATH      A string containing the file path for the
                             key remap sound effect.
-                            relative to the parent Surface.
         TEXT_DISTANCE       The vertical distance, in pixels, between
                             the top edges of the text graphic for each
                             Key Binding.
