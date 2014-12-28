@@ -288,7 +288,7 @@ class IntroAnimator(object):
 
         if (logo.image.get_alpha() >= self.FADE_DELAY
                 and (not self.voice_has_played)):
-            self.voice.play()
+            sound_channel.play(self.voice)
             self.voice_has_played = True
         elif (self.voice_has_played and
               self.voice_timer < self.VOICE_DURATION):
@@ -334,7 +334,7 @@ class IntroAnimator(object):
                 play the announcer's voice.
         """
         if not self.voice_has_played:
-            self.voice.play()
+            sound_channel.play(self.voice)
 
         bg.move(0, -1 * bg.rect[1])
         pygame.mixer.music.play(-1)
@@ -563,7 +563,7 @@ class OptionList(object):
                 last update cycle.
         """
         if self.options[0].x == self.x:
-            self.sfx_slide.play()
+            self.sound_channel.play(self.sfx_slide)
 
         distance = self.TEXT_SLIDE_SPEED * time
 
@@ -626,7 +626,7 @@ class OptionList(object):
         else:
             self.option_index -= 1
 
-        self.sfx_scroll.play()
+        self.sound_channel.play(self.sfx_scroll)
         self.highlight_option(self.option_index)
 
     def scroll_down(self):
@@ -636,7 +636,7 @@ class OptionList(object):
         else:
             self.option_index += 1
 
-        self.sfx_scroll.play()
+        self.sound_channel.play(self.sfx_scroll)
         self.highlight_option(self.option_index)
 
     def confirm_option(self):
@@ -645,7 +645,7 @@ class OptionList(object):
 
         The Option will flash on-screen to indicate the confirmation.
         """
-        self.sfx_confirm.play()
+        self.sound_channel.play(self.sfx_confirm)
         self.confirm_timer = 0
 
     def flash_confirmed_option(self):
@@ -1130,7 +1130,7 @@ class BattleSetting(Option):
             self.y + self.ARROW_Y_OFFSET))
         self.scroll_right_arrow.flip(is_horizontal=True)
 
-    def scroll_values_left(self, scroll_sound):
+    def scroll_values_left(self, sound_channel, scroll_sound):
         """Select the previous value for this BattleSetting.
 
         Args:
@@ -1140,9 +1140,9 @@ class BattleSetting(Option):
             self.value_index -= 1
             self.value_surf = self.render_text(
                 str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
-            scroll_sound.play()
+            sound_channel.play(scroll_sound)
 
-    def scroll_values_right(self, scroll_sound):
+    def scroll_values_right(self, sound_channel, scroll_sound):
         """Select the next value for this BattleSetting.
 
         Args:
@@ -1152,7 +1152,7 @@ class BattleSetting(Option):
             self.value_index += 1
             self.value_surf = self.render_text(
                 str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
-            scroll_sound.play()
+            sound_channel.play(scroll_sound)
 
     def highlight(self):
         """Redraw the text with an alternate color."""
