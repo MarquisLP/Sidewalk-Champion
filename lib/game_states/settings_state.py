@@ -290,7 +290,8 @@ class SettingsState(State):
             new_key: The name of the key that will be bound.
         """
         player_num = self.setting_list.get_binding_player()
-        self.binding_list.edit_selected_binding(player_num, new_key)
+        self.binding_list.edit_selected_binding(player_num, new_key,
+                                                self.state_pass.ui_channel)
 
         self.update_key_bindings()
 
@@ -902,7 +903,7 @@ class KeyBindingList(object):
             new_y += self.TEXT_DISTANCE
 
     # Rebinding
-    def edit_selected_binding(self, player_num, new_key):
+    def edit_selected_binding(self, player_num, new_key, channel):
         """Change the value of the currently-selected key binding
         for one of the players.
 
@@ -913,6 +914,8 @@ class KeyBindingList(object):
             player_num: Either 1 or 2, for player 1 and 2 respectively.
                 Any other value will default to 2.
             new_key: The name of the new key to set in the key binding.
+            channel: The PyGame Channel that will be used to play sound
+                effects for a successful or unsuccessful key binding.
         """
         if player_num == 1:
             last_key = self.bindings[self.current_binding].p1_binding
@@ -922,8 +925,10 @@ class KeyBindingList(object):
         if self.key_is_bound(new_key) and new_key != last_key:
             # Redraw the name of the key that was previously bound.
             self.bindings[self.current_binding].rebind(player_num, last_key)
+            channel.play(self.invalid_sound)
         else:
             self.bindings[self.current_binding].rebind(player_num, new_key)
+            channel.play(self.remap_sound)
 
     def key_is_bound(self, key_name):
         """Determine whether the specified key is already bound to
