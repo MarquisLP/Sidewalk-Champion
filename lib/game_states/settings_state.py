@@ -31,8 +31,9 @@ class SettingsState(State):
             image.
         SLIDE_SFX_PATH: A string containing the file path for the
             slide-in sound effect.
-        INPUT_SFX_PATH: A string containing the file path for the
-            player input sound effect.
+
+        SCROLL_SFX_PATH: A string containing the file path for the
+            scroll list sound effect.
         EXIT_SFX_PATH: A string containing the file path for the
             exit screen sound effect.
         SLIDE_SPEED: An integer that sets the speed at which the State
@@ -46,10 +47,10 @@ class SettingsState(State):
         binding_list: The KeyBindingList object that controls all
             the available Key Bindings.
         bg_image: The PyGame image for the Settings Screen background.
+        scroll_sound: A PyGame Sound that plays when the players select
+            another item in the SettingList or KeyBindingList.
         slide_sound: A PyGame Sound that plays when the screen slides in
             or out of the window.
-        input_sound: A PyGame Sound that will plays when the players
-            press an input button.
         is_editing_binding: A Boolean that indicates whether the next
             key press will be saved to the currently-selected Key
             Binding.
@@ -58,19 +59,10 @@ class SettingsState(State):
             to another State.
     """
     BG_PATH = "images/settings_back.png"
-    """@rtype: String"""
-
     SLIDE_SFX_PATH = "audio/settings_slide.wav"
-    """@rtype: String"""
-
-    INPUT_SFX_PATH = "audio/settings_input.wav"
-    """@rtype: String"""
-
+    SCROLL_SFX_PATH = "audio/scroll.wav"
     EXIT_SFX_PATH = "audio/cancel.wav"
-    """@rtype: String"""
-
-    SLIDE_SPEED = 500.0
-    """@rtype: float"""
+    SLIDE_SPEED = 1000.0
 
     # Initialization
     def __init__(self, state_manager, state_pass):
@@ -86,34 +78,17 @@ class SettingsState(State):
         @type state_pass: StatePass
         """
         super(SettingsState, self).__init__(state_manager, state_pass)
-
         p1_bindings = self.state_pass.settings.player1_keys
-
         p2_bindings = self.state_pass.settings.player2_keys
-
         self.setting_list = SettingList(p1_bindings, p2_bindings)
-        """@rtype: SettingList"""
-
         self.binding_list = self.setting_list.binding_list
-        """@rtype: KeyBindingList"""
-
         self.file_manager = SettingsManager()
-        """@rtype: SettingsManager"""
-
         self.bg_image = Graphic(self.BG_PATH, (0.0, 0.0))
-        """@rtype: Graphic"""
-
-        #self.slide_sound = Sound(self.SLIDE_SFX_PATH)
-
-        #self.input_sound = Sound(self.INPUT_SFX_PATH)
-
-        #self.exit_sound = Sound(self.EXIT_SFX_PATH)
-
+        self.slide_sound = Sound(self.SLIDE_SFX_PATH)
+        self.scroll_sound = Sound(self.SCROLL_SFX_PATH)
+        self.exit_sound = Sound(self.EXIT_SFX_PATH)
         self.is_editing_binding = False
-        """@rtype: bool"""
-
         self.is_leaving_state = False
-        """@rtype: bool"""
 
     def load_state(self):
         """Prepare this State to be run for the first time."""
@@ -203,12 +178,18 @@ class SettingsState(State):
         distance = (self.SLIDE_SPEED / FRAME_RATE) * scale
 
         if not is_backwards:
+            if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
+                self.state_pass.ui_channel.play(self.slide_sound)
+
             new_x = self.exact_offset[0] - distance
             self.exact_offset = (new_x, 0.0)
             # Prevent the screen from going past the left edge of the window.
             if self.exact_offset[0] <= 0.0:
                 self.exact_offset = (0.0, 0.0)
         else:
+            if self.exact_offset[0] <= 0.0:
+                self.state_pass.ui_channel.play(self.exit_sound)
+
             new_x = self.exact_offset[0] + distance
             self.exact_offset = (new_x, 0.0)
             # Prevent the screen from going past the right edge of the window.
@@ -241,10 +222,12 @@ class SettingsState(State):
             active_setting = self.setting_list.active_setting
 
             # Scroll the list.
-            if input_name == 'up':
-                self.scroll_selected_list(should_scroll_up=True)
-            elif input_name == 'down':
-                self.scroll_selected_list()
+            if input_name in ['up', 'down']:
+                self.state_pass.ui_channel.play(self.scroll_sound)
+                if input_name == 'up':
+                    self.scroll_selected_list(should_scroll_up=True)
+                elif input_name == 'down':
+                    self.scroll_selected_list()
 
             # Activate 'Edit Controls' mode.
             if active_setting == SettingIndex.BINDING_LIST:
@@ -253,11 +236,13 @@ class SettingsState(State):
                     self.is_editing_binding = True
             # Edit Setting values.
             elif input_name in ['back', 'forward']:
+                self.state_pass.ui_channel.play(self.scroll_sound)
                 if input_name == 'back':
                     self.setting_list.scroll_setting_options(
                         is_backwards=True)
                 else:
                     self.setting_list.scroll_setting_options()
+
                 # Change which player's key bindings are displayed
                 # if requested.
                 active_setting = self.setting_list.active_setting
@@ -305,7 +290,8 @@ class SettingsState(State):
             new_key: The name of the key that will be bound.
         """
         player_num = self.setting_list.get_binding_player()
-        self.binding_list.edit_selected_binding(player_num, new_key)
+        self.binding_list.edit_selected_binding(player_num, new_key,
+                                                self.state_pass.ui_channel)
 
         self.update_key_bindings()
 
@@ -417,12 +403,8 @@ class SettingList(object):
             selected Setting.
     """
     X = 21
-
     Y = 17
-    """:rtype : int"""
-
     SETTING_DISTANCE = 15
-    """:rtype : int"""
 
     # Initialization
     def __init__(self, p1_bindings, p2_bindings):
@@ -432,13 +414,8 @@ class SettingList(object):
         @type p2_bindings: dict of (String, String)
         """
         self.settings = self.create_all_settings()
-        """:rtype : list of Setting"""
-
         self.binding_list = KeyBindingList(self, p1_bindings, p2_bindings)
-        """:rtype : KeyBindingList"""
-
         self.active_setting = 0
-        """:rtype : int"""
 
     def create_all_settings(self):
         """Returns a list containing all of the Settings within the
@@ -713,8 +690,12 @@ class KeyBindingList(object):
     Class Constants:
         X                   The x-position of the main Surface,
                             relative to the parent Surface.
-        Y                   The y-position of the main Surface,
+        Y                   The y-position of the main Surface.
                             relative to the parent Surface.
+        REMAP_SFX_PATH      A string containing the file path for the
+                            key remap sound effect.
+        INVALID_SFX_PATH    A string containing the file path for the
+                            invalid key sound effect.
         TEXT_DISTANCE       The vertical distance, in pixels, between
                             the top edges of the text graphic for each
                             Key Binding.
@@ -738,6 +719,11 @@ class KeyBindingList(object):
     Attributes:
         setting_list        The SettingList object that controls all
                             other Settings in this game state.
+        remap_sound         A PyGame Sound that plays when a key binding
+                            is remapped to different key.
+        invalid_sound       A PyGame Sound that plays when the game
+                            stops the players from remapping a key that
+                            is already bound to an input.
         bindings            A list containing all of the KeyBinding
                             objects within the Settings State.
         current_binding     The index of the currently-selected
@@ -755,6 +741,8 @@ class KeyBindingList(object):
     """
     X = 52
     Y = 115
+    REMAP_SFX_PATH = "audio/settings_remap.wav"
+    INVALID_SFX_PATH = "audio/invalid.wav"
     TEXT_DISTANCE = 23
     BINDINGS_ON_SCREEN = 4
     UP_ARROW_PATH = "images/settings_arrow_up.png"
@@ -778,11 +766,9 @@ class KeyBindingList(object):
                             bindings.
         """
         self.setting_list = setting_list
-        """@rtype: SettingList"""
-
+        self.remap_sound = Sound(self.REMAP_SFX_PATH)
+        self.invalid_sound = Sound(self.INVALID_SFX_PATH)
         self.bindings = self.load_bindings(p1_bindings, p2_bindings)
-        """@rtype: list of KeyBinding"""
-
         self.current_binding = 0
         self.top_binding = 0
         self.up_arrow = Animation(self.UP_ARROW_PATH,
@@ -917,7 +903,7 @@ class KeyBindingList(object):
             new_y += self.TEXT_DISTANCE
 
     # Rebinding
-    def edit_selected_binding(self, player_num, new_key):
+    def edit_selected_binding(self, player_num, new_key, channel):
         """Change the value of the currently-selected key binding
         for one of the players.
 
@@ -928,6 +914,8 @@ class KeyBindingList(object):
             player_num: Either 1 or 2, for player 1 and 2 respectively.
                 Any other value will default to 2.
             new_key: The name of the new key to set in the key binding.
+            channel: The PyGame Channel that will be used to play sound
+                effects for a successful or unsuccessful key binding.
         """
         if player_num == 1:
             last_key = self.bindings[self.current_binding].p1_binding
@@ -937,8 +925,10 @@ class KeyBindingList(object):
         if self.key_is_bound(new_key) and new_key != last_key:
             # Redraw the name of the key that was previously bound.
             self.bindings[self.current_binding].rebind(player_num, last_key)
+            channel.play(self.invalid_sound)
         else:
             self.bindings[self.current_binding].rebind(player_num, new_key)
+            channel.play(self.remap_sound)
 
     def key_is_bound(self, key_name):
         """Determine whether the specified key is already bound to

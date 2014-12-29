@@ -1,4 +1,5 @@
 from pygame.surface import Surface
+from pygame.mixer import Channel
 from lib.globals import SCREEN_SIZE
 from lib.custom_data.character_data import *
 from lib.custom_data.settings_data import SettingsData
@@ -165,6 +166,18 @@ class StatePass(object):
     well.
 
     Attributes:
+        announcer_channel: A PyGame Channel for playing announcer voice
+            clips.
+        ui_channel: A PyGame Channel for playing user interface sound
+            effects.
+        p1_channel_one: One of the two PyGame Channels that Player 1's
+            character can use when playing action sounds.
+        p2_channel_two: One of the two PyGame Channels that Player 1's
+            character can use when playing action sounds.
+        p2_channel_one: One of the two PyGame Channels that Player 2's
+            character can use when playing action sounds.
+        p2_channel_two: One of the two PyGame Channels that Player 2's
+            character can use when playing action sounds.
         will_reset_state: A Boolean indicating whether the next State
             to be called should have its reset_state() method called.
         enter_transition_on: A Boolean indicating whether the next State
@@ -195,25 +208,17 @@ class StatePass(object):
 
         @type settings_data: SettingsData
         """
+        self.announcer_channel = Channel(0)
+        self.ui_channel = Channel(1)
+        self.p1_channel_one = Channel(2)
+        self.p1_channel_two = Channel(3)
+        self.p2_channel_one = Channel(4)
+        self.p2_channel_two = Channel(5)
         self.will_reset_state = False
-        """@rtype: bool"""
-
         self.enter_transition_on = True
-        """@rtype: bool"""
-
         self.character_one = CharacterData()
-        """@rtype: CharacterData"""
-
         self.character_two = CharacterData()
-        """@rtype: CharacterData"""
-
         #self.stage = StageData()
-
         self.battle_rounds = 3
-        """@rtype: int"""
-
         self.time_limit = 99
-        """@rtype: int"""
-
         self.settings = settings_data
-        """@rtype: SettingsData"""
