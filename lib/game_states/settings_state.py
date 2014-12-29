@@ -221,15 +221,13 @@ class SettingsState(State):
             input_name = self.get_key_input(event)
             active_setting = self.setting_list.active_setting
 
-            # Play list scrolling sound effect if applicable.
-            if input_name in ['up', 'down', 'back', 'forward']:
-                self.state_pass.ui_channel.play(self.scroll_sound)
-
             # Scroll the list.
-            if input_name == 'up':
-                self.scroll_selected_list(should_scroll_up=True)
-            elif input_name == 'down':
-                self.scroll_selected_list()
+            if input_name in ['up', 'down']:
+                self.state_pass.ui_channel.play(self.scroll_sound)
+                if input_name == 'up':
+                    self.scroll_selected_list(should_scroll_up=True)
+                elif input_name == 'down':
+                    self.scroll_selected_list()
 
             # Activate 'Edit Controls' mode.
             if active_setting == SettingIndex.BINDING_LIST:
@@ -238,11 +236,13 @@ class SettingsState(State):
                     self.is_editing_binding = True
             # Edit Setting values.
             elif input_name in ['back', 'forward']:
+                self.state_pass.ui_channel.play(self.scroll_sound)
                 if input_name == 'back':
                     self.setting_list.scroll_setting_options(
                         is_backwards=True)
                 else:
                     self.setting_list.scroll_setting_options()
+
                 # Change which player's key bindings are displayed
                 # if requested.
                 active_setting = self.setting_list.active_setting
