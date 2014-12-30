@@ -47,14 +47,14 @@ class CharacterPreview(object):
     SHADOW_COLOR = (0, 5, 90)
     OFFSET_FROM_SHADOW = 3
 
-    def __init__(self, ground_y, is_reversed, spritesheet_path, name,
+    def __init__(self, ground_y, is_facing_left, spritesheet_path, name,
                  name_font, frame_width, frame_durations):
         """Declare and initialize instance variables.
 
         Args:
             ground_y: An integer for the y-position of the ground where
                 the character will be standing, relative to the screen.
-            is_reversed: A Boolean indicating whether the character
+            is_facing_left: A Boolean indicating whether the character
                 is facing to the left, rather than to the right (which
                 is the default direction for characters in this game).
             spritesheet_path: A String for the file path to the
@@ -71,10 +71,10 @@ class CharacterPreview(object):
                 the second frame for 8 update cycles, and so on.
         """
         self.spritesheet = image.load(spritesheet_path).convert_alpha()
-        self.is_reversed = is_reversed
+        self.is_facing_left = is_facing_left
         self.x = 0
         self.y = self.calculate_y_position(ground_y)
-        if is_reversed:
+        if is_facing_left:
             self.correct_position()
 
     def calculate_y_position(self, ground_y):
@@ -98,7 +98,7 @@ class CharacterPreview(object):
         edge of the screen if the character faces right, or on the right
         edge if the character faces left.
         """
-        if self.is_reversed:
+        if self.is_facing_left:
             self.x = SCREEN_SIZE[0] - self.frame_width
         else:
             self.x = 0
