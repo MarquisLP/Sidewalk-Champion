@@ -42,3 +42,19 @@ class CharacterPreview(object):
     SHADOW_HEIGHT = 14
     SHADOW_COLOR = (0, 5, 90)
     OFFSET_FROM_SHADOW = 3
+
+    def calculate_y_position(self, ground_y):
+        """Determine the vertical positioning of the character so that
+        the bottom edge of the sprite (usually their feet) is touching
+        the ground.
+
+        Args:
+            ground_y: An integer for the y-position of the ground
+                relative to the screen.
+
+        Returns:
+            An integer for the character's y-position.
+        """
+        character_height = self.spritesheet.get_height()
+        y = ground_y - character_height
+        return y
