@@ -1,3 +1,4 @@
+from pygame import image
 from lib.globals import SCREEN_SIZE
 
 
@@ -45,6 +46,36 @@ class CharacterPreview(object):
     SHADOW_HEIGHT = 14
     SHADOW_COLOR = (0, 5, 90)
     OFFSET_FROM_SHADOW = 3
+
+    def __init__(self, ground_y, is_reversed, spritesheet_path, name,
+                 name_font, frame_width, frame_durations):
+        """Declare and initialize instance variables.
+
+        Args:
+            ground_y: An integer for the y-position of the ground where
+                the character will be standing, relative to the screen.
+            is_reversed: A Boolean indicating whether the character
+                is facing to the left, rather than to the right (which
+                is the default direction for characters in this game).
+            spritesheet_path: A String for the file path to the
+                animation's sprite sheet image.
+            name: A String for the character's name.s
+            name_font: The PyGame font used for rendering the
+                character's name.
+            frame_width: An integer for the width, in pixels, of each
+                frame in the animation sprite sheet.
+            frame_durations: A tuple of integers containing the
+                duration, in update cycles, of each animation frame in
+                order. For example, passing (10, 8, 5) means that the
+                first animation frame is shown for 10 update cycles,
+                the second frame for 8 update cycles, and so on.
+        """
+        self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        self.is_reversed = is_reversed
+        self.x = 0
+        self.y = self.calculate_y_position(ground_y)
+        if is_reversed:
+            self.correct_position()
 
     def calculate_y_position(self, ground_y):
         """Determine the vertical positioning of the character so that
