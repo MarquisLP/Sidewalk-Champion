@@ -110,4 +110,4 @@ class CharacterPreview(object):
         """Return an integer for the number of frames in the
         animation.
         """
-        return len(self.frame_durations) - 1
+        return len(self.frame_durations)
