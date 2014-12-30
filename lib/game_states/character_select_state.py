@@ -1,3 +1,6 @@
+from lib.globals import SCREEN_SIZE
+
+
 class CharacterPreview(object):
     """A looped character animation with an accompanying shadow and
     name.
@@ -58,3 +61,13 @@ class CharacterPreview(object):
         character_height = self.spritesheet.get_height()
         y = ground_y - character_height
         return y
+
+    def correct_position(self):
+        """Position the animation horizontally so that it is on the left
+        edge of the screen if the character faces right, or on the right
+        edge if the character faces left.
+        """
+        if self.is_reversed:
+            self.x = SCREEN_SIZE[0] - self.frame_width
+        else:
+            self.x = 0
