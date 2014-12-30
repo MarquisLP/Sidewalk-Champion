@@ -1,4 +1,6 @@
+import pygame.transform as transform
 from pygame import image
+from pygame.surface import Surface
 from lib.globals import SCREEN_SIZE
 
 
@@ -70,6 +72,7 @@ class CharacterPreview(object):
                 first animation frame is shown for 10 update cycles,
                 the second frame for 8 update cycles, and so on.
         """
+        self.frame_durations = frame_durations
         self.spritesheet = image.load(spritesheet_path).convert_alpha()
         self.is_facing_left = is_facing_left
         self.x = 0
@@ -102,3 +105,9 @@ class CharacterPreview(object):
             self.x = SCREEN_SIZE[0] - self.frame_width
         else:
             self.x = 0
+
+    def get_num_of_frames(self):
+        """Return an integer for the number of frames in the
+        animation.
+        """
+        return len(self.frame_durations) - 1
