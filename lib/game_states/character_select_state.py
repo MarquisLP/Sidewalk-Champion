@@ -1,6 +1,7 @@
 import pygame.transform as transform
 from pygame import image
 from pygame.surface import Surface
+from pygame.rect import Rect
 from lib.globals import SCREEN_SIZE
 
 
@@ -72,6 +73,7 @@ class CharacterPreview(object):
                 first animation frame is shown for 10 update cycles,
                 the second frame for 8 update cycles, and so on.
         """
+        self.frame_width = frame_width
         self.frame_durations = frame_durations
         self.spritesheet = image.load(spritesheet_path).convert_alpha()
         self.is_facing_left = is_facing_left
@@ -111,3 +113,53 @@ class CharacterPreview(object):
         animation.
         """
         return len(self.frame_durations)
+
+    def flip_sprite(self):
+        """Alter the sprite sheet so that the character faces in the
+        opposite direction.
+        """
+        flipped_sheet = transform.flip(self.spritesheet, xbool=True,
+                                       ybool=False)
+        self.spritesheet = self.order_reversed_spritesheet(flipped_sheet)
+
+    def order_reversed_spritesheet(self, flipped_sheet):
+        """Reorganize the frames in a flipped sprite sheet so that
+        they are in the same order as the original sheet.
+
+        Args:
+            flipped_sheet: A PyGame Surface containing a flipped sprite
+                sheet.
+
+        Returns:
+            A PyGame Surface containing the sprite sheet with each frame
+            flipped and in the correct order.
+        """
+        flipped_sprite_sheet = Surface((self.spritesheet.get_width(),
+                                        self.spritesheet.get_height()))
+        flipped_sprite_sheet.convert_alpha()
+
+        for frame_index in xrange(0, self.get_num_of_frames()):
+            frame_x = self.frame_width * frame_index
+            old_frame_index = self.get_num_of_frames() - 1 - frame_index
+            old_region = self.get_frame_region(old_frame_index)
+
+            flipped_sprite_sheet.blit(flipped_sheet, (frame_x, 0),
+                                      old_region)
+
+        return flipped_sprite_sheet
+
+    def get_frame_region(self, frame_index):
+        """Get the region occupied by of one of the animation frames
+        within the sprite sheet.
+
+        Args:
+            frame_index: An integer for the index of the desired frame.
+
+        Returns:
+            A Rect containing the frame's position and dimensions within
+            the sprite sheet.
+        """
+        frame_x = self.frame_width * frame_index
+        sheet_height = self.spritesheet.get_height()
+        region = Rect(frame_x, 0, self.frame_width, sheet_height)
+        return region
