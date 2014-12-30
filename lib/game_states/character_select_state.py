@@ -80,6 +80,7 @@ class CharacterPreview(object):
         self.x = 0
         self.y = self.calculate_y_position(ground_y)
         if is_facing_left:
+            self.flip_sprite()
             self.correct_position()
 
     def calculate_y_position(self, ground_y):
