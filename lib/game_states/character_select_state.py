@@ -1,5 +1,6 @@
 import pygame.transform as transform
 import pygame.draw
+import pygame.locals
 from pygame import image
 from pygame.surface import Surface
 from pygame.rect import Rect
@@ -141,7 +142,8 @@ class CharacterPreview(object):
             flipped and in the correct order.
         """
         flipped_sprite_sheet = Surface((self.spritesheet.get_width(),
-                                        self.spritesheet.get_height()))
+                                        self.spritesheet.get_height()),
+                                       pygame.locals.SRCALPHA)
         flipped_sprite_sheet.convert_alpha()
 
         for frame_index in xrange(0, self.get_num_of_frames()):
@@ -199,7 +201,8 @@ class CharacterPreview(object):
             A Surface with the original text outlined.
         """
         outlined_text = Surface((text_surf.get_width() + 2,
-                                 text_surf.get_height() + 2))
+                                 text_surf.get_height() + 2),
+                                pygame.locals.SRCALPHA)
 
         outlined_text.blit(outline, (0, 0))
         outlined_text.blit(outline, (0, 2))
@@ -216,7 +219,8 @@ class CharacterPreview(object):
             A Surface with a shadow wide enough to fit the character
             drawn onto it.
         """
-        shadow_surf = Surface((self.frame_width, self.SHADOW_HEIGHT + 1))
+        shadow_surf = Surface((self.frame_width, self.SHADOW_HEIGHT + 1),
+                              pygame.locals.SRCALPHA)
         draw_region = Rect(0, 0, self.frame_width, self.SHADOW_HEIGHT)
 
         pygame.draw.ellipse(shadow_surf, self.SHADOW_COLOR, draw_region)
