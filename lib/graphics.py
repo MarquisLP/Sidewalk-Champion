@@ -303,8 +303,6 @@ class CharacterAnimation(object):
             facing to the left instead of to the right.
         spritesheet: A PyGame Surface containing all of the animation
             frames in order.
-        frame_width: An integer for width, in pixels, of each frame in
-            the animation.
         frame_durations: A tuple of integers containing the duration,
             in update cycles, of each animation frame in order.
         current_frame: An integer for the index of the animation frame
@@ -312,8 +310,7 @@ class CharacterAnimation(object):
         frame_timer: An integer for the number of update cycles elapsed
             since the current animation frame was shown.
     """
-    def __init__(self, is_facing_left, spritesheet_path, frame_width,
-                 frame_durations):
+    def __init__(self, is_facing_left, spritesheet_path, frame_durations):
         """Declare and initialize instance variables:
 
         Args:
@@ -332,15 +329,13 @@ class CharacterAnimation(object):
         """
         self.spritesheet = image.load(spritesheet_path).convert_alpha()
         self.is_facing_left = is_facing_left
-        self.frame_width = frame_width
         self.frame_durations = frame_durations
         self.current_frame = 0
         self.frame_timer = 0
         if is_facing_left:
             self.flip_sprite()
 
-    def change_animation(self, spritesheet_path, frame_width,
-                         frame_durations):
+    def change_animation(self, spritesheet_path, frame_durations):
         """Display a different animation.
 
         Args:
@@ -354,7 +349,6 @@ class CharacterAnimation(object):
                 first animation frame is shown for 10 update cycles,
                 the second frame for 8 update cycles, and so on.
         """
-        self.frame_width = frame_width
         self.frame_durations = frame_durations
         self.spritesheet = image.load(spritesheet_path).convert_alpha()
         self.current_frame = 0
@@ -393,7 +387,7 @@ class CharacterAnimation(object):
         ordered_sheet.convert_alpha()
 
         for frame_index in xrange(0, self.get_num_of_frames()):
-            frame_x = self.frame_width * frame_index
+            frame_x = self.get_width() * frame_index
             old_frame_index = self.get_num_of_frames() - 1 - frame_index
             old_region = self.get_frame_region(old_frame_index)
 
@@ -412,10 +406,17 @@ class CharacterAnimation(object):
             A Rect containing the frame's position and dimensions within
             the sprite sheet.
         """
-        frame_x = self.frame_width * frame_index
+        frame_x = self.get_width() * frame_index
         sheet_height = self.spritesheet.get_height()
-        region = Rect(frame_x, 0, self.frame_width, sheet_height)
+        region = Rect(frame_x, 0, self.get_width(), sheet_height)
         return region
+
+    def get_width(self):
+        """Return an integer for the width, in pixels, of each
+        individual animation frame.
+        """
+        width = self.spritesheet.get_width() / self.get_num_of_frames()
+        return int(width)
 
     def get_height(self):
         """Return an integer for the height of each frame, in pixels."""

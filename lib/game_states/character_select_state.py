@@ -49,7 +49,7 @@ class CharacterPreview(object):
     OFFSET_FROM_SHADOW = 3
 
     def __init__(self, is_facing_left, spritesheet_path, name,
-                 name_font, frame_width, frame_durations):
+                 name_font, frame_durations):
         """Declare and initialize instance variables.
 
         Args:
@@ -61,8 +61,6 @@ class CharacterPreview(object):
             name: A String for the character's name.
             name_font: The PyGame font used for rendering the
                 character's name.
-            frame_width: An integer for the width, in pixels, of each
-                frame in the animation sprite sheet.
             frame_durations: A tuple of integers containing the
                 duration, in update cycles, of each animation frame in
                 order. For example, passing (10, 8, 5) means that the
@@ -71,7 +69,7 @@ class CharacterPreview(object):
         """
         self.is_facing_left = is_facing_left
         self.animation = CharacterAnimation(is_facing_left,
-                                            spritesheet_path, frame_width,
+                                            spritesheet_path,
                                             frame_durations)
         self.name_font = name_font
         self.name = self.render_name(name)
@@ -82,23 +80,20 @@ class CharacterPreview(object):
         if is_facing_left:
             self.correct_position()
 
-    def change_character(self, spritesheet_path, name, frame_width,
-                         frame_durations):
+    def change_character(self, spritesheet_path, name, frame_durations):
         """Display a different character animation.
 
         Args:
             spritesheet_path: A String for the file path to the
                 animation's sprite sheet image.
             name: A String for the character's name.
-            frame_width: An integer for the width, in pixels, of each
-                frame in the animation sprite sheet.
             frame_durations: A tuple of integers containing the
                 duration, in update cycles, of each animation frame in
                 order. For example, passing (10, 8, 5) means that the
                 first animation frame is shown for 10 update cycles,
                 the second frame for 8 update cycles, and so on.
         """
-        self.animation.change_animation(spritesheet_path, frame_width,
+        self.animation.change_animation(spritesheet_path,
                                         frame_durations)
         self.name = self.render_name(name)
         self.shadow = self.render_shadow()
@@ -129,7 +124,7 @@ class CharacterPreview(object):
         edge if the character faces left.
         """
         if self.is_facing_left:
-            self.x = SCREEN_SIZE[0] - self.animation.frame_width
+            self.x = SCREEN_SIZE[0] - self.animation.get_width()
         else:
             self.x = 0
 
@@ -181,7 +176,7 @@ class CharacterPreview(object):
             A Surface with a shadow wide enough to fit the character
             drawn onto it.
         """
-        frame_width = self.animation.frame_width
+        frame_width = self.animation.get_width()
         shadow_surf = Surface((frame_width, self.SHADOW_HEIGHT + 1),
                               pygame.locals.SRCALPHA)
         draw_region = Rect(0, 0, frame_width, self.SHADOW_HEIGHT)
@@ -215,14 +210,14 @@ class CharacterPreview(object):
         if self.is_facing_left:
             self.x = SCREEN_SIZE[0]
         else:
-            self.x = 0 - self.animation.frame_width
+            self.x = 0 - self.animation.get_width()
 
     def is_onscreen(self):
         """Return a Boolean indicating whether all of the animation is
         visible on-screen.
         """
         if (self.x >= 0 and
-           self.x + self.animation.frame_width <= SCREEN_SIZE[0]):
+           self.x + self.animation.get_width() <= SCREEN_SIZE[0]):
             return True
         else:
             return False
@@ -231,7 +226,7 @@ class CharacterPreview(object):
         """Return a Boolean indicating whether none of the animation is
         visible on-screen.
         """
-        if (self.x + self.animation.frame_width <= 0 or
+        if (self.x + self.animation.get_width() <= 0 or
            self.x >= SCREEN_SIZE[0]):
             return True
         else:
