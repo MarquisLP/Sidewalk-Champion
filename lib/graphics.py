@@ -328,7 +328,7 @@ class CharacterAnimation(object):
                 the second frame for 8 update cycles, and so on.
         """
         self.spritesheet = image.load(spritesheet_path).convert_alpha()
-        self.is_facing_left = is_facing_left
+        self.is_facing_left = False
         self.frame_durations = frame_durations
         self.current_frame = 0
         self.frame_timer = 0
