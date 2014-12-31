@@ -125,8 +125,7 @@ class CharacterPreview(object):
         """Alter the sprite sheet so that the character faces in the
         opposite direction.
         """
-        flipped_sheet = transform.flip(self.spritesheet, xbool=True,
-                                       ybool=False)
+        flipped_sheet = transform.flip(self.spritesheet, True, False)
         self.spritesheet = self.order_reversed_spritesheet(flipped_sheet)
 
     def order_reversed_spritesheet(self, flipped_sheet):
