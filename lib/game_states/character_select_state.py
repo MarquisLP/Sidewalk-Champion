@@ -92,6 +92,35 @@ class CharacterPreview(object):
             self.flip_sprite()
             self.correct_position()
 
+    def change_character(self, spritesheet_path, name, frame_width,
+                         frame_durations):
+        """Display a different character animation.
+
+        Args:
+            spritesheet_path: A String for the file path to the
+                animation's sprite sheet image.
+            name: A String for the character's name.
+            frame_width: An integer for the width, in pixels, of each
+                frame in the animation sprite sheet.
+            frame_durations: A tuple of integers containing the
+                duration, in update cycles, of each animation frame in
+                order. For example, passing (10, 8, 5) means that the
+                first animation frame is shown for 10 update cycles,
+                the second frame for 8 update cycles, and so on.
+        """
+        self.frame_width = frame_width
+        self.frame_durations = frame_durations
+        self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        self.name = self.render_name(name)
+        self.shadow = self.render_shadow()
+        self.y = self.calculate_y_position()
+        if self.is_facing_left:
+            self.flip_sprite()
+            self.correct_position()
+
+        self.current_frame = 0
+        self.frame_timer = 0
+
     def calculate_y_position(self):
         """Determine the vertical positioning of the character so that
         the bottom edge of the sprite (usually their feet) is touching
