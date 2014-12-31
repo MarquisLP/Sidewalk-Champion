@@ -270,3 +270,17 @@ class CharacterPreview(object):
             self.current_frame += 1
             if self.current_frame > self.get_num_of_frames() - 1:
                 self.current_frame = 0
+
+    def move(self, dx=0, dy=0):
+        """Move the animation around the screen space.
+
+        Args:
+            dx: An integer for the horizontal shift, in pixels.
+                A positive value causes a shift to the right, while a
+                negative value causes a shift to the left.
+            dx: An integer for the vertical shift, in pixels.
+                A positive value shifts the animation down, while a
+                negative value shifts the animation up.
+        """
+        self.x += dx
+        self.y += dy
