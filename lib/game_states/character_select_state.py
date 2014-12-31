@@ -1,4 +1,5 @@
 import pygame.transform as transform
+import pygame.draw
 from pygame import image
 from pygame.surface import Surface
 from pygame.rect import Rect
@@ -80,6 +81,7 @@ class CharacterPreview(object):
         self.name = self.render_name(name, name_font)
         self.frame_width = frame_width
         self.frame_durations = frame_durations
+        self.shadow = self.render_shadow()
 
         if is_facing_left:
             self.flip_sprite()
@@ -205,3 +207,18 @@ class CharacterPreview(object):
         outlined_text.blit(text_surf, (1, 1))
 
         return outlined_text
+
+    def render_shadow(self):
+        """Render a shadow to fit the character.
+
+        Returns:
+            A Surface with a shadow wide enough to fit the character
+            drawn onto it.
+        """
+        shadow_surf = Surface((self.frame_width, self.SHADOW_HEIGHT + 1))
+        center_y = self.SHADOW_HEIGHT / 2
+
+        draw_region = Rect(0, center_y, self.frame_width,
+                           self.SHADOW_HEIGHT)
+        pygame.draw.ellipse(shadow_surf, self.SHADOW_COLOR, draw_region)
+        return shadow_surf
