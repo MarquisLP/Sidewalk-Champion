@@ -13,6 +13,7 @@ from lib.custom_data.character_loader import CharacterLoader
 from lib.custom_data.settings_manager import SettingsManager
 from lib.game_states.game_state_manager import *
 from lib.globals import SCREEN_SIZE
+from lib.globals import FULL_SCALE
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 
@@ -40,8 +41,12 @@ if check_pygame_modules() == True:
     del(char_loader)
     del(settings_loader)
 
+    display_flags = 0
+    if settings.screen_scale == FULL_SCALE:
+        display_flags = pygame.FULLSCREEN | pygame.HWSURFACE
     screen = pygame.display.set_mode((SCREEN_SIZE[0] * settings.screen_scale,
-                                      SCREEN_SIZE[1] * settings.screen_scale))
+                                      SCREEN_SIZE[1] * settings.screen_scale),
+                                     display_flags)
     pygame.display.set_caption('Sidewalk Champion')
     clock = pygame.time.Clock()
 
