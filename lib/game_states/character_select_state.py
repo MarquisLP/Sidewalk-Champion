@@ -12,6 +12,8 @@ class CharacterPreview(object):
     name.
 
     Class Constants:
+        GROUND_Y: An integer for the y-position of the ground upon which
+            the character will be standing, relative to the screen.
         NAME_COLOR: A tuple containing the RGB values for the name
             text's color.
         NAME_OUTLINE_COLOR: A tuple containing the RGB values for the
@@ -46,19 +48,18 @@ class CharacterPreview(object):
         frame_timer: An integer for the number of update cycles elapsed
             since the current animation frame was shown.
     """
+    GROUND_Y = 157
     NAME_COLOR = (255, 255, 255)
     NAME_OUTLINE_COLOR = (80, 80, 80)
     SHADOW_HEIGHT = 14
     SHADOW_COLOR = (0, 5, 90)
     OFFSET_FROM_SHADOW = 3
 
-    def __init__(self, ground_y, is_facing_left, spritesheet_path, name,
+    def __init__(self, is_facing_left, spritesheet_path, name,
                  name_font, frame_width, frame_durations):
         """Declare and initialize instance variables.
 
         Args:
-            ground_y: An integer for the y-position of the ground where
-                the character will be standing, relative to the screen.
             is_facing_left: A Boolean indicating whether the character
                 is facing to the left, rather than to the right (which
                 is the default direction for characters in this game).
@@ -84,13 +85,13 @@ class CharacterPreview(object):
         self.frame_timer = 0
         self.shadow = self.render_shadow()
         self.x = 0
-        self.y = self.calculate_y_position(ground_y)
+        self.y = self.calculate_y_position()
 
         if is_facing_left:
             self.flip_sprite()
             self.correct_position()
 
-    def calculate_y_position(self, ground_y):
+    def calculate_y_position(self):
         """Determine the vertical positioning of the character so that
         the bottom edge of the sprite (usually their feet) is touching
         the ground.
@@ -103,7 +104,7 @@ class CharacterPreview(object):
             An integer for the character's y-position.
         """
         character_height = self.spritesheet.get_height()
-        y = ground_y - character_height
+        y = self.GROUND_Y - character_height
         return y
 
     def correct_position(self):
