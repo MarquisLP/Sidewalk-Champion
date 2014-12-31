@@ -73,12 +73,14 @@ class CharacterPreview(object):
                 first animation frame is shown for 10 update cycles,
                 the second frame for 8 update cycles, and so on.
         """
-        self.frame_width = frame_width
-        self.frame_durations = frame_durations
-        self.spritesheet = image.load(spritesheet_path).convert_alpha()
-        self.is_facing_left = is_facing_left
         self.x = 0
         self.y = self.calculate_y_position(ground_y)
+        self.is_facing_left = is_facing_left
+        self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        self.name = self.render_name(name, name_font)
+        self.frame_width = frame_width
+        self.frame_durations = frame_durations
+
         if is_facing_left:
             self.flip_sprite()
             self.correct_position()
@@ -164,3 +166,42 @@ class CharacterPreview(object):
         sheet_height = self.spritesheet.get_height()
         region = Rect(frame_x, 0, self.frame_width, sheet_height)
         return region
+
+    def render_name(self, name, font):
+        """Render the character's name onto a new Surface.
+
+        Args:
+            name: A String for the character's name.
+            font: A PyGame Font object that will be used to render the
+                name as a text graphic.
+
+        Returns:
+            A Surface with the character's name drawn and outlined.
+        """
+        text_surf = font.render(name, True, self.NAME_COLOR)
+        outline = font.render(name, True, self.NAME_OUTLINE_COLOR)
+        name_surf = self.add_outline_to_text(text_surf, outline)
+        return name_surf
+
+    def add_outline_to_text(self, text_surf, outline):
+        """Combine a text Surface with a pre-made outline Surface to add
+        a 1-pixel thick outline to the text.
+
+        Args:
+            text_surf: A PyGame Surface with text drawn onto it.
+            outline: A PyGame Surface containing the same text as the
+                one in text_surf, but rendered in a darker color.
+
+        Returns:
+            A Surface with the original text outlined.
+        """
+        outlined_text = Surface((text_surf.get_width() + 2,
+                                 text_surf.get_height() + 2))
+
+        outlined_text.blit(outline, (0, 0))
+        outlined_text.blit(outline, (0, 2))
+        outlined_text.blit(outline, (2, 0))
+        outlined_text.blit(outline, (2, 2))
+        outlined_text.blit(text_surf, (1, 1))
+
+        return outlined_text
