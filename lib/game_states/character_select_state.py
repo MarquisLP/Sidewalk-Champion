@@ -217,9 +217,7 @@ class CharacterPreview(object):
             drawn onto it.
         """
         shadow_surf = Surface((self.frame_width, self.SHADOW_HEIGHT + 1))
-        center_y = self.SHADOW_HEIGHT / 2
+        draw_region = Rect(0, 0, self.frame_width, self.SHADOW_HEIGHT)
 
-        draw_region = Rect(0, center_y, self.frame_width,
-                           self.SHADOW_HEIGHT)
         pygame.draw.ellipse(shadow_surf, self.SHADOW_COLOR, draw_region)
         return shadow_surf
