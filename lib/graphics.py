@@ -2,7 +2,7 @@
 animations via the PyGame Surface and Image modules."""
 from __builtin__ import True, False
 from pygame.locals import *
-from pygame import Surface
+from pygame.surface import Surface
 from pygame import image
 from pygame import transform
 from pygame import color
@@ -290,3 +290,158 @@ class Animation(Graphic):
             self.animate()
 
         parent_surf.blit(self.image, self.rect, self.draw_rect)
+
+
+class CharacterAnimation(object):
+    """A special type of animation for a character's action.
+
+    Unlike regular Animations, this one can have different durations for
+    each individual frame.
+
+    Attributes:
+        is_facing_left: A Boolean indicating whether the character is
+            facing to the left instead of to the right.
+        spritesheet: A PyGame Surface containing all of the animation
+            frames in order.
+        frame_width: An integer for width, in pixels, of each frame in
+            the animation.
+        frame_durations: A tuple of integers containing the duration,
+            in update cycles, of each animation frame in order.
+        current_frame: An integer for the index of the animation frame
+            currently being displayed.
+        frame_timer: An integer for the number of update cycles elapsed
+            since the current animation frame was shown.
+    """
+    def __init__(self, is_facing_left, spritesheet_path, frame_width,
+                 frame_durations):
+        """Declare and initialize instance variables:
+
+        Args:
+            is_facing_left: A Boolean indicating whether the character
+                is facing to the left, rather than to the right (which
+                is the default direction for characters in this game).
+            spritesheet_path: A String for the file path to the
+                animation's sprite sheet image.
+            frame_width: An integer for the width, in pixels, of each
+                frame in the animation sprite sheet.
+            frame_durations: A tuple of integers containing the
+                duration, in update cycles, of each animation frame in
+                order. For example, passing (10, 8, 5) means that the
+                first animation frame is shown for 10 update cycles,
+                the second frame for 8 update cycles, and so on.
+        """
+        self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        self.is_facing_left = is_facing_left
+        self.frame_width = frame_width
+        self.frame_durations = frame_durations
+        self.current_frame = 0
+        self.frame_timer = 0
+        if is_facing_left:
+            self.flip_sprite()
+
+    def change_animation(self, spritesheet_path, frame_width,
+                         frame_durations):
+        """Display a different animation.
+
+        Args:
+            spritesheet_path: A String for the file path to the
+                animation's sprite sheet image.
+            frame_width: An integer for the width, in pixels, of each
+                frame in the animation sprite sheet.
+            frame_durations: A tuple of integers containing the
+                duration, in update cycles, of each animation frame in
+                order. For example, passing (10, 8, 5) means that the
+                first animation frame is shown for 10 update cycles,
+                the second frame for 8 update cycles, and so on.
+        """
+        self.frame_width = frame_width
+        self.frame_durations = frame_durations
+        self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        if self.is_facing_left:
+            self.flip_sprite()
+
+    def get_num_of_frames(self):
+        """Return an integer for the number of frames in the
+        animation.
+        """
+        return len(self.frame_durations)
+
+    def flip_sprite(self):
+        """Alter the sprite sheet so that the character faces in the
+        opposite direction.
+        """
+        flipped_sheet = transform.flip(self.spritesheet, True, False)
+        self.spritesheet = self.order_reversed_spritesheet(flipped_sheet)
+
+    def order_reversed_spritesheet(self, flipped_sheet):
+        """Reorganize the frames in a flipped sprite sheet so that
+        they are in the same order as the original sheet.
+
+        Args:
+            flipped_sheet: A PyGame Surface containing a flipped sprite
+                sheet.
+
+        Returns:
+            A PyGame Surface containing the sprite sheet with each frame
+            flipped and in the correct order.
+        """
+        ordered_sheet = Surface((self.spritesheet.get_width(),
+                                 self.spritesheet.get_height()),
+                                SRCALPHA)
+        ordered_sheet.convert_alpha()
+
+        for frame_index in xrange(0, self.get_num_of_frames()):
+            frame_x = self.frame_width * frame_index
+            old_frame_index = self.get_num_of_frames() - 1 - frame_index
+            old_region = self.get_frame_region(old_frame_index)
+
+            ordered_sheet.blit(flipped_sheet, (frame_x, 0), old_region)
+
+        return ordered_sheet
+
+    def get_frame_region(self, frame_index):
+        """Get the region occupied by of one of the animation frames
+        within the sprite sheet.
+
+        Args:
+            frame_index: An integer for the index of the desired frame.
+
+        Returns:
+            A Rect containing the frame's position and dimensions within
+            the sprite sheet.
+        """
+        frame_x = self.frame_width * frame_index
+        sheet_height = self.spritesheet.get_height()
+        region = Rect(frame_x, 0, self.frame_width, sheet_height)
+        return region
+
+    def get_height(self):
+        """Return an integer for the height of each frame, in pixels."""
+        return self.spritesheet.get_height()
+
+    def draw(self, parent_surf, x, y):
+        """Draw the animation onto a Surface at a specific location.
+
+        Args:
+            parent_surf: The Surface upon which the animation will be
+                drawn.
+            x: An integer for the animation's x-position relative to the
+                parent Surface.
+            y: An integer for the animation's y-position relative to the
+                parent Surface.
+        """
+        frame_region = self.get_frame_region(self.current_frame)
+        parent_surf.blit(self.spritesheet, (x, y), frame_region)
+
+    def update(self):
+        """Update the animation by cycling through to the next frame
+        once enough time has elapsed.
+        """
+        self.frame_timer += 1
+
+        if self.frame_timer >= self.frame_durations[self.current_frame]:
+            self.frame_timer = 0
+
+            self.current_frame += 1
+            if self.current_frame > self.get_num_of_frames() - 1:
+                self.current_frame = 0
