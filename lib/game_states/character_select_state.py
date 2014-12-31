@@ -34,20 +34,12 @@ class CharacterPreview(object):
             screen.
         is_facing_left: A Boolean indicating whether the character is
             facing to the left instead of to the right.
+        animation: A CharacterAnimation object that updates and displays
+            the character's animation.
         name: A PyGame Surface with the character's name rendered onto
             it.
-        spritesheet: A PyGame Surface containing all of the animation
-            frames in order.
         shadow: A PyGame Surface with the character's shadow drawn onto
             it.
-        frame_width: An integer for width, in pixels, of each frame in
-            the animation.
-        frame_durations: A tuple of integers containing the duration,
-            in update cycles, of each animation frame in order.
-        current_frame: An integer for the index of the animation frame
-            currently being displayed.
-        frame_timer: An integer for the number of update cycles elapsed
-            since the current animation frame was shown.
     """
     GROUND_Y = 157
     NAME_COLOR = (255, 255, 255)
