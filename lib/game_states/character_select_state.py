@@ -74,8 +74,6 @@ class CharacterPreview(object):
                 first animation frame is shown for 10 update cycles,
                 the second frame for 8 update cycles, and so on.
         """
-        self.x = 0
-        self.y = self.calculate_y_position(ground_y)
         self.is_facing_left = is_facing_left
         self.spritesheet = image.load(spritesheet_path).convert_alpha()
         self.name = self.render_name(name, name_font)
@@ -84,6 +82,8 @@ class CharacterPreview(object):
         self.current_frame = 0
         self.frame_timer = 0
         self.shadow = self.render_shadow()
+        self.x = 0
+        self.y = self.calculate_y_position(ground_y)
 
         if is_facing_left:
             self.flip_sprite()
