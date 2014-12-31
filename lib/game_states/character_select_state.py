@@ -225,3 +225,16 @@ class CharacterPreview(object):
 
         pygame.draw.ellipse(shadow_surf, self.SHADOW_COLOR, draw_region)
         return shadow_surf
+
+    def update(self):
+        """Update the animation by cycling through to the next frame
+        once enough time has elapsed.
+        """
+        self.frame_timer += 1
+
+        if self.frame_timer >= self.frame_durations[self.current_frame]:
+            self.frame_timer = 0
+
+            self.current_frame += 1
+            if self.current_frame > self.get_num_of_frames() - 1:
+                self.current_frame = 0
