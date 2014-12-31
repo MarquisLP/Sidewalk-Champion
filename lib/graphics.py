@@ -341,8 +341,6 @@ class CharacterAnimation(object):
         Args:
             spritesheet_path: A String for the file path to the
                 animation's sprite sheet image.
-            frame_width: An integer for the width, in pixels, of each
-                frame in the animation sprite sheet.
             frame_durations: A tuple of integers containing the
                 duration, in update cycles, of each animation frame in
                 order. For example, passing (10, 8, 5) means that the
