@@ -28,7 +28,7 @@ class CharacterPreview(object):
             screen.
         y: An integer for the y-coordinate of the sprite relative to the
             screen.
-        is_reversed: A Boolean indicating whether the character is
+        is_facing_left: A Boolean indicating whether the character is
             facing to the left instead of to the right.
         name: A PyGame Surface with the character's name rendered onto
             it.
@@ -81,6 +81,8 @@ class CharacterPreview(object):
         self.name = self.render_name(name, name_font)
         self.frame_width = frame_width
         self.frame_durations = frame_durations
+        self.current_frame = 0
+        self.frame_timer = 0
         self.shadow = self.render_shadow()
 
         if is_facing_left:
