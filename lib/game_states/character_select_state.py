@@ -284,3 +284,13 @@ class CharacterPreview(object):
         """
         self.x += dx
         self.y += dy
+
+    def place_offscreen(self):
+        """Set the position of the animation so that it is just off the
+        left edge of the screen if the character faces right, or just
+        off the right edge of the screen if the character faces left.
+        """
+        if self.is_facing_left:
+            self.x = SCREEN_SIZE[0]
+        else:
+            self.x = 0 - self.frame_width
