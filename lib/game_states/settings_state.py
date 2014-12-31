@@ -425,7 +425,7 @@ class SettingList(object):
         """
         setting_list = []
 
-        scale = Setting(self.X, self.Y, "Window Scale", "1x", "2x", "3x")
+        scale = Setting(self.X, self.Y, "Window Scale", "1x", "2x", "FULL")
         box_display = Setting(self.X,
             self.Y + scale.get_height() + self.SETTING_DISTANCE,
             "Collision Box Display", "ON", "OFF")
