@@ -357,6 +357,8 @@ class CharacterAnimation(object):
         self.frame_width = frame_width
         self.frame_durations = frame_durations
         self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        self.current_frame = 0
+        self.frame_timer = 0
         if self.is_facing_left:
             self.flip_sprite()
 
