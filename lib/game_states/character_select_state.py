@@ -65,7 +65,7 @@ class CharacterPreview(object):
                 is the default direction for characters in this game).
             spritesheet_path: A String for the file path to the
                 animation's sprite sheet image.
-            name: A String for the character's name.s
+            name: A String for the character's name.
             name_font: The PyGame font used for rendering the
                 character's name.
             frame_width: An integer for the width, in pixels, of each
@@ -78,7 +78,8 @@ class CharacterPreview(object):
         """
         self.is_facing_left = is_facing_left
         self.spritesheet = image.load(spritesheet_path).convert_alpha()
-        self.name = self.render_name(name, name_font)
+        self.name_font = name_font
+        self.name = self.render_name(name)
         self.frame_width = frame_width
         self.frame_durations = frame_durations
         self.current_frame = 0
@@ -173,7 +174,7 @@ class CharacterPreview(object):
         region = Rect(frame_x, 0, self.frame_width, sheet_height)
         return region
 
-    def render_name(self, name, font):
+    def render_name(self, name):
         """Render the character's name onto a new Surface.
 
         Args:
@@ -184,8 +185,9 @@ class CharacterPreview(object):
         Returns:
             A Surface with the character's name drawn and outlined.
         """
-        text_surf = font.render(name, True, self.NAME_COLOR)
-        outline = font.render(name, True, self.NAME_OUTLINE_COLOR)
+        text_surf = self.name_font.render(name, True, self.NAME_COLOR)
+        outline = self.name_font.render(name, True,
+                                        self.NAME_OUTLINE_COLOR)
         name_surf = self.add_outline_to_text(text_surf, outline)
         return name_surf
 
