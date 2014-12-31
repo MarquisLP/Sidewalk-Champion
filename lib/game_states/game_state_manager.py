@@ -155,7 +155,12 @@ class GameStateManager(object):
                     SCREEN_SIZE[1] * scale)
 
         if self.screen.get_size() != scaled_size:
-            self.screen = pygame.display.set_mode(scaled_size)
+            if scale == FULL_SCALE:
+                self.screen = pygame.display.set_mode(scaled_size,
+                                                      pygame.FULLSCREEN |
+                                                      pygame.HWSURFACE)
+            else:
+                self.screen = pygame.display.set_mode(scaled_size, 0)
 
     def scale_surface(self, surf, scale):
         """Magnify the specified Surface according to the specified
