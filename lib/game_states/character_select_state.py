@@ -294,3 +294,21 @@ class CharacterPreview(object):
             self.x = SCREEN_SIZE[0]
         else:
             self.x = 0 - self.frame_width
+
+    def is_onscreen(self):
+        """Return a Boolean indicating whether all of the animation is
+        visible on-screen.
+        """
+        if self.x >= 0 and self.x + self.frame_width <= SCREEN_SIZE[0]:
+            return True
+        else:
+            return False
+
+    def is_offscreen(self):
+        """Return a Boolean indicating whether none of the animation is
+        visible on-screen.
+        """
+        if self.x + self.frame_width <= 0 or self.x >= SCREEN_SIZE[0]:
+            return True
+        else:
+            return False
