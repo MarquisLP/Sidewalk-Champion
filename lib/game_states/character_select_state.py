@@ -4,6 +4,7 @@ import pygame.locals
 from pygame import image
 from pygame.surface import Surface
 from pygame.rect import Rect
+from lib.graphics import CharacterAnimation
 from lib.globals import SCREEN_SIZE
 
 
@@ -77,19 +78,16 @@ class CharacterPreview(object):
                 the second frame for 8 update cycles, and so on.
         """
         self.is_facing_left = is_facing_left
-        self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        self.animation = CharacterAnimation(is_facing_left,
+                                            spritesheet_path, frame_width,
+                                            frame_durations)
         self.name_font = name_font
         self.name = self.render_name(name)
-        self.frame_width = frame_width
-        self.frame_durations = frame_durations
-        self.current_frame = 0
-        self.frame_timer = 0
         self.shadow = self.render_shadow()
         self.x = 0
         self.y = self.calculate_y_position()
 
         if is_facing_left:
-            self.flip_sprite()
             self.correct_position()
 
     def change_character(self, spritesheet_path, name, frame_width,
@@ -108,18 +106,14 @@ class CharacterPreview(object):
                 first animation frame is shown for 10 update cycles,
                 the second frame for 8 update cycles, and so on.
         """
-        self.frame_width = frame_width
-        self.frame_durations = frame_durations
-        self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        self.animation.change_animation(spritesheet_path, frame_width,
+                                        frame_durations)
         self.name = self.render_name(name)
         self.shadow = self.render_shadow()
+        self.x = 0
         self.y = self.calculate_y_position()
         if self.is_facing_left:
-            self.flip_sprite()
             self.correct_position()
-
-        self.current_frame = 0
-        self.frame_timer = 0
 
     def calculate_y_position(self):
         """Determine the vertical positioning of the character so that
@@ -133,7 +127,7 @@ class CharacterPreview(object):
         Returns:
             An integer for the character's y-position.
         """
-        character_height = self.spritesheet.get_height()
+        character_height = self.animation.get_height()
         y = self.GROUND_Y - character_height
         return y
 
@@ -143,65 +137,9 @@ class CharacterPreview(object):
         edge if the character faces left.
         """
         if self.is_facing_left:
-            self.x = SCREEN_SIZE[0] - self.frame_width
+            self.x = SCREEN_SIZE[0] - self.animation.frame_width
         else:
             self.x = 0
-
-    def get_num_of_frames(self):
-        """Return an integer for the number of frames in the
-        animation.
-        """
-        return len(self.frame_durations)
-
-    def flip_sprite(self):
-        """Alter the sprite sheet so that the character faces in the
-        opposite direction.
-        """
-        flipped_sheet = transform.flip(self.spritesheet, True, False)
-        self.spritesheet = self.order_reversed_spritesheet(flipped_sheet)
-
-    def order_reversed_spritesheet(self, flipped_sheet):
-        """Reorganize the frames in a flipped sprite sheet so that
-        they are in the same order as the original sheet.
-
-        Args:
-            flipped_sheet: A PyGame Surface containing a flipped sprite
-                sheet.
-
-        Returns:
-            A PyGame Surface containing the sprite sheet with each frame
-            flipped and in the correct order.
-        """
-        flipped_sprite_sheet = Surface((self.spritesheet.get_width(),
-                                        self.spritesheet.get_height()),
-                                       pygame.locals.SRCALPHA)
-        flipped_sprite_sheet.convert_alpha()
-
-        for frame_index in xrange(0, self.get_num_of_frames()):
-            frame_x = self.frame_width * frame_index
-            old_frame_index = self.get_num_of_frames() - 1 - frame_index
-            old_region = self.get_frame_region(old_frame_index)
-
-            flipped_sprite_sheet.blit(flipped_sheet, (frame_x, 0),
-                                      old_region)
-
-        return flipped_sprite_sheet
-
-    def get_frame_region(self, frame_index):
-        """Get the region occupied by of one of the animation frames
-        within the sprite sheet.
-
-        Args:
-            frame_index: An integer for the index of the desired frame.
-
-        Returns:
-            A Rect containing the frame's position and dimensions within
-            the sprite sheet.
-        """
-        frame_x = self.frame_width * frame_index
-        sheet_height = self.spritesheet.get_height()
-        region = Rect(frame_x, 0, self.frame_width, sheet_height)
-        return region
 
     def render_name(self, name):
         """Render the character's name onto a new Surface.
@@ -251,25 +189,17 @@ class CharacterPreview(object):
             A Surface with a shadow wide enough to fit the character
             drawn onto it.
         """
-        shadow_surf = Surface((self.frame_width, self.SHADOW_HEIGHT + 1),
+        frame_width = self.animation.frame_width
+        shadow_surf = Surface((frame_width, self.SHADOW_HEIGHT + 1),
                               pygame.locals.SRCALPHA)
-        draw_region = Rect(0, 0, self.frame_width, self.SHADOW_HEIGHT)
+        draw_region = Rect(0, 0, frame_width, self.SHADOW_HEIGHT)
 
         pygame.draw.ellipse(shadow_surf, self.SHADOW_COLOR, draw_region)
         return shadow_surf
 
     def update(self):
-        """Update the animation by cycling through to the next frame
-        once enough time has elapsed.
-        """
-        self.frame_timer += 1
-
-        if self.frame_timer >= self.frame_durations[self.current_frame]:
-            self.frame_timer = 0
-
-            self.current_frame += 1
-            if self.current_frame > self.get_num_of_frames() - 1:
-                self.current_frame = 0
+        """Update the character animation."""
+        self.animation.update()
 
     def move(self, dx=0, dy=0):
         """Move the animation around the screen space.
@@ -293,13 +223,14 @@ class CharacterPreview(object):
         if self.is_facing_left:
             self.x = SCREEN_SIZE[0]
         else:
-            self.x = 0 - self.frame_width
+            self.x = 0 - self.animation.frame_width
 
     def is_onscreen(self):
         """Return a Boolean indicating whether all of the animation is
         visible on-screen.
         """
-        if self.x >= 0 and self.x + self.frame_width <= SCREEN_SIZE[0]:
+        if (self.x >= 0 and
+           self.x + self.animation.frame_width <= SCREEN_SIZE[0]):
             return True
         else:
             return False
@@ -308,7 +239,8 @@ class CharacterPreview(object):
         """Return a Boolean indicating whether none of the animation is
         visible on-screen.
         """
-        if self.x + self.frame_width <= 0 or self.x >= SCREEN_SIZE[0]:
+        if (self.x + self.animation.frame_width <= 0 or
+           self.x >= SCREEN_SIZE[0]):
             return True
         else:
             return False
