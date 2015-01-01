@@ -360,10 +360,15 @@ class CharacterAnimation(object):
         """
         return len(self.frame_durations)
 
-    def flip_sprite(self):
-        """Make the animation face in the opposite direction.
-        """
+    def switch_direction(self):
+        """Make the animation face in the opposite direction."""
         self.is_facing_left = not self.is_facing_left
+        self.flip_sprite()
+
+    def flip_sprite(self):
+        """Alter the spritesheet so that the character faces in the
+        other direction.
+        """
         flipped_sheet = transform.flip(self.spritesheet, True, False)
         self.spritesheet = self.order_reversed_spritesheet(flipped_sheet)
 
