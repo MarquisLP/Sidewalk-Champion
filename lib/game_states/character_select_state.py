@@ -188,6 +188,18 @@ class CharacterPreview(object):
         """Update the character animation."""
         self.animation.update()
 
+    def draw_shadow(self, parent_surf):
+        """Draw the shadow at the character's feet (or, where their
+        feet would be in case they're feetless).
+
+        Args:
+            parent_surf: The Surface upon which the shadow will be
+                drawn.
+        """
+        char_bottom = self.y + self.animation.get_height()
+        y = char_bottom - self.shadow.get_height() + self.OFFSET_FROM_SHADOW
+        parent_surf.blit(self.shadow, (self.x, y))
+
     def move(self, dx=0, dy=0):
         """Move the animation around the screen space.
 
