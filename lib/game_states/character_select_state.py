@@ -223,6 +223,22 @@ class RosterDisplay():
                 self.current_slot -= 1
                 self.cursor.move(0 - self.slot_size(), 0)
 
+    def scroll_down_row(self):
+        """Scroll down to the next row of characters, if there is one.
+        """
+        if self.current_row < self.num_of_rows() - 1:
+            self.current_row += 1
+            self.rendered_row = self.render_row(self.current_row)
+
+            if self.get_character_index() > len(self.mugshots) - 1:
+                # If the roster scrolls to the last row, and the last
+                # row has less slots than the previous one, make sure
+                # the selection only goes as far as the very last slot.
+                last_slot = (len(self.mugshots) - 1) % self.SLOTS_PER_ROW
+                self.cursor.move(0 - (self.slot_size() *
+                                 (self.current_slot - last_slot)), 0)
+                self.current_slot = last_slot
+
 
 class RosterCursor(Animation):
     """An animated cursor that is used to mark the currently-selected
