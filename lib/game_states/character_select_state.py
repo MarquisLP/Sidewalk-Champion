@@ -9,6 +9,35 @@ from lib.graphics import CharacterAnimation
 from lib.globals import SCREEN_SIZE
 
 
+class RosterDisplay():
+    """An on-screen list of the entire roster of playable characters
+    available in this copy of the game.
+
+    Players will use this list to select characters for a battle.
+    Since only one row characters can be displayed at a time, only one
+    player may select from the list at a time; the color of the cursor
+    can be toggled to show which player is currently choosing.
+
+    Class Constants:
+        MUGSHOT_SIZE: An integer for the length and width of a
+            character's mugshot image (which should be square-shaped).
+        SLOTS_PER_ROW: An integer for the number of character slots that
+            can be shown on the displayed row.
+        FRAME_COLOR: A tuple of integers for the RGB color of the
+            character slot frames.
+        BACKGROUND_COLOR: A tuple of integers for the RGB color of each
+            character slot's background.
+        ARROW_DISTANCE: An integer for the horizontal distance, in
+            pixels, between the edges of the roster and each of the
+            scroll arrows.
+    """
+    MUGSHOT_SIZE = 50
+    SLOTS_PER_ROW = 5
+    FRAME_COLOR = (102, 102, 102)
+    BACKGROUND_COLOR = (255, 255, 255)
+    ARROW_DISTANCE = 11
+
+
 class RosterArrow(Animation):
     """An animated arrow that notifies the players of a direction in
     which the character roster can be scrolled.
