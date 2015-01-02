@@ -135,6 +135,30 @@ class RosterDisplay():
         return (SCREEN_SIZE[0] - self.rendered_row.get_width()) / 2
 
 
+class RosterCursor(Animation):
+    """An animated cursor that is used to mark the currently-selected
+    character within the roster.
+
+    The cursor can toggle between two different animations with
+    identical dimensions; use this to signify which player is currently
+    choosing.
+
+    Class Constants:
+        P1_SPRITESHEET: A String for the file path to player 1's cursor
+            animation.
+        P2_SPRITESHEET: A String for the file path to player 2's cursor
+            animation.
+        FRAME_AMOUNT: An integer for the amount of frames in each
+            Animation.
+        FRAME_DURATION: An integer for the duration, in update cycles,
+            of each animation frame.
+    """
+    P1_SPRITESHEET = 'images/p1_character_cursor.png'
+    P2_SPRITESHEET = 'images/p2_character_cursor.png'
+    FRAME_AMOUNT = 2
+    FRAME_DURATION = 3
+
+
 class RosterArrow(Animation):
     """An animated arrow that notifies the players of a direction in
     which the character roster can be scrolled.
