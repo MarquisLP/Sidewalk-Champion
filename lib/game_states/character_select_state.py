@@ -4,8 +4,53 @@ import pygame.locals
 from pygame import image
 from pygame.surface import Surface
 from pygame.rect import Rect
+from lib.graphics import Animation
 from lib.graphics import CharacterAnimation
 from lib.globals import SCREEN_SIZE
+
+
+class RosterArrow(Animation):
+    """An animated arrow that notifies the players of a direction in
+    which the character roster can be scrolled.
+
+    Class Constants:
+        SPRITESHEET: A String for the file path to the animation
+            spritesheet.
+        FRAME_AMOUNT: An integer for the number of frames in the
+            animation.
+        FRAME_DURATION: An integer for the duration, in update cycles,
+            of each animation frame.
+    """
+    SPRITESHEET = 'images/roster_up_arrow.png'
+    FRAME_AMOUNT = 2
+    FRAME_DURATION = 10
+
+    def __init__(self, position, arrow_type):
+        """Declare and initialize instance variables.
+
+        Args:
+            position: A tuple of two integers, respectively
+                representing the x and y-positions of the arrow relative
+                to the screen.
+            arrow_type: An integer value from the ArrowType enum. This
+                is used to specify the direction the arrow points.
+        """
+        super(RosterArrow, self).__init__(self.SPRITESHEET, position,
+                                          self.FRAME_AMOUNT,
+                                          self.FRAME_DURATION)
+        if arrow_type == ArrowType.DOWN:
+            self.flip(is_vertical=True)
+
+
+class ArrowType(object):
+    """An enumeration for the types of roster scroll arrows.
+
+    Attributes:
+        UP: An integer value representing an arrow pointing up.
+        DOWN: An integer value representing an arrow pointing down.
+    """
+    UP = 0
+    DOWN = 1
 
 
 class CharacterPreview(object):
