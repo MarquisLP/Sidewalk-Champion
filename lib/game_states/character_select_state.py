@@ -1,3 +1,4 @@
+from math import ceil as round_up
 import pygame.transform as transform
 import pygame.draw
 import pygame.locals
@@ -160,6 +161,26 @@ class RosterDisplay():
         roster on the screen.
         """
         return (SCREEN_SIZE[0] - self.rendered_row.get_width()) / 2
+
+    def num_of_rows(self):
+        """Return an integer for the number of rows of characters that
+        can be selected.
+        """
+        return round_up(len(self.mugshots) / float(self.SLOTS_PER_ROW))
+
+    def draw(self, parent_surf):
+        """Draw the entire roster onto another Surface.
+
+        Args:
+            parent_surf: The Surface upon which the roster will be
+                drawn.
+        """
+        parent_surf.blit(self.rendered_row, (self.x, self.y))
+        self.cursor.draw(parent_surf)
+        if self.current_row > 0:
+            self.scroll_up_arrow.draw(parent_surf)
+        if self.current_row < self.num_of_rows() - 1:
+            self.scroll_down_arrow.draw(parent_surf)
 
 
 class RosterCursor(Animation):
