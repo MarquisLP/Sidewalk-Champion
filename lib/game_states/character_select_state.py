@@ -223,6 +223,17 @@ class RosterDisplay():
                 self.current_slot -= 1
                 self.cursor.move(0 - self.slot_size(), 0)
 
+    def correct_last_row_selection(self):
+        """If the roster scrolls to the last row, and the last row has
+        less slots than the previous one, make sure  the selection only
+        goes as far as the very last slot.
+        """
+        if len(self.mugshots) % self.SLOTS_PER_ROW != 0:
+            last_slot = (len(self.mugshots) - 1) % self.SLOTS_PER_ROW
+            self.cursor.move(0 - (self.slot_size() *
+                                  (self.current_slot - last_slot)), 0)
+            self.current_slot = last_slot
+
     def scroll_down_row(self):
         """Scroll down to the next row of characters.
 
@@ -233,13 +244,7 @@ class RosterDisplay():
             self.current_row += 1
 
             if self.get_character_index() > len(self.mugshots) - 1:
-                # If the roster scrolls to the last row, and the last
-                # row has less slots than the previous one, make sure
-                # the selection only goes as far as the very last slot.
-                last_slot = (len(self.mugshots) - 1) % self.SLOTS_PER_ROW
-                self.cursor.move(0 - (self.slot_size() *
-                                 (self.current_slot - last_slot)), 0)
-                self.current_slot = last_slot
+                self.correct_last_row_selection()
         else:
             self.current_row = 0
 
@@ -255,12 +260,7 @@ class RosterDisplay():
             self.current_row -= 1
         else:
             self.current_row = self.num_of_rows() - 1
-
-            if self.get_character_index() > len(self.mugshots) - 1:
-                last_slot = (len(self.mugshots) - 1) % self.SLOTS_PER_ROW
-                self.cursor.move(0 - (self.slot_size() *
-                                 (self.current_slot - last_slot)), 0)
-                self.current_slot = last_slot
+            self.correct_last_row_selection()
         self.rendered_row = self.render_row(self.current_row)
 
 
