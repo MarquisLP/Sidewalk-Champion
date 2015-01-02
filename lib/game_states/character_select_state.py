@@ -166,7 +166,7 @@ class RosterDisplay():
         """Return an integer for the number of rows of characters that
         can be selected.
         """
-        return round_up(len(self.mugshots) / float(self.SLOTS_PER_ROW))
+        return int(round_up(len(self.mugshots) / float(self.SLOTS_PER_ROW)))
 
     def draw(self, parent_surf):
         """Draw the entire roster onto another Surface.
@@ -224,11 +224,13 @@ class RosterDisplay():
                 self.cursor.move(0 - self.slot_size(), 0)
 
     def scroll_down_row(self):
-        """Scroll down to the next row of characters, if there is one.
+        """Scroll down to the next row of characters.
+
+        If there are no more rows after the current one, selection will
+        wrap around to the first row.
         """
         if self.current_row < self.num_of_rows() - 1:
             self.current_row += 1
-            self.rendered_row = self.render_row(self.current_row)
 
             if self.get_character_index() > len(self.mugshots) - 1:
                 # If the roster scrolls to the last row, and the last
@@ -238,6 +240,28 @@ class RosterDisplay():
                 self.cursor.move(0 - (self.slot_size() *
                                  (self.current_slot - last_slot)), 0)
                 self.current_slot = last_slot
+        else:
+            self.current_row = 0
+
+        self.rendered_row = self.render_row(self.current_row)
+
+    def scroll_up_row(self):
+        """Scroll up to the previous row of characters.
+
+        If the current row is the first row, selection will wrap around
+        to the last row.
+        """
+        if self.current_row > 0:
+            self.current_row -= 1
+        else:
+            self.current_row = self.num_of_rows() - 1
+
+            if self.get_character_index() > len(self.mugshots) - 1:
+                last_slot = (len(self.mugshots) - 1) % self.SLOTS_PER_ROW
+                self.cursor.move(0 - (self.slot_size() *
+                                 (self.current_slot - last_slot)), 0)
+                self.current_slot = last_slot
+        self.rendered_row = self.render_row(self.current_row)
 
 
 class RosterCursor(Animation):
