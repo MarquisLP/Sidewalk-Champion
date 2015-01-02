@@ -208,6 +208,21 @@ class RosterDisplay():
                 self.current_slot += 1
                 self.cursor.move(self.slot_size(), 0)
 
+    def select_previous(self):
+        """Select the previous character slot, if there is one."""
+        if self.get_character_index() > 0:
+            if self.current_slot <= 0:
+                # Go back to the previous row.
+                self.cursor.move(self.slot_size() *
+                                 (self.SLOTS_PER_ROW - 1 - self.current_slot),
+                                 0)
+                self.current_slot = self.SLOTS_PER_ROW - 1
+                self.current_row -= 1
+                self.rendered_row = self.render_row(self.current_row)
+            else:
+                self.current_slot -= 1
+                self.cursor.move(0 - self.slot_size(), 0)
+
 
 class RosterCursor(Animation):
     """An animated cursor that is used to mark the currently-selected
