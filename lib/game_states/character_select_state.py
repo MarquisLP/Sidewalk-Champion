@@ -38,8 +38,8 @@ class RosterDisplay():
             screen.
         y: An integer for the y-position of the roster relative to the
             screen.
-        mugshot_paths: A tuple of Strings containing the file paths to
-            each characters' mugshot image.
+        mugshots: A tuple of Surfaces, each containing a character's
+            mugshot.
         current_row: An integer for the index of the currently-selected
             'row' of characters. Each row contains a number of
             characters specified by the SLOTS_PER_ROW constant.
@@ -71,7 +71,7 @@ class RosterDisplay():
             mugshot_paths: A tuple of Strings which refer to the file
                 paths of each character's mugshot image.
         """
-        self.mugshot_paths = mugshot_paths
+        self.mugshots = self.load_all_mugshots(mugshot_paths)
         self.rendered_row = self.render_row(0)
         self.x = self.get_screen_centered_x()
         self.y = SCREEN_SIZE[1] - self.rendered_row.get_height()
@@ -84,6 +84,24 @@ class RosterDisplay():
         self.scroll_down_arrow = RosterArrow(ArrowType.DOWN, self.x, self.y,
                                              self.rendered_row.get_width(),
                                              self.rendered_row.get_height())
+
+    def load_all_mugshots(self, filepaths):
+        """Load all characters' mugshots as images.
+
+        Args:
+            filepaths: A tuple of Strings for the file paths to each
+                character's mugshot image.
+
+        Returns:
+            A tuple of Surfaces, each containing a character's mugshot.
+        """
+        all_mugshots = []
+
+        for filepath in filepaths:
+            new_mugshot = pygame.image.load(filepath).convert_alpha()
+            all_mugshots.append(new_mugshot)
+
+        return tuple(all_mugshots)
 
     def render_row(self, row_index):
         """Render a row of mugshots in order from the mugshot list.
@@ -101,7 +119,7 @@ class RosterDisplay():
         last_slot = first_slot + self.SLOTS_PER_ROW
 
         for slot_index in xrange(first_slot, last_slot + 1):
-            if slot_index <= len(self.mugshot_paths) - 1:
+            if slot_index <= len(self.mugshots) - 1:
                 new_slot = self.render_slot(slot_index)
             else:
                 new_slot = self.render_slot(-1)
@@ -136,7 +154,7 @@ class RosterDisplay():
 
         # Mugshot.
         if slot_index >= 0:
-            mugshot = image.load(self.mugshot_paths[slot_index]).convert_alpha()
+            mugshot = self.mugshots[slot_index]
             slot_surf.blit(mugshot, (self.FRAME_THICKNESS, self.FRAME_THICKNESS))
 
         # Frame.
