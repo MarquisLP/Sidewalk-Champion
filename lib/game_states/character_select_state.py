@@ -259,7 +259,7 @@ class CharacterPreview(object):
     NAME_OFFSET = 6
     SHADOW_HEIGHT = 14
     SHADOW_COLOR = (0, 5, 90)
-    OFFSET_FROM_SHADOW = 3
+    OFFSET_FROM_SHADOW = 4
 
     def __init__(self, is_facing_left, spritesheet_path, name,
                  name_font, frame_durations):
