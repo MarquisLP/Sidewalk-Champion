@@ -182,12 +182,31 @@ class RosterDisplay():
         if self.current_row < self.num_of_rows() - 1:
             self.scroll_down_arrow.draw(parent_surf)
 
+    def get_character_index(self):
+        """Return an integer for the index of character currently
+        selected.
+        """
+        return self.current_row + self.current_slot
+
     def select_first(self):
         """Select the very first slot in the roster."""
         self.cursor.move(0 - self.slot_size() * self.current_slot, 0)
         self.current_row = 0
         self.current_slot = 0
         self.rendered_row = self.render_row(0)
+
+    def select_next(self):
+        """Select the next character slot, if there is one."""
+        if self.get_character_index() < len(self.mugshots) - 1:
+            if self.current_slot >= self.SLOTS_PER_ROW - 1:
+                # Move on to the next row.
+                self.cursor.move(0 - self.slot_size() * self.current_slot, 0)
+                self.current_slot = 0
+                self.current_row += 1
+                self.rendered_row = self.render_row(self.current_row)
+            else:
+                self.current_slot += 1
+                self.cursor.move(self.slot_size(), 0)
 
 
 class RosterCursor(Animation):
