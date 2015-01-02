@@ -158,6 +158,17 @@ class RosterCursor(Animation):
     FRAME_AMOUNT = 2
     FRAME_DURATION = 3
 
+    def __init__(self, position):
+        """Declare and initialize instance variables.
+
+        Args:
+            position: A tuple of two integers which represent the x
+                and y-positions of the cursor relative to ths screen.
+        """
+        super(RosterCursor, self).__init__(self.P1_SPRITESHEET, position,
+                                           self.FRAME_AMOUNT,
+                                           self.FRAME_DURATION)
+
 
 class RosterArrow(Animation):
     """An animated arrow that notifies the players of a direction in
