@@ -5,7 +5,7 @@ from pygame import image
 from pygame.surface import Surface
 from pygame.rect import Rect
 from lib.graphics import load_tuple_of_images
-from lib.graphics import add_outline_to_text
+from lib.graphics import render_outlined_text
 from lib.graphics import convert_to_colorkey_alpha
 from lib.graphics import Animation
 from lib.graphics import CharacterAnimation
@@ -363,7 +363,8 @@ class CharacterPreview(object):
         self.animation = CharacterAnimation(is_facing_left,
                                             spritesheet, frame_durations)
         self.name_font = name_font
-        self.name = self.render_name(name)
+        self.name = render_outlined_text(name_font, name, self.NAME_COLOR,
+                                         self.NAME_OUTLINE_COLOR)
         self.shadow = self.render_shadow()
         self.x = 0
         self.y = self.calculate_y_position()
@@ -385,7 +386,9 @@ class CharacterPreview(object):
                 the second frame for 8 update cycles, and so on.
         """
         self.animation.change_animation(spritesheet, frame_durations)
-        self.name = self.render_name(name)
+        self.name = render_outlined_text(self.name_font, name,
+                                         self.NAME_COLOR,
+                                         self.NAME_OUTLINE_COLOR)
         self.shadow = self.render_shadow()
         self.x = 0
         self.y = self.calculate_y_position()
@@ -417,23 +420,6 @@ class CharacterPreview(object):
             self.x = SCREEN_SIZE[0] - self.animation.get_width()
         else:
             self.x = 0
-
-    def render_name(self, name):
-        """Render the character's name onto a new Surface.
-
-        Args:
-            name: A String for the character's name.
-            font: A PyGame Font object that will be used to render the
-                name as a text graphic.
-
-        Returns:
-            A Surface with the character's name drawn and outlined.
-        """
-        text_surf = self.name_font.render(name, True, self.NAME_COLOR)
-        outline = self.name_font.render(name, True,
-                                        self.NAME_OUTLINE_COLOR)
-        name_surf = add_outline_to_text(text_surf, outline)
-        return name_surf
 
     def render_shadow(self):
         """Render a shadow to fit the character.

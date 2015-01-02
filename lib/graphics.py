@@ -32,18 +32,23 @@ def load_tuple_of_images(filepaths):
     return tuple(all_images)
 
 
-def add_outline_to_text(text_surf, outline):
-        """Combine a text Surface with a pre-made outline Surface to add
-        a 1-pixel thick outline to the text.
+def render_outlined_text(font, text, text_color, outline_color):
+        """Render a text Surface with an outline 1-pixel thick.
 
         Args:
-            text_surf: A PyGame Surface with text drawn onto it.
-            outline: A PyGame Surface containing the same text as the
-                one in text_surf, but rendered in a darker color.
+            font: A PyGame Font object used for rendering the text.
+            text: A String for the text that will be rendered.
+            text_color: A tuple of integers which specify the RGB color
+                of the text.
+            text_color: A tuple of integers which specify the RGB color
+                of the outline.
 
         Returns:
-            A Surface with the original text outlined.
+            A Surface with the desired text outlined.
         """
+        text_surf = font.render(text, True, text_color)
+        outline = font.render(text, True, outline_color)
+
         outlined_text = Surface((text_surf.get_width() + 2,
                                  text_surf.get_height() + 2),
                                 SRCALPHA)
