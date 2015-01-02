@@ -51,6 +51,15 @@ class RosterDisplay():
         self.rendered_row = self.render_row(0)
         self.x = self.get_screen_centered_x()
         self.y = SCREEN_SIZE[1] - self.rendered_row.get_height()
+        self.current_row = 0
+        self.current_slot = 0
+        #self.cursor = RosterCursor((self.x, self.y))
+        self.scroll_up_arrow = RosterArrow(ArrowType.UP, self.x, self.y,
+                                           self.rendered_row.get_width(),
+                                           self.rendered_row.get_height())
+        self.scroll_down_arrow = RosterArrow(ArrowType.DOWN, self.x, self.y,
+                                             self.rendered_row.get_width(),
+                                             self.rendered_row.get_height())
 
     def render_row(self, row_index):
         """Render a row of mugshots in order from the mugshot list.
