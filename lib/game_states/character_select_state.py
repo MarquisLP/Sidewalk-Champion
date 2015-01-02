@@ -182,6 +182,13 @@ class RosterDisplay():
         if self.current_row < self.num_of_rows() - 1:
             self.scroll_down_arrow.draw(parent_surf)
 
+    def select_first(self):
+        """Select the very first slot in the roster."""
+        self.cursor.move(0 - self.slot_size() * self.current_slot, 0)
+        self.current_row = 0
+        self.current_slot = 0
+        self.rendered_row = self.render_row(0)
+
 
 class RosterCursor(Animation):
     """An animated cursor that is used to mark the currently-selected
