@@ -49,6 +49,32 @@ class RosterDisplay():
         """
         self.mugshot_paths = mugshot_paths
 
+    def render_row(self, row_index):
+        """Render a row of mugshots in order from the mugshot list.
+
+        Args:
+            row_index: An integer for the index of the row that will be
+                rendered. For example, given that SLOTS_PER_ROW is 5,
+                passing 1 would render mugshots of index 5 through 9.
+        """
+        row_surf = Surface((self.slot_size() * self.SLOTS_PER_ROW,
+                            self.slot_size()))
+        slot_x = 0
+
+        first_slot = row_index * self.SLOTS_PER_ROW
+        last_slot = first_slot + self.SLOTS_PER_ROW
+
+        for slot_index in xrange(first_slot, last_slot + 1):
+            if slot_index <= len(self.mugshot_paths) - 1:
+                new_slot = self.render_slot(slot_index)
+            else:
+                new_slot = self.render_slot(-1)
+            row_surf.blit(new_slot, (slot_x, 0))
+
+            slot_x += self.slot_size()
+
+        return row_surf
+
     def render_slot(self, slot_index):
         """Render one of the character's mugshots and place it within a
         frame.
@@ -65,8 +91,7 @@ class RosterDisplay():
             A Surface containing a framed mugshot, if slot_index is 0 or
             more. Otherwise, a Surface with a blank slot is returned.
         """
-        frame_size = self.MUGSHOT_SIZE + (self.FRAME_THICKNESS * 2)
-        slot_surf = Surface((frame_size, frame_size))
+        slot_surf = Surface((self.slot_size(), self.slot_size()))
 
         # Background.
         pygame.draw.rect(slot_surf, self.BACKGROUND_COLOR,
@@ -80,9 +105,16 @@ class RosterDisplay():
 
         # Frame.
         pygame.draw.rect(slot_surf, self.FRAME_COLOR,
-                         Rect(0, 0, frame_size - 1, frame_size - 1),
+                         Rect(0, 0,
+                              self.slot_size() - 1, self.slot_size() - 1),
                          self.FRAME_THICKNESS)
         return slot_surf
+
+    def slot_size(self):
+        """Return an integer for the length and width, in pixels, of
+        a character slot (mugshot + frame).
+        """
+        return self.MUGSHOT_SIZE + (self.FRAME_THICKNESS * 2)
 
 
 class RosterArrow(Animation):
