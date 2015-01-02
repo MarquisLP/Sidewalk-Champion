@@ -23,6 +23,8 @@ class RosterDisplay():
             character's mugshot image (which should be square-shaped).
         SLOTS_PER_ROW: An integer for the number of character slots that
             can be shown on the displayed row.
+        FRAME_THICKNESS: An integer for the thickness, in pixels, of
+            each character slot frame.
         FRAME_COLOR: A tuple of integers for the RGB color of the
             character slot frames.
         BACKGROUND_COLOR: A tuple of integers for the RGB color of each
@@ -33,9 +35,54 @@ class RosterDisplay():
     """
     MUGSHOT_SIZE = 50
     SLOTS_PER_ROW = 5
+    FRAME_THICKNESS = 2
     FRAME_COLOR = (102, 102, 102)
     BACKGROUND_COLOR = (255, 255, 255)
     ARROW_DISTANCE = 11
+
+    def __init__(self, mugshot_paths):
+        """Declare and initialize instance variables.
+
+        Args:
+            mugshot_paths: A tuple of Strings which refer to the file
+                paths of each character's mugshot image.
+        """
+        self.mugshot_paths = mugshot_paths
+
+    def render_slot(self, slot_index):
+        """Render one of the character's mugshots and place it within a
+        frame.
+
+        Alternatively, a blank slot with just a frame and background can
+        be rendered.
+
+        Args:
+            slot_index: The index of the character's mugshot within
+                mugshot_paths. Passing a value less than 0 will create
+                a blank slot.
+
+        Returns:
+            A Surface containing a framed mugshot, if slot_index is 0 or
+            more. Otherwise, a Surface with a blank slot is returned.
+        """
+        frame_size = self.MUGSHOT_SIZE + (self.FRAME_THICKNESS * 2)
+        slot_surf = Surface((frame_size, frame_size))
+
+        # Background.
+        pygame.draw.rect(slot_surf, self.BACKGROUND_COLOR,
+                         Rect(self.FRAME_THICKNESS, self.FRAME_THICKNESS,
+                              self.MUGSHOT_SIZE, self.MUGSHOT_SIZE))
+
+        # Mugshot.
+        if slot_index >= 0:
+            mugshot = image.load(self.mugshot_paths[slot_index]).convert_alpha()
+            slot_surf.blit(mugshot, (self.FRAME_THICKNESS, self.FRAME_THICKNESS))
+
+        # Frame.
+        pygame.draw.rect(slot_surf, self.FRAME_COLOR,
+                         Rect(0, 0, frame_size - 1, frame_size - 1),
+                         self.FRAME_THICKNESS)
+        return slot_surf
 
 
 class RosterArrow(Animation):
