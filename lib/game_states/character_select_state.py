@@ -48,6 +48,8 @@ class RosterDisplay():
                 paths of each character's mugshot image.
         """
         self.mugshot_paths = mugshot_paths
+        self.rendered_row = self.render_row(0)
+        self.x = self.get_screen_centered_x()
 
     def render_row(self, row_index):
         """Render a row of mugshots in order from the mugshot list.
@@ -115,6 +117,12 @@ class RosterDisplay():
         a character slot (mugshot + frame).
         """
         return self.MUGSHOT_SIZE + (self.FRAME_THICKNESS * 2)
+
+    def get_screen_centered_x(self):
+        """Return an integer for the x-position that will center the
+        roster on the screen.
+        """
+        return (SCREEN_SIZE[0] - self.rendered_row.get_width()) / 2
 
 
 class RosterArrow(Animation):
