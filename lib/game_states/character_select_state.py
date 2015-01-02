@@ -177,12 +177,14 @@ class RosterCursor(Animation):
         self.p2_image = pygame.image.load(self.P2_SPRITESHEET)
         self.p2_image = self.convert_to_colorkey_alpha(self.p2_image)
 
-    def toggle_cursor(self):
+    def toggle_player(self):
         """Switch to the other player's cursor animation."""
         if self.filepath == self.P1_SPRITESHEET:
-            self.image = self.p1_image
-        else:
+            self.filepath = self.P2_SPRITESHEET
             self.image = self.p2_image
+        else:
+            self.filepath = self.P1_SPRITESHEET
+            self.image = self.p1_image
 
 
 class RosterArrow(Animation):
