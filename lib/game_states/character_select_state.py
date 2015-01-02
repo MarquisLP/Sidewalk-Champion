@@ -53,7 +53,7 @@ class RosterDisplay():
         self.y = SCREEN_SIZE[1] - self.rendered_row.get_height()
         self.current_row = 0
         self.current_slot = 0
-        #self.cursor = RosterCursor((self.x, self.y))
+        self.cursor = RosterCursor((self.x, self.y))
         self.scroll_up_arrow = RosterArrow(ArrowType.UP, self.x, self.y,
                                            self.rendered_row.get_width(),
                                            self.rendered_row.get_height())
@@ -313,16 +313,16 @@ class CharacterPreview(object):
     SHADOW_COLOR = (0, 5, 90)
     OFFSET_FROM_SHADOW = 4
 
-    def __init__(self, is_facing_left, spritesheet_path, name,
-                 name_font, frame_durations):
+    def __init__(self, is_facing_left, spritesheet, name, name_font,
+                 frame_durations):
         """Declare and initialize instance variables.
 
         Args:
             is_facing_left: A Boolean indicating whether the character
                 is facing to the left, rather than to the right (which
                 is the default direction for characters in this game).
-            spritesheet_path: A String for the file path to the
-                animation's sprite sheet image.
+            spritesheet_path: A Surface containing the character
+                animation's spritesheet image.
             name: A String for the character's name.
             name_font: The PyGame font used for rendering the
                 character's name.
@@ -334,8 +334,7 @@ class CharacterPreview(object):
         """
         self.is_facing_left = is_facing_left
         self.animation = CharacterAnimation(is_facing_left,
-                                            spritesheet_path,
-                                            frame_durations)
+                                            spritesheet, frame_durations)
         self.name_font = name_font
         self.name = self.render_name(name)
         self.shadow = self.render_shadow()
@@ -345,12 +344,12 @@ class CharacterPreview(object):
         if is_facing_left:
             self.correct_position()
 
-    def change_character(self, spritesheet_path, name, frame_durations):
+    def change_character(self, spritesheet, name, frame_durations):
         """Display a different character animation.
 
         Args:
-            spritesheet_path: A String for the file path to the
-                animation's sprite sheet image.
+            spritesheet_path: A Surface containing the character
+                animation's spritesheet image.
             name: A String for the character's name.
             frame_durations: A tuple of integers containing the
                 duration, in update cycles, of each animation frame in
@@ -358,8 +357,7 @@ class CharacterPreview(object):
                 first animation frame is shown for 10 update cycles,
                 the second frame for 8 update cycles, and so on.
         """
-        self.animation.change_animation(spritesheet_path,
-                                        frame_durations)
+        self.animation.change_animation(spritesheet, frame_durations)
         self.name = self.render_name(name)
         self.shadow = self.render_shadow()
         self.x = 0

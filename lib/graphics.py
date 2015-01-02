@@ -310,15 +310,15 @@ class CharacterAnimation(object):
         frame_timer: An integer for the number of update cycles elapsed
             since the current animation frame was shown.
     """
-    def __init__(self, is_facing_left, spritesheet_path, frame_durations):
+    def __init__(self, is_facing_left, spritesheet, frame_durations):
         """Declare and initialize instance variables:
 
         Args:
             is_facing_left: A Boolean indicating whether the character
                 is facing to the left, rather than to the right (which
                 is the default direction for characters in this game).
-            spritesheet_path: A String for the file path to the
-                animation's sprite sheet image.
+            spritesheet_path: A Surface containing the animation's
+                spritesheet image.
             frame_width: An integer for the width, in pixels, of each
                 frame in the animation sprite sheet.
             frame_durations: A tuple of integers containing the
@@ -327,7 +327,7 @@ class CharacterAnimation(object):
                 first animation frame is shown for 10 update cycles,
                 the second frame for 8 update cycles, and so on.
         """
-        self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        self.spritesheet = spritesheet
         self.is_facing_left = False
         self.frame_durations = frame_durations
         self.current_frame = 0
@@ -335,12 +335,12 @@ class CharacterAnimation(object):
         if is_facing_left:
             self.flip_sprite()
 
-    def change_animation(self, spritesheet_path, frame_durations):
+    def change_animation(self, spritesheet, frame_durations):
         """Display a different animation.
 
         Args:
-            spritesheet_path: A String for the file path to the
-                animation's sprite sheet image.
+            spritesheet: A Surface containing the animation's
+                spritesheet image.
             frame_durations: A tuple of integers containing the
                 duration, in update cycles, of each animation frame in
                 order. For example, passing (10, 8, 5) means that the
@@ -348,7 +348,7 @@ class CharacterAnimation(object):
                 the second frame for 8 update cycles, and so on.
         """
         self.frame_durations = frame_durations
-        self.spritesheet = image.load(spritesheet_path).convert_alpha()
+        self.spritesheet = spritesheet
         self.current_frame = 0
         self.frame_timer = 0
         if self.is_facing_left:
