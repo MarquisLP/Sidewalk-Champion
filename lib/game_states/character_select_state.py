@@ -32,6 +32,30 @@ class RosterDisplay():
         ARROW_DISTANCE: An integer for the horizontal distance, in
             pixels, between the edges of the roster and each of the
             scroll arrows.
+
+    Attributes:
+        x: An integer for the x-position of the roster relative to the
+            screen.
+        y: An integer for the y-position of the roster relative to the
+            screen.
+        mugshot_paths: A tuple of Strings containing the file paths to
+            each characters' mugshot image.
+        current_row: An integer for the index of the currently-selected
+            'row' of characters. Each row contains a number of
+            characters specified by the SLOTS_PER_ROW constant.
+        current_slot: An integer for the index of the currently-selected
+            slot within the current row.
+            For example, if current_row is 1 and current_slot is 2, the
+            seventh character overall is currently being selected. Use
+            get_character_index() if you wish to obtain this data.
+        cursor: A RosterCursor used for marking the currently-selected
+            mugshot.
+        rendered_row: A Surface containing the currently-selected row
+            of character slots.
+        scroll_up_arrow: A RosterArrow indicating that the players can
+            scroll up a row.
+        scroll_down_arrow: A RosterArrow indicating that the players can
+            scroll down a row.
     """
     MUGSHOT_SIZE = 50
     SLOTS_PER_ROW = 5
