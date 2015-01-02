@@ -1,5 +1,9 @@
 """This module contains classes for representing in-game sprites and
-animations via the PyGame Surface and Image modules."""
+animations via the PyGame Surface and Image modules.
+
+It also contains module level methods to assist in loading and managing
+in-game images in other modules.
+"""
 from __builtin__ import True, False
 from pygame.locals import *
 from pygame.surface import Surface
@@ -7,6 +11,77 @@ from pygame import image
 from pygame import transform
 from pygame import color
 from pygame import Rect
+
+
+def load_tuple_of_images(filepaths):
+    """Load a collection of Surfaces from file and store them in an
+    immutable container -- a tuple.
+
+    Args:
+        filepaths: A tuple of Strings for the file paths to each image.
+
+    Returns:
+        A list of Surfaces, each containing an image loaded from file.
+    """
+    all_images = []
+
+    for filepath in filepaths:
+        new_image = image.load(filepath).convert_alpha()
+        all_images.append(new_image)
+
+    return tuple(all_images)
+
+
+def add_outline_to_text(text_surf, outline):
+        """Combine a text Surface with a pre-made outline Surface to add
+        a 1-pixel thick outline to the text.
+
+        Args:
+            text_surf: A PyGame Surface with text drawn onto it.
+            outline: A PyGame Surface containing the same text as the
+                one in text_surf, but rendered in a darker color.
+
+        Returns:
+            A Surface with the original text outlined.
+        """
+        outlined_text = Surface((text_surf.get_width() + 2,
+                                 text_surf.get_height() + 2),
+                                SRCALPHA)
+
+        outlined_text.blit(outline, (0, 0))
+        outlined_text.blit(outline, (0, 2))
+        outlined_text.blit(outline, (2, 0))
+        outlined_text.blit(outline, (2, 2))
+        outlined_text.blit(text_surf, (1, 1))
+
+        return outlined_text
+
+
+def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
+        """Give the surface a colorkeyed background that will be
+        transparent when drawing.
+        Colorkey alpha, unlike per-pixel alpha, will allow the
+        surface's transparent background to remain while using
+        methods such as Surface.set_alpha().
+
+        Keyword arguments:
+            surf        The Surface to convert.
+            colorkey    The color value for the colorkey. The default
+                        is magenta or RGB(255, 0, 255).
+                        This should be set to a color that isn't
+                        present in the image, otherwise those areas
+                        with a matching colour will be drawn
+                        transparent as well.
+        """
+        colorkeyed_surf = Surface(surf.get_size())
+
+        colorkeyed_surf.fill(colorkey)
+        colorkeyed_surf.blit(surf, (0, 0))
+        colorkeyed_surf.set_colorkey(colorkey)
+        colorkeyed_surf.convert()
+
+        return colorkeyed_surf
+
 
 class Graphic(object):
     """An in-game image that can be drawn to the screen.
@@ -35,7 +110,7 @@ class Graphic(object):
                         screen.
         """
         self.image = image.load(filepath)
-        self.image = self.convert_to_colorkey_alpha(self.image)
+        self.image = convert_to_colorkey_alpha(self.image)
         self.filepath = filepath
 
         width = self.image.get_width()
@@ -43,32 +118,6 @@ class Graphic(object):
         self.exact_pos = position
         self.rect = Rect(int(self.exact_pos[0]), int(self.exact_pos[1]),
                          width, height)
-
-    def convert_to_colorkey_alpha(self, surf,
-                                  colorkey=color.Color('magenta')):
-        """Give the surface a colorkeyed background that will be
-        transparent when drawing.
-        Colorkey alpha, unlike per-pixel alpha, will allow the
-        surface's transparent background to remain while using
-        methods such as Surface.set_alpha().
-
-        Keyword arguments:
-            surf        The Surface to convert.
-            colorkey    The color value for the colorkey. The default
-                        is magenta or RGB(255, 0, 255).
-                        This should be set to a color that isn't
-                        present in the image, otherwise those areas
-                        with a matching colour will be drawn
-                        transparent as well.
-        """
-        colorkeyed_surf = Surface(surf.get_size())
-
-        colorkeyed_surf.fill(colorkey)
-        colorkeyed_surf.blit(surf, (0, 0))
-        colorkeyed_surf.set_colorkey(colorkey)
-        colorkeyed_surf.convert()
-
-        return colorkeyed_surf
 
     def get_right_edge(self):
         """Return the x-coordinate of the Graphic's right edge."""

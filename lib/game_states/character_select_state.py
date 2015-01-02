@@ -4,6 +4,9 @@ import pygame.locals
 from pygame import image
 from pygame.surface import Surface
 from pygame.rect import Rect
+from lib.graphics import load_tuple_of_images
+from lib.graphics import add_outline_to_text
+from lib.graphics import convert_to_colorkey_alpha
 from lib.graphics import Animation
 from lib.graphics import CharacterAnimation
 from lib.globals import SCREEN_SIZE
@@ -71,7 +74,7 @@ class RosterDisplay():
             mugshot_paths: A tuple of Strings which refer to the file
                 paths of each character's mugshot image.
         """
-        self.mugshots = self.load_all_mugshots(mugshot_paths)
+        self.mugshots = load_tuple_of_images(mugshot_paths)
         self.rendered_row = self.render_row(0)
         self.x = self.get_screen_centered_x()
         self.y = SCREEN_SIZE[1] - self.rendered_row.get_height()
@@ -84,24 +87,6 @@ class RosterDisplay():
         self.scroll_down_arrow = RosterArrow(ArrowType.DOWN, self.x, self.y,
                                              self.rendered_row.get_width(),
                                              self.rendered_row.get_height())
-
-    def load_all_mugshots(self, filepaths):
-        """Load all characters' mugshots as images.
-
-        Args:
-            filepaths: A tuple of Strings for the file paths to each
-                character's mugshot image.
-
-        Returns:
-            A tuple of Surfaces, each containing a character's mugshot.
-        """
-        all_mugshots = []
-
-        for filepath in filepaths:
-            new_mugshot = pygame.image.load(filepath).convert_alpha()
-            all_mugshots.append(new_mugshot)
-
-        return tuple(all_mugshots)
 
     def render_row(self, row_index):
         """Render a row of mugshots in order from the mugshot list.
@@ -215,9 +200,9 @@ class RosterCursor(Animation):
                                            self.FRAME_AMOUNT,
                                            self.FRAME_DURATION)
         self.p1_image = pygame.image.load(self.P1_SPRITESHEET)
-        self.p1_image = self.convert_to_colorkey_alpha(self.p1_image)
+        self.p1_image = convert_to_colorkey_alpha(self.p1_image)
         self.p2_image = pygame.image.load(self.P2_SPRITESHEET)
-        self.p2_image = self.convert_to_colorkey_alpha(self.p2_image)
+        self.p2_image = convert_to_colorkey_alpha(self.p2_image)
 
     def toggle_player(self):
         """Switch to the other player's cursor animation."""
@@ -447,32 +432,8 @@ class CharacterPreview(object):
         text_surf = self.name_font.render(name, True, self.NAME_COLOR)
         outline = self.name_font.render(name, True,
                                         self.NAME_OUTLINE_COLOR)
-        name_surf = self.add_outline_to_text(text_surf, outline)
+        name_surf = add_outline_to_text(text_surf, outline)
         return name_surf
-
-    def add_outline_to_text(self, text_surf, outline):
-        """Combine a text Surface with a pre-made outline Surface to add
-        a 1-pixel thick outline to the text.
-
-        Args:
-            text_surf: A PyGame Surface with text drawn onto it.
-            outline: A PyGame Surface containing the same text as the
-                one in text_surf, but rendered in a darker color.
-
-        Returns:
-            A Surface with the original text outlined.
-        """
-        outlined_text = Surface((text_surf.get_width() + 2,
-                                 text_surf.get_height() + 2),
-                                pygame.locals.SRCALPHA)
-
-        outlined_text.blit(outline, (0, 0))
-        outlined_text.blit(outline, (0, 2))
-        outlined_text.blit(outline, (2, 0))
-        outlined_text.blit(outline, (2, 2))
-        outlined_text.blit(text_surf, (1, 1))
-
-        return outlined_text
 
     def render_shadow(self):
         """Render a shadow to fit the character.
