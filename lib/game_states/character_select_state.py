@@ -186,7 +186,7 @@ class RosterDisplay():
         """Return an integer for the index of character currently
         selected.
         """
-        return self.current_row + self.current_slot
+        return (self.current_row * self.SLOTS_PER_ROW) + self.current_slot
 
     def select_first(self):
         """Select the very first slot in the roster."""
