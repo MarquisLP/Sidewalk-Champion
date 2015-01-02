@@ -50,6 +50,7 @@ class RosterDisplay():
         self.mugshot_paths = mugshot_paths
         self.rendered_row = self.render_row(0)
         self.x = self.get_screen_centered_x()
+        self.y = SCREEN_SIZE[1] - self.rendered_row.get_height()
 
     def render_row(self, row_index):
         """Render a row of mugshots in order from the mugshot list.
@@ -136,26 +137,65 @@ class RosterArrow(Animation):
             animation.
         FRAME_DURATION: An integer for the duration, in update cycles,
             of each animation frame.
+        ROSTER_DISTANCE: An integer for the distance, in pixels, of this
+            arrow from the edge of the roster.
     """
     SPRITESHEET = 'images/roster_up_arrow.png'
     FRAME_AMOUNT = 2
     FRAME_DURATION = 10
+    ROSTER_DISTANCE = 18
 
-    def __init__(self, position, arrow_type):
+    def __init__(self, arrow_type, roster_x, roster_y, roster_width,
+                 roster_height):
         """Declare and initialize instance variables.
 
         Args:
-            position: A tuple of two integers, respectively
-                representing the x and y-positions of the arrow relative
-                to the screen.
             arrow_type: An integer value from the ArrowType enum. This
                 is used to specify the direction the arrow points.
+            roster_x: An integer for the x-position of the roster
+                relative to the screen.
+            roster_y: An integer for the y-position of the roster
+                relative to the screen.
+            roster_width: An integer for the width of the roster, in
+                pixels.
+            roster_height: An integer for the height of the roster, in
+                pixels.
         """
-        super(RosterArrow, self).__init__(self.SPRITESHEET, position,
+        super(RosterArrow, self).__init__(self.SPRITESHEET, (0, 0),
                                           self.FRAME_AMOUNT,
                                           self.FRAME_DURATION)
+        self.correct_position(arrow_type, roster_x, roster_y,
+                              roster_width, roster_height)
         if arrow_type == ArrowType.DOWN:
             self.flip(is_vertical=True)
+
+    def correct_position(self, arrow_type, roster_x, roster_y,
+                         roster_width, roster_height):
+        """Move the arrow into the correct position beside the roster.
+
+        If the arrow points up, it will be on the left edge; it it
+        points down, it will be on the right edge.
+
+        Args:
+            arrow_type: An integer value from the ArrowType enum. This
+                is used to specify the direction the arrow points.
+            roster_x: An integer for the x-position of the roster
+                relative to the screen.
+            roster_y: An integer for the y-position of the roster
+                relative to the screen.
+            roster_width: An integer for the width of the roster, in
+                pixels.
+            roster_height: An integer for the height of the roster, in
+                pixels.
+        """
+        y = roster_y + ((roster_height - self.image.get_height()) / 2)
+
+        if arrow_type == ArrowType.UP:
+            x = roster_x - self.frame_width - self.ROSTER_DISTANCE
+            self.move(x, y)
+        if arrow_type == ArrowType.DOWN:
+            x = roster_x + roster_width + self.ROSTER_DISTANCE
+            self.move(x, y)
 
 
 class ArrowType(object):
