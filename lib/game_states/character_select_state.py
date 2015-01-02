@@ -160,7 +160,7 @@ class RosterCursor(Animation):
     P1_SPRITESHEET = 'images/p1_character_cursor.png'
     P2_SPRITESHEET = 'images/p2_character_cursor.png'
     FRAME_AMOUNT = 2
-    FRAME_DURATION = 3
+    FRAME_DURATION = 8
 
     def __init__(self, position):
         """Declare and initialize instance variables.
