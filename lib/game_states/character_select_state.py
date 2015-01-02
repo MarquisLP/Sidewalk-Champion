@@ -152,6 +152,10 @@ class RosterCursor(Animation):
             Animation.
         FRAME_DURATION: An integer for the duration, in update cycles,
             of each animation frame.
+
+    Attributes:
+        p1_image: A Surface containing player 1's spritesheet image.
+        p2_image: A Surface containing player 2's spritesheet image.
     """
     P1_SPRITESHEET = 'images/p1_character_cursor.png'
     P2_SPRITESHEET = 'images/p2_character_cursor.png'
@@ -168,6 +172,10 @@ class RosterCursor(Animation):
         super(RosterCursor, self).__init__(self.P1_SPRITESHEET, position,
                                            self.FRAME_AMOUNT,
                                            self.FRAME_DURATION)
+        self.p1_image = pygame.image.load(self.P1_SPRITESHEET)
+        self.p1_image = self.convert_to_colorkey_alpha(self.p1_image)
+        self.p2_image = pygame.image.load(self.P2_SPRITESHEET)
+        self.p2_image = self.convert_to_colorkey_alpha(self.p2_image)
 
 
 class RosterArrow(Animation):
