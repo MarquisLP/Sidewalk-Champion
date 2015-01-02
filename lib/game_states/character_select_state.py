@@ -19,6 +19,8 @@ class CharacterPreview(object):
             text's color.
         NAME_OUTLINE_COLOR: A tuple containing the RGB values for the
             color of the name text's outline.
+        NAME_OFFSET: An integer for the vertical shift up, in pixels,
+            of the name text from the bottom of the character sprite.
         SHADOW_HEIGHT: An integer for the height of the shadow, in
             pixels.
         SHADOW_COLOR: A tuple containing the RGB values for the color
@@ -44,6 +46,7 @@ class CharacterPreview(object):
     GROUND_Y = 157
     NAME_COLOR = (255, 255, 255)
     NAME_OUTLINE_COLOR = (80, 80, 80)
+    NAME_OFFSET = 6
     SHADOW_HEIGHT = 14
     SHADOW_COLOR = (0, 5, 90)
     OFFSET_FROM_SHADOW = 3
@@ -199,6 +202,34 @@ class CharacterPreview(object):
         char_bottom = self.y + self.animation.get_height()
         y = char_bottom - self.shadow.get_height() + self.OFFSET_FROM_SHADOW
         parent_surf.blit(self.shadow, (self.x, y))
+
+    def draw_name(self, parent_surf):
+        """Draw the character's name at the bottom of their sprite.
+
+        Args:
+            parent_surf: The Surface upon which the name will be drawn.
+        """
+        if self.name.get_width() < self.animation.get_width():
+            x = self.get_centered_x(self.name.get_width())
+        elif self.is_facing_left:
+            x = self.x + self.animation.get_width() - self.name.get_width()
+        else:
+            x = self.x
+        y = self.y + self.animation.get_height() - self.NAME_OFFSET
+        parent_surf.blit(self.name, (x, y))
+
+    def get_centered_x(self, width):
+        """Calculate an x-value that would allow a Surface of a given
+        width to be centered relative to the character sprite.
+
+        Note that this only works with Surfaces that have a smaller
+        width than the character.
+
+        Args:
+            width: An integer for the width of a Surface.
+        """
+        surface_difference = self.animation.get_width() - width
+        return self.x + int(surface_difference / 2)
 
     def move(self, dx=0, dy=0):
         """Move the animation around the screen space.
