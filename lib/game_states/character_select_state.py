@@ -191,6 +191,15 @@ class CharacterPreview(object):
         """Update the character animation."""
         self.animation.update()
 
+    def draw(self, parent_surf):
+        """Draw the CharacterPreview onto a Surface.
+
+        parent_surf: The Surface upon which the preview will be drawn.
+        """
+        self.draw_shadow(parent_surf)
+        self.animation.draw(parent_surf, self.x, self.y)
+        self.draw_name(parent_surf)
+
     def draw_shadow(self, parent_surf):
         """Draw the shadow at the character's feet (or, where their
         feet would be in case they're feetless).
