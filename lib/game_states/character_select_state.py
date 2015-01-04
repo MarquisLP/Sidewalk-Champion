@@ -41,6 +41,11 @@ class BackgroundLines(object):
     LINE_Y_COORDS = (11, 21, 57, 93, 144)
     LINE_WIDTHS = (3, 9, 7, 5, 17)
 
+    def __init__(self):
+        """Declare and initialize instance variables."""
+        self.left_end = 0
+        self.right_end = SCREEN_SIZE[0]
+
 
 class RosterDisplay():
     """An on-screen list of the entire roster of playable characters
