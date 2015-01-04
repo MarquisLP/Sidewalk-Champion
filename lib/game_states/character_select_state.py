@@ -59,6 +59,28 @@ class BackgroundLines(object):
                              (self.left_end, y), (self.right_end, y),
                              width)
 
+    def move_left_end(self, distance):
+        """Move the starting point of all lines from the left side of
+        the screen.
+
+        Args:
+            distance: An integer for the distance moved, in pixels. A
+            positive value will shift the point to the right, while a
+            negative value will shift it to the left.
+        """
+        self.left_end += distance
+
+    def move_right_end(self, distance):
+        """Move the end point of all lines from the right side of the
+        screen.
+
+        Args:
+            distance: An integer for the distance moved, in pixels. A
+            positive value will shift the point to the right, while a
+            negative value will shift it to the left.
+        """
+        self.right_end += distance
+
 
 class RosterDisplay():
     """An on-screen list of the entire roster of playable characters
