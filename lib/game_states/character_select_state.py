@@ -273,6 +273,9 @@ class RosterDisplay():
         """
         self.x += dx
         self.y += dy
+        self.cursor.move(dx, dy)
+        self.scroll_up_arrow.move(dx, dy)
+        self.scroll_down_arrow.move(dx, dy)
 
     def place_offscreen(self):
         """Position the roster so that it is just off the bottom edge of
