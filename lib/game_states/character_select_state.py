@@ -300,6 +300,12 @@ class RosterDisplay():
         else:
             return False
 
+    def toggle_player_cursor(self):
+        """Toggle the cursor's animation to show that the other player
+        is now choosing.
+        """
+        self.cursor.toggle_player()
+
 
 class RosterCursor(Animation):
     """An animated cursor that is used to mark the currently-selected
