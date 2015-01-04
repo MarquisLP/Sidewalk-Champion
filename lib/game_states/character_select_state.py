@@ -46,6 +46,19 @@ class BackgroundLines(object):
         self.left_end = 0
         self.right_end = SCREEN_SIZE[0]
 
+    def draw(self, parent_surf):
+        """Draw all of the lines onto a Surface.
+
+        Args:
+            parent_surf: The Surface upon which the lines will be drawn.
+        """
+        for line_index in xrange(0, len(self.LINE_Y_COORDS)):
+            y = self.LINE_Y_COORDS[line_index]
+            width = self.LINE_WIDTHS[line_index]
+            pygame.draw.line(parent_surf, self.LINE_COLOR,
+                             (self.left_end, y), (self.right_end, y),
+                             width)
+
 
 class RosterDisplay():
     """An on-screen list of the entire roster of playable characters
