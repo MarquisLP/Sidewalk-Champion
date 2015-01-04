@@ -13,6 +13,35 @@ from lib.graphics import CharacterAnimation
 from lib.globals import SCREEN_SIZE
 
 
+class BackgroundLines(object):
+    """A series of action lines that will be drawn in the background.
+
+    The starting and end points of the lines can be moved to create a
+    type of scrolling movement effect.
+
+    Class Constants:
+        LINE_COLOR: A tuple three integers, representing the RGB color
+            used in drawing all of the lines.
+        LINE_Y_COOORS: A tuple of integers, each of which represent one
+            of the lines' y-position relative to the screen.
+        LINE_WIDTHS: A tuple of integers, each of which represent the
+            width of one of the lines, in pixels.
+            Note that this is in the same order as LINE_Y_COORS. For
+            example, if the first value in LINE_Y_COORS is 50 and the
+            first value in LINE_WIDTHS is 5, a line with a width of 5
+            pixels will be drawn at a y-position of 50.
+
+    Attributes:
+        left_end: An integer for the x-position of the lines' starting
+            point from the left edge of the screen.
+        right_end: An integer for the x-position of the lines' end point
+            closer to the right side of the screen.
+    """
+    LINE_COLOR = (0, 19, 217)
+    LINE_Y_COORDS = (11, 21, 57, 93, 144)
+    LINE_WIDTHS = (3, 9, 7, 5, 17)
+
+
 class RosterDisplay():
     """An on-screen list of the entire roster of playable characters
     available in this copy of the game.
