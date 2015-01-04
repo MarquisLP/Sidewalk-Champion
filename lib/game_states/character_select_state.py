@@ -37,8 +37,8 @@ class BackgroundLines(object):
         right_end: An integer for the x-position of the lines' end point
             closer to the right side of the screen.
     """
-    LINE_COLOR = (0, 19, 217)
-    LINE_Y_COORDS = (11, 21, 57, 93, 144)
+    LINE_COLOR = (0, 19, 127)
+    LINE_Y_COORDS = (11, 26, 59, 95, 151)
     LINE_WIDTHS = (3, 9, 7, 5, 17)
 
     def __init__(self):
