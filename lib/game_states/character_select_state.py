@@ -52,12 +52,13 @@ class BackgroundLines(object):
         Args:
             parent_surf: The Surface upon which the lines will be drawn.
         """
-        for line_index in xrange(0, len(self.LINE_Y_COORDS)):
-            y = self.LINE_Y_COORDS[line_index]
-            width = self.LINE_WIDTHS[line_index]
-            pygame.draw.line(parent_surf, self.LINE_COLOR,
-                             (self.left_end, y), (self.right_end, y),
-                             width)
+        if self.right_end > self.left_end:
+            for line_index in xrange(0, len(self.LINE_Y_COORDS)):
+                y = self.LINE_Y_COORDS[line_index]
+                width = self.LINE_WIDTHS[line_index]
+                pygame.draw.line(parent_surf, self.LINE_COLOR,
+                                 (self.left_end, y), (self.right_end, y),
+                                 width)
 
     def move_left_end(self, distance):
         """Move the starting point of all lines from the left side of
