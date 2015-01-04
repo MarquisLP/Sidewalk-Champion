@@ -280,6 +280,26 @@ class RosterDisplay():
         """
         self.y = SCREEN_SIZE[1]
 
+    def is_onscreen(self):
+        """Return a Boolean indicating whether all of the roster can be
+        seen on-screen.
+        """
+        if (self.y >= 0 and
+           self.y + self.rendered_row.get_height() <= SCREEN_SIZE[1]):
+            return True
+        else:
+            return False
+
+    def is_offscreen(self):
+        """Return a Boolean indicating whether none of the roster can be
+        seen at all.
+        """
+        if (self.y + self.rendered_row.get_height() <= 0 or
+           self.y >= SCREEN_SIZE[1]):
+            return True
+        else:
+            return False
+
 
 class RosterCursor(Animation):
     """An animated cursor that is used to mark the currently-selected
