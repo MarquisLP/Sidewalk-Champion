@@ -263,6 +263,23 @@ class RosterDisplay():
             self.correct_last_row_selection()
         self.rendered_row = self.render_row(self.current_row)
 
+    def move(self, dx=0, dy=0):
+        """Move the roster across the screen space.
+
+        Args:
+            dx: An integer for the horizontal distance moved, in pixels.
+            A positive value will result in a shift to the right, while
+            a negative value will cause a shift to the left.
+        """
+        self.x += dx
+        self.y += dy
+
+    def place_offscreen(self):
+        """Position the roster so that it is just off the bottom edge of
+        the screen.
+        """
+        self.y = SCREEN_SIZE[1]
+
 
 class RosterCursor(Animation):
     """An animated cursor that is used to mark the currently-selected
