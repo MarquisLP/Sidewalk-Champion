@@ -13,6 +13,42 @@ from lib.graphics import CharacterAnimation
 from lib.globals import SCREEN_SIZE
 
 
+class PlayerSelectPrompt(object):
+    """A prompt that notifies either Player 1 or Player 2 that they are
+    currently choosing their character.
+
+    Class Constants:
+        Y: An integer for the y-position of the prompt relative to the
+            screen.
+        FLASH_RATE: An integer for the amount of time elapsed, in update
+            cycles, between toggling the visibility of the text.
+        P1_TEXT: A String for the text that will be displayed as player
+            1's prompt message.
+        P2_TEXT: A String for the text that will be displayed as player
+            2's prompt message.
+        P1_COLOR: A tuple of three integers, representing the RGB value
+            for player 1's text.
+        P2_COLOR: A tuple of three integers, representing the RGB value
+            for player 2's text.
+
+    Attributes:
+        p1_surf: A Surface containing player 1's prompt message.
+        p2_surf: A Surface containing player 1's prompt message.
+        current_surf: A Surface containing either player 1 or player 2's
+            message as the prompt currently displayed on-screen.
+        flash_timer: An integer timer that counts the duration between
+            text flash cycles.
+        text_is_visible: A Boolean indicating whether the current prompt
+            is being shown.
+    """
+    Y = 13
+    FLASH_RATE = 30
+    P1_TEXT = 'P1 Select'
+    P2_TEXT = 'P2 Select'
+    P1_COLOR = (255, 0, 0)
+    P2_COLOR = (0, 255, 255)
+
+
 class BackgroundLines(object):
     """A series of action lines that will be drawn in the background.
 
