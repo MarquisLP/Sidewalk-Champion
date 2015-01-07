@@ -47,6 +47,27 @@ class PlayerSelectPrompt(object):
     P2_TEXT = 'P2 Select'
     P1_COLOR = (255, 0, 0)
     P2_COLOR = (0, 255, 255)
+    
+    def __init__(self, font):
+        """Declare and initialize instance variables.
+
+        Args:
+            font: A PyGame Font that will be used in rendering the
+                prompt text.
+        """
+        self.p1_surf = font.render(self.P1_TEXT, True, self.P1_COLOR)
+        self.p2_surf = font.render(self.P2_TEXT, True, self.P2_COLOR)
+        self.current_surf = self.p1_surf
+        self.flash_timer = 0
+        self.text_is_visible = True
+        self.x = 0
+        self.center_horizontally()
+        
+    def center_horizontally(self):
+        """Position the text so that it is centered horizontally on the
+        screen.
+        """
+        self.x = (SCREEN_SIZE[0] - self.current_surf.get_width()) / 2
 
 
 class BackgroundLines(object):
