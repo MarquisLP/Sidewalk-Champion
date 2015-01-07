@@ -76,6 +76,13 @@ class PlayerSelectPrompt(object):
         else:
             self.current_surf = self.p1_surf
         self.center_horizontally()
+        
+    def update(self):
+        """Update the text flashing."""
+        self.flash_timer += 1
+        if self.flash_timer >= self.FLASH_RATE:
+            self.flash_timer = 0
+            self.text_is_visible = not self.text_is_visible
 
 
 class BackgroundLines(object):
