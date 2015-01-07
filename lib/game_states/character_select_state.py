@@ -83,6 +83,16 @@ class PlayerSelectPrompt(object):
         if self.flash_timer >= self.FLASH_RATE:
             self.flash_timer = 0
             self.text_is_visible = not self.text_is_visible
+            
+    def draw(self, parent_surf):
+        """Draw the current player's prompt onto a Surface.
+
+        Args:
+            parent_surf: The Surface upon which the prompt will be
+                drawn.
+        """
+        if self.text_is_visible:
+            parent_surf.blit(self.current_surf, (self.x, self.Y))
 
 
 class BackgroundLines(object):
