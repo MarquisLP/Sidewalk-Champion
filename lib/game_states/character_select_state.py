@@ -68,6 +68,14 @@ class PlayerSelectPrompt(object):
         screen.
         """
         self.x = (SCREEN_SIZE[0] - self.current_surf.get_width()) / 2
+        
+    def toggle_player(self):
+        """Display the other player's prompt."""
+        if self.current_surf == self.p1_surf:
+            self.current_surf = self.p2_surf
+        else:
+            self.current_surf = self.p1_surf
+        self.center_horizontally()
 
 
 class BackgroundLines(object):
