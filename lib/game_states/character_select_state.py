@@ -11,7 +11,52 @@ from lib.graphics import convert_to_colorkey_alpha
 from lib.graphics import Animation
 from lib.graphics import CharacterAnimation
 from lib.globals import SCREEN_SIZE
+from lib.game_states.state import State
 
+
+class CharacterSelectState(State):
+    """The screen where players can select their characters before
+    diving into battle.
+
+    Class Constants:
+        FONT_PATH: A String for the file path to the font used for
+            rendering the text in this State.
+        FONT_SIZE: An integer for the size of most text in this State.
+        VS_SIZE: An integer for the size of the VS text.
+        VS_COLOR: A tuple of three integers, representing the RGB color
+            of the VS text.
+        VS_OUTLINE_TEXT: A tuple of three integers, representing the
+            RGB color of the VS text's outline.
+        VS_POSITION: A tuple of two integers, for the x and y-positions
+            of the VS text relative to the screen.
+
+    Attributes:
+        bg_lines: BackgroundLines that will be drawn on the screen.
+        roster: A RosterDisplay that will allow the players to choose
+            from all of the characters included in the game.
+        p1_preview: A CharacterPreview for player 1's currently-
+            selected character.
+        p2_preview: A CharacterPreview for player 2's currently-
+            selected character.
+        select_prompt: A PlayerSelectPrompt displayed at the top of the
+            screen.
+        vs_text: A Surface containing text that says "VS". It will be
+            drawn between the two CharacterPreviews.
+        spritesheets: A tuple of Surfaces for all of the characters'
+            preview animations.
+        p1_char_index: An integer for the index of the character
+            selected and confirmed by player 1.
+        p2_char_index: An integer for the index of the character
+            selected and confirmed by player 2.
+        next_state: An integer for the index of the next State to be run
+            by the game. See the StateIDs enum for possible values.
+    """
+    FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
+    FONT_SIZE = 12
+    VS_SIZE = 28
+    VS_COLOR = (255, 255, 255)
+    VS_UNDERLINE_COLOR
+    VS_POSITION = (166, 80)
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
