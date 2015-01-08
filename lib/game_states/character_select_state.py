@@ -94,6 +94,13 @@ class PlayerSelectPrompt(object):
         if self.text_is_visible:
             parent_surf.blit(self.current_surf, (self.x, self.Y))
 
+    def reset(self):
+        """Reset the flash and display player 1's prompt."""
+        self.text_is_visible = True
+        self.flash_timer = 0
+        self.current_surf = self.p1_surf
+        self.center_horizontally()
+    
 
 class BackgroundLines(object):
     """A series of action lines that will be drawn in the background.
