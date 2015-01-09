@@ -59,10 +59,10 @@ class CharacterSelectState(State):
     VS_POSITION = (166, 80)
 
     @staticmethod
-    def load_all_spritesheets(self, all_chars):
-        """ Return a tuple of Surfaces, containing the spritesheets for
+    def load_all_spritesheets(all_chars):
+        """Return a tuple of Surfaces, containing the spritesheets for
         the first Action defined in every character.
-        
+
         Args:
             all_chars: A tuple of CharacterData objects for all of the
                 characters included in the game.
@@ -290,14 +290,14 @@ class RosterDisplay():
     BACKGROUND_COLOR = (255, 255, 255)
     ARROW_DISTANCE = 11
 
-    def __init__(self, mugshot_paths):
+    def __init__(self, all_chars):
         """Declare and initialize instance variables.
 
         Args:
-            mugshot_paths: A tuple of Strings which refer to the file
-                paths of each character's mugshot image.
+            all_chars: A tuple of CharacterData objects for all of the
+                characters included in the game.
         """
-        self.mugshots = load_tuple_of_images(mugshot_paths)
+        self.mugshots = self.load_all_mugshots(all_chars)
         self.rendered_row = self.render_row(0)
         self.x = self.get_screen_centered_x()
         self.y = SCREEN_SIZE[1] - self.rendered_row.get_height()
@@ -310,6 +310,22 @@ class RosterDisplay():
         self.scroll_down_arrow = RosterArrow(ArrowType.DOWN, self.x, self.y,
                                              self.rendered_row.get_width(),
                                              self.rendered_row.get_height())
+
+    @staticmethod
+    def load_all_mugshots(all_chars):
+        """Return a tuple of Surfaces, containing the mugshot images for
+        every character.
+
+        Args:
+            all_chars: A tuple of CharacterData objects for all of the
+                characters included in the game.
+        """
+        mugshot_paths = []
+
+        for character in all_chars:
+            mugshot_paths.append(character.mugshot_path)
+
+        return load_tuple_of_images(mugshot_paths)
 
     def render_row(self, row_index):
         """Render a row of mugshots in order from the mugshot list.
