@@ -46,6 +46,8 @@ def load_all_characters():
     """Load the data from all of the XML files specified in the
     character_list file, and return it as a List of CharacterData
     objects.
+
+    If no characters could be loaded, None is returned instead.
     """
     character_list = []
     xml_paths = get_character_paths()
@@ -61,7 +63,10 @@ def load_all_characters():
             if new_character is not None:
                 character_list.append(new_character)
 
-    return character_list
+    if len(character_list) <= 0:
+        return None
+    else:
+        return character_list
 
 
 def get_character_paths():
