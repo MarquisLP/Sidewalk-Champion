@@ -1,4 +1,5 @@
 from math import ceil as round_up
+import collections
 import pygame.transform as transform
 import pygame.draw
 import pygame.locals
@@ -11,8 +12,13 @@ from lib.graphics import convert_to_colorkey_alpha
 from lib.graphics import Animation
 from lib.graphics import CharacterAnimation
 from lib.globals import SCREEN_SIZE
+from lib.custom_data.character_data import load_frame_durations
 from lib.custom_data.character_loader import load_all_characters
 from lib.game_states.state import State
+
+
+PreviewData = collections.namedtuple('PreviewData',
+                                     'name spritesheet frame_durations')
 
 
 class CharacterSelectState(State):
@@ -35,6 +41,9 @@ class CharacterSelectState(State):
         bg_lines: BackgroundLines that will be drawn on the screen.
         roster: A RosterDisplay that will allow the players to choose
             from all of the characters included in the game.
+        all_preview_data: A tuple of PreviewData tuples, containing the
+            name, spritesheet, and frame durations for each character's
+            preview animation.
         p1_preview: A CharacterPreview for player 1's currently-
             selected character.
         p2_preview: A CharacterPreview for player 2's currently-
@@ -43,11 +52,6 @@ class CharacterSelectState(State):
             screen.
         vs_text: A Surface containing text that says "VS". It will be
             drawn between the two CharacterPreviews.
-        spritesheets: A tuple of Surfaces for all of the characters'
-            preview animations.
-        all_frame_durations: A tuple containing tuples of ints, for the
-            duration of each frame in all characters' preview
-            animations.
         p1_char_index: An integer for the index of the character
             selected and confirmed by player 1.
         p2_char_index: An integer for the index of the character
@@ -63,37 +67,26 @@ class CharacterSelectState(State):
     VS_POSITION = (166, 80)
 
     @staticmethod
-    def load_all_spritesheets(all_chars):
-        """Return a tuple of Surfaces, containing the spritesheets for
-        the first Action defined in every character.
+    def load_all_preview_data(all_chars):
+        """Return a tuple of PreviewData tuples for all characters'
+        preview animations.
 
         Args:
             all_chars: A tuple of CharacterData objects for all of the
                 characters included in the game.
         """
-        spritesheet_paths = []
+        all_preview_data = []
 
         for character in all_chars:
-            spritesheet_paths.append(
-                character.action_list[0].spritesheet_path)
+            name = character.name
+            spritesheet_path = character.action_list[0].spritesheet_path
+            spritesheet = pygame.image.load(spritesheet_path).convert_alpha()
+            frame_durations = load_frame_durations(character.action_list[0])
 
-        return load_tuple_of_images(tuple(spritesheet_paths))
+            all_preview_data.append(PreviewData(name, spritesheet,
+                                                frame_durations))
 
-    @staticmethod
-    def load_all_frame_durations(all_chars):
-        """Return a tuple containing tuples of ints, for the duration of
-        each frame within the first Action of all characters.
-        """
-        all_frame_durations = []
-
-        for character in all_chars:
-            frame_durations = []
-            for frame in character.action_list[0].frames:
-                frame_durations.append(frame.duration)
-
-            all_frame_durations.append(tuple(frame_durations))
-
-        return tuple(all_frame_durations)
+        return tuple(all_preview_data)
 
 
 class PlayerSelectPrompt(object):

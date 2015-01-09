@@ -8,7 +8,7 @@ import pygame
 from pygame.locals import Rect
 
 
-def load_all_frame_durations(action):
+def load_frame_durations(action):
     """Return a tuple containing tuples of ints, for the duration of
     each frame within the specified Action.
 
