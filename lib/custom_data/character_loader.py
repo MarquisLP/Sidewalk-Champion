@@ -58,7 +58,7 @@ def load_all_characters():
             # None is returned if there was an error reading the file.
             # If that happens, the current character won't be added and
             # the function will skip to the next character.
-            if new_character != None:
+            if new_character is not None:
                 character_list.append(new_character)
 
     return character_list
@@ -88,7 +88,7 @@ def load_default_actions(character_element):
     default_element = character_element.find('default_actions')
 
     for default_action in default_element:
-        default_list.update({default_action.tag:default_action.text})
+        default_list.update({default_action.tag: default_action.text})
 
     return default_list
 
@@ -115,7 +115,7 @@ def load_all_actions(character_element):
 
     # If any of the Actions are None, there must have been an error
     # loading data from one or more of the elements.
-    if has_null_items_in_list(all_actions) == True:
+    if has_null_items_in_list(all_actions):
         return None
 
     return all_actions
@@ -164,7 +164,7 @@ def load_all_frames(parent_element):
     if len(all_frames) < 1:
         return None
 
-    if has_null_items_in_list(all_frames) == True:
+    if has_null_items_in_list(all_frames):
         return None
 
     return all_frames
@@ -188,7 +188,7 @@ def load_all_hurtboxes(frame_element):
     # Note that it is possible for a Frame to not have any hurtboxes.
     # (This also applies to hitboxes and projectiles.)
 
-    if has_null_items_in_list(all_hurtboxes) == True:
+    if has_null_items_in_list(all_hurtboxes):
         return None
 
     return all_hurtboxes
@@ -230,7 +230,7 @@ def load_all_projectiles(frame_element):
         new_projectile = load_projectile_data(projectile_element)
         all_projectiles.append(new_projectile)
 
-    if has_null_items_in_list(all_projectiles) == True:
+    if has_null_items_in_list(all_projectiles):
         return None
 
     return all_projectiles
@@ -249,7 +249,7 @@ def load_character_data(xml_path):
     character_element = load_xml('characters/' + xml_path, 'character')
     # Immediately return an error if the XML file lacks a 'character' root
     # element.
-    if character_element == None:
+    if character_element is None:
         return None
 
     character.name = character_element.get('name')
@@ -266,7 +266,7 @@ def load_character_data(xml_path):
     # have been missing important attributes. In this case, None should be
     # returned to indicate an error and not have the character loaded into
     # the game.
-    if has_null_attributes(character) == True:
+    if has_null_attributes(character):
         return None
 
     # Values from XML tags are read as Strings, so numeric values have to
@@ -278,7 +278,7 @@ def load_character_data(xml_path):
     character.speed = int(character.speed)
     character.stun_threshold = int(character.stun_threshold)
 
-    if has_all_default_names(character.default_actions) == False:
+    if not has_all_default_names(character.default_actions):
         return None
 
     return character
@@ -309,7 +309,7 @@ def load_action(action_element):
     action.frames = load_all_frames(action_element)
     action.input_list = load_all_inputs(action_element)
 
-    if has_null_attributes(action) == True:
+    if has_null_attributes(action):
         return None
 
     action.frame_width = int(action.frame_width)
@@ -397,7 +397,7 @@ def load_hurtbox(hurtbox_element):
 
     hurtbox.rect = load_collision_rect(hurtbox_element)
 
-    if has_null_attributes(hurtbox) == True:
+    if has_null_attributes(hurtbox):
         return None
 
     return hurtbox
@@ -423,7 +423,7 @@ def load_hitbox(hitbox_element):
     hitbox.can_block_high = hitbox_element.get('high_block')
     hitbox.can_block_low = hitbox_element.get('low_block')
 
-    if has_null_attributes(hitbox) == True:
+    if has_null_attributes(hitbox):
         return None
 
     hitbox.damage = int(hitbox.damage)
@@ -452,9 +452,9 @@ def load_projectile_data(projectile_element):
     # Most of the data for the Projectile is kept in a separate XML file,
     # which is referenced in the 'filepath' attribute.
     projectile_doc_path = projectile_element.get('filepath')
-    if is_valid_xml('characters/' + projectile_doc_path,
-                    PROJECTILE_VERIFY_CODE,
-                    'projectile') == False:
+    if not is_valid_xml('characters/' + projectile_doc_path,
+                        PROJECTILE_VERIFY_CODE,
+                        'projectile'):
         return None
     projectile_doc = load_xml('characters/' + projectile_doc_path,
                               'projectile')
