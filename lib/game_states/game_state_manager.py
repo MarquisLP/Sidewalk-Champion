@@ -48,8 +48,7 @@ class GameStateManager(object):
             screen_scale in state_pass.settings.)
     """
     # Initialization
-    def __init__(self, screen, clock, all_characters, all_stages,
-                 settings_data):
+    def __init__(self, screen, clock, settings_data):
         """Initialize instance variables.
 
         Args:
@@ -62,8 +61,6 @@ class GameStateManager(object):
             settings_data: A SettingsData object for various options
                 that can be set by the players via the Settings screen.
         """
-        self.character_list = all_characters
-        self.stage_list = all_stages
         self.clock = clock
         self.screen = screen
         self.state_pass = StatePass(settings_data)

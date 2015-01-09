@@ -31,14 +31,10 @@ def check_pygame_modules():
 
 # Do some necessary checks and load external data while the game starts up.
 if check_pygame_modules() == True:
-    char_loader = CharacterLoader()
     settings_loader = SettingsManager()
-    all_characters = char_loader.load_all_characters()
-    all_stages = []
     settings = settings_loader.load_settings()
 
-    # We don't need these objects once they've finished loading data.
-    del(char_loader)
+    # We don't need the SettingsManager once it's finished loading data.
     del(settings_loader)
 
     display_flags = 0
@@ -50,8 +46,7 @@ if check_pygame_modules() == True:
     pygame.display.set_caption('Sidewalk Champion')
     clock = pygame.time.Clock()
 
-    state_manager = GameStateManager(screen, clock, all_characters,
-                                     all_stages, settings)
+    state_manager = GameStateManager(screen, clock, settings)
     state_manager.run_game()
 else:
     pygame.quit()
