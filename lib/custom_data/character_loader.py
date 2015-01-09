@@ -66,7 +66,7 @@ def load_all_characters():
     if len(character_list) <= 0:
         return None
     else:
-        return character_list
+        return tuple(character_list)
 
 
 def load_character(line_index):
@@ -127,7 +127,7 @@ def load_default_actions(character_element):
 
 def load_all_actions(character_element):
     """Load all action elements from a character XML element and
-    return them as a List of Action objects.
+    return them as a tuple of Action objects.
     Return None if any of the action elements have errors.
     
     Keyword arguments:
@@ -150,12 +150,12 @@ def load_all_actions(character_element):
     if has_null_items_in_list(all_actions):
         return None
 
-    return all_actions
+    return tuple(all_actions)
 
 
 def load_all_inputs(action_element):
     """Load all of the input steps and their containing buttons
-    and return them as a List of InputStep objects.
+    and return them as a tuple of InputStep objects.
 
     Keyword arguments:
         action_element  The action XML element that contains an
@@ -173,12 +173,12 @@ def load_all_inputs(action_element):
 
         inputs.append(new_input_step)
 
-    return inputs
+    return tuple(inputs)
 
 
 def load_all_frames(parent_element):
     """Load all frame elements from an action XML element and
-    return them as a List of Frame objects.
+    return them as a tuple of Frame objects.
     Return None if any of the hurtbox elements have errors.
     
     Keyword arguments:
@@ -199,12 +199,12 @@ def load_all_frames(parent_element):
     if has_null_items_in_list(all_frames):
         return None
 
-    return all_frames
+    return tuple(all_frames)
 
 
 def load_all_hurtboxes(frame_element):
     """Load all hurtbox elements from a frame XML element and
-    return them as a List of Hurtbox objects.
+    return them as a tuple of Hurtbox objects.
     Return None if any of the hurtbox elements have errors.
     
     Keyword arguments:
@@ -223,12 +223,12 @@ def load_all_hurtboxes(frame_element):
     if has_null_items_in_list(all_hurtboxes):
         return None
 
-    return all_hurtboxes
+    return tuple(all_hurtboxes)
 
 
 def load_all_hitboxes(frame_element):
     """Load all hitbox elements from a frame XML element and
-    return them as a List of Hitbox objects.
+    return them as a tuple of Hitbox objects.
     Return None if any of the hitbox elements have errors.
     
     Keyword arguments:
@@ -244,12 +244,12 @@ def load_all_hitboxes(frame_element):
     if has_null_items_in_list(all_hitboxes):
         return None
 
-    return all_hitboxes
+    return tuple(all_hitboxes)
 
 
 def load_all_projectiles(frame_element):
     """Load all projectile elements from a frame XML element and
-    return them as a List of Projectile objects.
+    return them as a tuple of Projectile objects.
     Return None if any of the projectile elements have errors.
     
     Keyword arguments:
@@ -265,7 +265,7 @@ def load_all_projectiles(frame_element):
     if has_null_items_in_list(all_projectiles):
         return None
 
-    return all_projectiles
+    return tuple(all_projectiles)
 
 
 # Load individual Elements.
