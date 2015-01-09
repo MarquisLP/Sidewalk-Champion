@@ -1,7 +1,26 @@
 """All classes in this module are read-only data classes and should not
-have their values modified after being loaded from external files."""
+have their values modified after being loaded from external files.
+
+This module also contains various methods for retrieving data from these
+classes.
+"""
 import pygame
 from pygame.locals import Rect
+
+
+def load_all_frame_durations(action):
+    """Return a tuple containing tuples of ints, for the duration of
+    each frame within the specified Action.
+
+    Args:
+        action: The Action that will be read.
+    """
+    frame_durations = []
+
+    for frame in action.frames:
+        frame_durations.append(frame.duration)
+
+    return tuple(frame_durations)
 
 
 class CharacterData(object):
