@@ -747,7 +747,7 @@ class CharacterPreview(object):
             is_facing_left: A Boolean indicating whether the character
                 is facing to the left, rather than to the right (which
                 is the default direction for characters in this game).
-            spritesheet_path: A Surface containing the character
+            spritesheet: A Surface containing the character
                 animation's spritesheet image.
             name: A String for the character's name.
             name_font: The PyGame font used for rendering the
