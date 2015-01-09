@@ -11,6 +11,7 @@ from lib.graphics import convert_to_colorkey_alpha
 from lib.graphics import Animation
 from lib.graphics import CharacterAnimation
 from lib.globals import SCREEN_SIZE
+from lib.custom_data.character_loader import load_all_characters
 from lib.game_states.state import State
 
 
@@ -44,6 +45,9 @@ class CharacterSelectState(State):
             drawn between the two CharacterPreviews.
         spritesheets: A tuple of Surfaces for all of the characters'
             preview animations.
+        all_frame_durations: A tuple containing tuples of ints, for the
+            duration of each frame in all characters' preview
+            animations.
         p1_char_index: An integer for the index of the character
             selected and confirmed by player 1.
         p2_char_index: An integer for the index of the character
@@ -74,6 +78,22 @@ class CharacterSelectState(State):
                 character.action_list[0].spritesheet_path)
 
         return load_tuple_of_images(tuple(spritesheet_paths))
+
+    @staticmethod
+    def load_all_frame_durations(all_chars):
+        """Return a tuple containing tuples of ints, for the duration of
+        each frame within the first Action of all characters.
+        """
+        all_frame_durations = []
+
+        for character in all_chars:
+            frame_durations = []
+            for frame in character.action_list[0].frames:
+                frame_durations.append(frame.duration)
+
+            all_frame_durations.append(tuple(frame_durations))
+
+        return tuple(all_frame_durations)
 
 
 class PlayerSelectPrompt(object):
