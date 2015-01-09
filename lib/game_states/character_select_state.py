@@ -58,6 +58,18 @@ class CharacterSelectState(State):
     VS_UNDERLINE_COLOR = (80, 80, 80)
     VS_POSITION = (166, 80)
 
+    def load_all_spritesheets(self, all_chars):
+        """ Return a tuple of Surfaces, containing the spritessheets for
+        the first Action defined in every character.
+        """
+        spritesheet_paths = []
+
+        for character in all_chars:
+            spritesheet_paths.append(
+                character.action_list[0].spritesheet_path)
+
+        return load_tuple_of_images(tuple(spritesheet_paths))
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
