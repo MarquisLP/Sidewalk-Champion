@@ -58,8 +58,9 @@ class CharacterSelectState(State):
     VS_UNDERLINE_COLOR = (80, 80, 80)
     VS_POSITION = (166, 80)
 
+    @staticmethod
     def load_all_spritesheets(self, all_chars):
-        """ Return a tuple of Surfaces, containing the spritessheets for
+        """ Return a tuple of Surfaces, containing the spritesheets for
         the first Action defined in every character.
         """
         spritesheet_paths = []
