@@ -9,7 +9,6 @@
 import os
 import pygame
 from pygame.locals import *
-from lib.custom_data.character_loader import CharacterLoader
 from lib.custom_data.settings_manager import SettingsManager
 from lib.game_states.game_state_manager import *
 from lib.globals import SCREEN_SIZE
