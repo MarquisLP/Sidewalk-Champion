@@ -55,8 +55,9 @@ class CharacterSelectState(State):
     FONT_SIZE = 12
     VS_SIZE = 28
     VS_COLOR = (255, 255, 255)
-    VS_UNDERLINE_COLOR
+    VS_UNDERLINE_COLOR = (80, 80, 80)
     VS_POSITION = (166, 80)
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
