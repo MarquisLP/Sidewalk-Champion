@@ -62,6 +62,10 @@ class CharacterSelectState(State):
     def load_all_spritesheets(self, all_chars):
         """ Return a tuple of Surfaces, containing the spritesheets for
         the first Action defined in every character.
+        
+        Args:
+            all_chars: A tuple of CharacterData objects for all of the
+                characters included in the game.
         """
         spritesheet_paths = []
 
