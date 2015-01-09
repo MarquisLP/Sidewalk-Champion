@@ -69,6 +69,33 @@ def load_all_characters():
         return character_list
 
 
+def load_character(line_index):
+    """Load a specific character from the list specified in the
+    character list text file.
+
+    Args:
+        line_index: An integer for the line index of the character file's
+            file path within the character list text file.
+            Note that like indexing in other parts of Python, this also
+            starts at 0.
+
+    Returns:
+        The specified character's data as a CharacterData object. If
+        there was an error loading data, None is returned instead.
+        None will also be returned if the line_index exceeds the number
+        of lines in the text file.
+    """
+    xml_paths = get_character_paths()
+    if line_index > len(xml_paths) - 1:
+        return None
+
+    character_path = xml_paths[line_index]
+    if is_valid_xml('characters/' + character_path, CHARACTER_VERIFY_CODE,
+                    'character'):
+        character_data = load_character_data(character_path)
+        return character_data
+
+
 def get_character_paths():
     """Return a List of all of the filepaths to the XML files for
     playable characters.
