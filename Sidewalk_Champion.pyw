@@ -48,6 +48,7 @@ if check_pygame_modules() == True:
                                       SCREEN_SIZE[1] * settings.screen_scale),
                                      display_flags)
     pygame.display.set_caption('Sidewalk Champion')
+    pygame.mouse.set_visible(False)
     clock = pygame.time.Clock()
 
     state_manager = GameStateManager(screen, clock, all_characters,
