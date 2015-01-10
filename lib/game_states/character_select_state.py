@@ -77,12 +77,36 @@ class CharacterSelectState(State):
                 passed between Game States.
         """
         super(CharacterSelectState, self).__init__(state_manager, state_pass)
-
-        all_chars = load_all_characters()
         general_font = pygame.font.Font(self.FONT_PATH, self.FONT_SIZE)
         vs_font = pygame.font.Font(self.FONT_PATH, self.VS_SIZE)
 
+        # Call load_state() to initialize the following four attributes.
+        self.roster = None
+        self.all_preview_data = None
+        self.p1_preview = None
+        self.p2_preview = None
+
         self.bg_lines = BackgroundLines()
+        self.select_prompt = PlayerSelectPrompt(general_font)
+        self.vs_text = render_outlined_text(vs_font, 'VS', self.VS_COLOR,
+                                            self.VS_OUTLINE_COLOR)
+        self.p1_char_index = None
+        self.p2_char_index = None
+        self.next_state = StateIDs.SELECT_CHARACTER
+
+    def load_state(self):
+        """Load all of the required data that will be used by this
+        State for the duration of the game.
+
+        Most notably, this includes loading PreviewData from external
+        character files and drawing and storing all of the required
+        images. As such, it is most efficient to call this method once
+        per game when this State is loaded for the first time.
+        """
+        self.is_loaded = True
+        general_font = pygame.font.Font(self.FONT_PATH, self.FONT_SIZE)
+        all_chars = load_all_characters()
+
         self.roster = RosterDisplay(all_chars)
         self.all_preview_data = self.load_all_preview_data(all_chars)
         first_char = self.all_preview_data[0]
@@ -92,12 +116,6 @@ class CharacterSelectState(State):
         self.p2_preview = CharacterPreview(True, first_char.spritesheet,
                                            first_char.name, general_font,
                                            first_char.frame_durations)
-        self.select_prompt = PlayerSelectPrompt(general_font)
-        self.vs_text = render_outlined_text(vs_font, 'VS', self.VS_COLOR,
-                                            self.VS_OUTLINE_COLOR)
-        self.p1_char_index = None
-        self.p2_char_index = None
-        self.next_state = StateIDs.SELECT_CHARACTER
 
     @staticmethod
     def load_all_preview_data(all_chars):
