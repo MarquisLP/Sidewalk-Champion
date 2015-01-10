@@ -20,10 +20,13 @@ Attributes:
                                 characters' XML files.
                                 The paths are separated by a
                                 new-line.
+    FILEPATH_PREFIX             The file path of the root directory
+                                where all character data files are kept.
 """
 CHARACTER_VERIFY_CODE = "dfh943ooJLM3"
 PROJECTILE_VERIFY_CODE = "f849udjQMoh7"
 CHARACTER_LIST_PATH = "characters/character_list.txt"
+FILEPATH_PREFIX = "characters/"
 
 
 # Error Checking
@@ -53,8 +56,8 @@ def load_all_characters():
     xml_paths = get_character_paths()
 
     for character_path in xml_paths:
-        if is_valid_xml('characters/' + character_path, CHARACTER_VERIFY_CODE,
-                        'character'):
+        if is_valid_xml(FILEPATH_PREFIX + character_path,
+                        CHARACTER_VERIFY_CODE, 'character'):
             new_character = load_character_data(character_path)
 
             # None is returned if there was an error reading the file.
@@ -90,7 +93,7 @@ def load_character(line_index):
         return None
 
     character_path = xml_paths[line_index]
-    if is_valid_xml('characters/' + character_path, CHARACTER_VERIFY_CODE,
+    if is_valid_xml(FILEPATH_PREFIX + character_path, CHARACTER_VERIFY_CODE,
                     'character'):
         character_data = load_character_data(character_path)
         return character_data
@@ -278,7 +281,7 @@ def load_character_data(xml_path):
         xml_path    The filepath to the character's XML data file.
     """
     character = CharacterData()
-    character_element = load_xml('characters/' + xml_path, 'character')
+    character_element = load_xml(FILEPATH_PREFIX + xml_path, 'character')
     # Immediately return an error if the XML file lacks a 'character' root
     # element.
     if character_element is None:
@@ -310,7 +313,7 @@ def load_character_data(xml_path):
     character.speed = int(character.speed)
     character.stun_threshold = int(character.stun_threshold)
     # The mugshot file path also needs to be prefixed.
-    character.mugshot_path = 'characters/' + character.mugshot_path
+    character.mugshot_path = FILEPATH_PREFIX + character.mugshot_path
 
     if not has_all_default_names(character.default_actions):
         return None
@@ -346,7 +349,7 @@ def load_action(action_element):
     if has_null_attributes(action):
         return None
 
-    action.spritesheet_path = 'characters/' + action.spritesheet_path
+    action.spritesheet_path = FILEPATH_PREFIX + action.spritesheet_path
     action.frame_width = int(action.frame_width)
     action.frame_height = int(action.frame_height)
     action.x_offset = int(action.x_offset)
@@ -487,11 +490,11 @@ def load_projectile_data(projectile_element):
     # Most of the data for the Projectile is kept in a separate XML file,
     # which is referenced in the 'filepath' attribute.
     projectile_doc_path = projectile_element.get('filepath')
-    if not is_valid_xml('characters/' + projectile_doc_path,
+    if not is_valid_xml(FILEPATH_PREFIX + projectile_doc_path,
                         PROJECTILE_VERIFY_CODE,
                         'projectile'):
         return None
-    projectile_doc = load_xml('characters/' + projectile_doc_path,
+    projectile_doc = load_xml(FILEPATH_PREFIX + projectile_doc_path,
                               'projectile')
 
     projectile.name = projectile_doc.get('name')
