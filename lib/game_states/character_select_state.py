@@ -105,7 +105,11 @@ class CharacterSelectState(State):
         """
         self.is_loaded = True
         general_font = pygame.font.Font(self.FONT_PATH, self.FONT_SIZE)
+
         all_chars = load_all_characters()
+        if all_chars is None:
+            self.roster = RosterDisplay(None)
+            return
 
         self.roster = RosterDisplay(all_chars)
         self.all_preview_data = self.load_all_preview_data(all_chars)
@@ -354,14 +358,18 @@ class RosterDisplay():
     BACKGROUND_COLOR = (255, 255, 255)
     ARROW_DISTANCE = 11
 
-    def __init__(self, all_chars):
+    def __init__(self, all_chars=None):
         """Declare and initialize instance variables.
 
         Args:
             all_chars: A tuple of CharacterData objects for all of the
                 characters included in the game.
+                If None is passed, a blank roster will be created.
         """
-        self.mugshots = self.load_all_mugshots(all_chars)
+        if all_chars is None:
+            self.mugshots = []
+        else:
+            self.mugshots = self.load_all_mugshots(all_chars)
         self.rendered_row = self.render_row(0)
         self.x = self.get_screen_centered_x()
         self.y = SCREEN_SIZE[1] - self.rendered_row.get_height()
