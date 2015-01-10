@@ -61,7 +61,7 @@ class CharacterSelectState(State):
             by the game. See the StateIDs enum for possible values.
     """
     FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
-    FONT_SIZE = 12
+    FONT_SIZE = 16
     VS_SIZE = 28
     VS_COLOR = (255, 255, 255)
     VS_OUTLINE_COLOR = (80, 80, 80)
