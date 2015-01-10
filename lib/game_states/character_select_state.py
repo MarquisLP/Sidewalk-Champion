@@ -65,7 +65,7 @@ class CharacterSelectState(State):
     VS_SIZE = 28
     VS_COLOR = (255, 255, 255)
     VS_OUTLINE_COLOR = (80, 80, 80)
-    VS_POSITION = (166, 80)
+    VS_POSITION = (169, 80)
 
     def __init__(self, state_manager, state_pass):
         """Declare and initialize instance variables.
