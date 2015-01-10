@@ -15,6 +15,7 @@ from lib.globals import SCREEN_SIZE
 from lib.custom_data.character_data import load_frame_durations
 from lib.custom_data.character_loader import load_all_characters
 from lib.game_states.state import State
+from lib.game_states.state_ids import StateIDs
 
 
 PreviewData = collections.namedtuple('PreviewData',
@@ -63,8 +64,40 @@ class CharacterSelectState(State):
     FONT_SIZE = 12
     VS_SIZE = 28
     VS_COLOR = (255, 255, 255)
-    VS_UNDERLINE_COLOR = (80, 80, 80)
+    VS_OUTLINE_COLOR = (80, 80, 80)
     VS_POSITION = (166, 80)
+
+    def __init__(self, state_manager, state_pass):
+        """Declare and initialize instance variables.
+
+        Args:
+            state_manager: The GameStateManager that owns and runs this
+                Game State.
+            state_pass: The StatePass object containing all of the data
+                passed between Game States.
+        """
+        super(CharacterSelectState, self).__init__(state_manager, state_pass)
+
+        all_chars = load_all_characters()
+        general_font = pygame.font.Font(self.FONT_PATH, self.FONT_SIZE)
+        vs_font = pygame.font.Font(self.FONT_PATH, self.VS_SIZE)
+
+        self.bg_lines = BackgroundLines()
+        self.roster = RosterDisplay(all_chars)
+        self.all_preview_data = self.load_all_preview_data(all_chars)
+        first_char = self.all_preview_data[0]
+        self.p1_preview = CharacterPreview(False, first_char.spritesheet,
+                                           first_char.name, general_font,
+                                           first_char.frame_durations)
+        self.p2_preview = CharacterPreview(True, first_char.spritesheet,
+                                           first_char.name, general_font,
+                                           first_char.frame_durations)
+        self.select_prompt = PlayerSelectPrompt(general_font)
+        self.vs_text = render_outlined_text(vs_font, 'VS', self.VS_COLOR,
+                                            self.VS_OUTLINE_COLOR)
+        self.p1_char_index = None
+        self.p2_char_index = None
+        self.next_state = StateIDs.SELECT_CHARACTER
 
     @staticmethod
     def load_all_preview_data(all_chars):
