@@ -28,7 +28,6 @@ def pygame_modules_have_loaded():
 
     return success
 
-
 pygame.init()
 pygame.font.init()
 pygame.mixer.init(44100)
@@ -39,12 +38,13 @@ if pygame_modules_have_loaded():
     clock = pygame.time.Clock()
     timer_rate = int((1.0 / FRAME_RATE) * 1000)
     pygame.time.set_timer(USEREVENT, timer_rate)
-    
-    # The class(es) that will be tested should be declared and initialized
-    # here in the global scope.
-    # Yes, globals are evil, but for a confined test script they will make
-    # everything much easier. This way, you can access the class(es) from all
-    # three of the methods provided below.
+
+    def declare_globals():
+        # The class(es) that will be tested should be declared and initialized
+        # here with the global keyword.
+        # Yes, globals are evil, but for a confined test script they will make
+        # everything much easier. This way, you can access the class(es) from
+        # all three of the methods provided below.
 
     def prepare_test():
         # Add in any code that needs to be run before the game loop starts.
