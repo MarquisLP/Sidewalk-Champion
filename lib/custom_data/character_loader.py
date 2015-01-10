@@ -309,6 +309,8 @@ def load_character_data(xml_path):
     character.stamina = int(character.stamina)
     character.speed = int(character.speed)
     character.stun_threshold = int(character.stun_threshold)
+    # The mugshot file path also needs to be prefixed.
+    character.mugshot_path = 'characters/' + character.mugshot_path
 
     if not has_all_default_names(character.default_actions):
         return None
@@ -344,6 +346,7 @@ def load_action(action_element):
     if has_null_attributes(action):
         return None
 
+    action.spritesheet_path = 'characters/' + action.spritesheet_path
     action.frame_width = int(action.frame_width)
     action.frame_height = int(action.frame_height)
     action.x_offset = int(action.x_offset)
