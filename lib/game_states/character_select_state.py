@@ -70,7 +70,7 @@ class CharacterSelectState(State):
     VS_SIZE = 28
     VS_COLOR = (255, 255, 255)
     VS_OUTLINE_COLOR = (80, 80, 80)
-    VS_POSITION = (164, 80)
+    VS_POSITION = (167, 80)
     NO_CHARS_POSITION = (40, 78)
 
     def __init__(self, state_manager, state_pass):
