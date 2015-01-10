@@ -1,43 +1,43 @@
 ﻿<sidewalk_champion>
     <character name="Ryu" stamina="1000" speed="80" stun_threshold="100" mugshot="ryu/images/mug.png">
         <action name="Stand" filepath="ryu/images/stand.png" width="78" height="111" x_offset="0" condition="0" multi_hit="0" priority="1" meter_gain="0" meter_needed="0" proximity="0" start_counter_frame="0">
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="8" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="16" width="54" height="95" />
             </frame>
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="8" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="16" width="54" height="95" />
             </frame>
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="2" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
             </frame>
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="0" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
             </frame>
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="0" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
             </frame>
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="0" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
             </frame>
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="0" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
             </frame>
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="1" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
             </frame>
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="2" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="10" width="54" height="101" />
             </frame>
-            <frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
+            <frame duration="5" cancelable="0" move_x="0" move_y="0" sfx="">
                 <hurtbox x_offset="35" y_offset="6" width="19" height="17" />
                 <hurtbox x_offset="12" y_offset="14" width="54" height="97" />
             </frame>
