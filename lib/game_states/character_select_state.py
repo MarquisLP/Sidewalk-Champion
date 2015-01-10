@@ -37,6 +37,9 @@ class CharacterSelectState(State):
             RGB color of the VS text's outline.
         VS_POSITION: A tuple of two integers, for the x and y-positions
             of the VS text relative to the screen.
+        NO_CHARS_POSITION: A tuple of two integers for the x and y-
+            positions of the 'No Characters' text relative to the
+            screen.
 
     Attributes:
         bg_lines: BackgroundLines that will be drawn on the screen.
@@ -53,6 +56,8 @@ class CharacterSelectState(State):
             screen.
         vs_text: A Surface containing text that says "VS". It will be
             drawn between the two CharacterPreviews.
+        no_chars_text: A Surface containing a message that will be shown
+            indicating that no characters could be loaded into the game.
         p1_char_index: An integer for the index of the character
             selected and confirmed by player 1.
         p2_char_index: An integer for the index of the character
@@ -66,6 +71,7 @@ class CharacterSelectState(State):
     VS_COLOR = (255, 255, 255)
     VS_OUTLINE_COLOR = (80, 80, 80)
     VS_POSITION = (169, 80)
+    NO_CHARS_POSITION = (40, 78)
 
     def __init__(self, state_manager, state_pass):
         """Declare and initialize instance variables.
@@ -90,6 +96,8 @@ class CharacterSelectState(State):
         self.select_prompt = PlayerSelectPrompt(general_font)
         self.vs_text = render_outlined_text(vs_font, 'VS', self.VS_COLOR,
                                             self.VS_OUTLINE_COLOR)
+        self.no_chars_text = vs_font.render('No characters loaded',
+                                            True, self.VS_COLOR)
         self.p1_char_index = None
         self.p2_char_index = None
         self.next_state = StateIDs.SELECT_CHARACTER
