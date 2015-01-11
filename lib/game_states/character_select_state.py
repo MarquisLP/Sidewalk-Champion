@@ -151,6 +151,14 @@ class CharacterSelectState(State):
 
         return tuple(all_preview_data)
 
+    def get_current_player(self):
+        """Return the number of the player currently making their
+        selection (either 1 or 2)."""
+        if self.p1_char_index is None:
+            return 1
+        else:
+            return 2
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
