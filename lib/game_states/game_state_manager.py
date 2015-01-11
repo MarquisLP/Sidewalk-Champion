@@ -95,6 +95,20 @@ class GameStateManager(object):
                                         SCREEN_SIZE[1] * 3))
         self.scaled_surf = self.zoom_one_surf
 
+    # Support
+    def create_state_by_id(self, state_id):
+        """Initialize a new Game State and return it.
+
+        Args:
+            state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
+        """
+        if state_id == StateIDs.TITLE:
+            return TitleState(self, self.state_pass)
+        elif state_id == StateIDs.SETTINGS:
+            return SettingsState(self, self.state_pass)
+        # More will be added as new States are created.
+
     # Game Processing
     def change_state(self, next_state_id):
         """Pop the currently-active State from the stack and push a new State
@@ -103,9 +117,8 @@ class GameStateManager(object):
         Game processing will immediately switch to this new State.
 
         Args:
-            next_state_id: The index of the next State to run. This
-                index refers to the State's position within state_list.
-                See the StateIDs enum for possible values.
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
         """
         self.active_state_list.pop()
         self.push_state(next_state_id)
@@ -114,11 +127,10 @@ class GameStateManager(object):
         """Push a another State onto the stack and switch processing to it.
 
         Args:
-            next_state_id: The index of the next State to run. This
-                index refers to the State's position within state_list.
-                See the StateIDs enum for possible values.
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
         """
-        new_state = self.state_list[next_state_id]
+        new_state = self.create_state_by_id(StateIDs.TITLE)
         self.active_state_stack.append(new_state)
 
     def remove_active_state(self):
