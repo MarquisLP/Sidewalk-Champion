@@ -200,9 +200,11 @@ class TitleState(State):
             state_id: The index of the next Game State to be run. For
                 possible values, refer to the StateIDs enum.
         """
-        self.update_battle_settings()
-
-        super(TitleState, self).change_state(state_id)
+        if state_id == StateIDs.SETTINGS:
+            self.push_new_state(StateIDs.SETTINGS)
+        else:
+            self.update_battle_settings()
+            self.change_state(state_id)
 
     def update_battle_settings(self):
         """Set the battle parameters within the StatePass object using

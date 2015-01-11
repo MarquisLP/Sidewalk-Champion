@@ -156,9 +156,7 @@ class SettingsState(State):
             self.is_leaving_state = False
             self.update_game_settings()
             self.save_settings_to_file()
-
-            previous_state = self.state_manager.previous_state_id
-            self.state_manager.change_state(previous_state)
+            self.discard_state()
 
     def animate_slide(self, is_backwards=False):
         """Slide the Settings Screen in or out of the game window.

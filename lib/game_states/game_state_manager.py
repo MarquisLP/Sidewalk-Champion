@@ -118,7 +118,7 @@ class GameStateManager(object):
             next_state_id: An integer for the ID of the new State, according to
                 the StateIDs enum; view the enum itself for possible values.
         """
-        new_state = self.create_state_by_id(StateIDs.TITLE)
+        new_state = self.create_state_by_id(next_state_id)
         self.active_state_stack.append(new_state)
 
     def pop_top_state(self):

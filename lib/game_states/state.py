@@ -98,14 +98,38 @@ class State(object):
         raise NotImplementedError
 
     def change_state(self, state_id):
-        """Call another State for state_manager to display and update.
+        """Remove this State from the stack and switch processing to another
+        State.
 
         Keyword arguments:
-            state_id        The index of the next State to run. For
+            state_id        The ID of the next State to run. For
                             reference, use the StateIDs enum class
                             within the state_ids module.
         """
         self.state_manager.change_state(state_id)
+
+    def push_new_state(self, state_id):
+        """Call another State to update and draw 'on top' of this one.
+
+        This State will be left on the stack and if it is still visible on-
+        screen, it will continue to be updated and drawn in addition to the
+        new State.
+
+        Keyword arguments:
+            state_id        The ID of the next State to run. For
+                            reference, use the StateIDs enum class
+                            within the state_ids module.
+        """
+        self.state_manager.push_state(state_id)
+
+    def discard_state(self):
+        """Pop this State off the top of stack and switch processing the State
+        that was active before it.
+
+        Be careful not to call this method if this State is the only one on
+        the stack - weird things may happen.
+        """
+        self.state_manager.pop_top_state()
 
     def get_last_state_id(self):
         """Return the index of the State that was active before this
