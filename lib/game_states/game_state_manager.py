@@ -238,12 +238,15 @@ class GameStateManager(object):
             # global frame rate.
             milliseconds = self.clock.tick(FRAME_RATE)
             seconds = milliseconds / 1000.0
-            self.update_state(self.active_state_id, seconds)
+            
+            visible_states = self.get_visible_states()
+            for game_state in visible_states:
+                self.update_state(game_state)
 
-            self.scale_screen(
-                self.state_pass.settings.screen_scale)
+            self.scale_screen(self.state_pass.settings.screen_scale)
             self.draw_background()
-            self.draw_state(self.active_state_id)
+            for game_state in visible_states:
+                self.draw_state(game_state)
             pygame.display.update()
 
             sleep_time = (1000.0 / FRAME_RATE) - milliseconds
