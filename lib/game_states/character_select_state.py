@@ -238,6 +238,7 @@ class CharacterSelectState(State):
         """
         if self.get_current_player() == 1:
             self.p1_char_index = self.roster.get_character_index()
+            self.roster.select_first()
             self.select_prompt.toggle_player()
             self.roster.toggle_player_cursor()
         else:
