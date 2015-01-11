@@ -140,7 +140,7 @@ class GameStateManager(object):
     def get_seconds_elapsed(self):
         """Return the number of seconds elapsed since the last update.
         """
-        milliseconds = self.clock.tick()
+        milliseconds = self.clock.tick(FRAME_RATE)
         seconds = milliseconds / 1000.0
 
         return seconds
