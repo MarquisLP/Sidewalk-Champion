@@ -229,6 +229,7 @@ class CharacterSelectState(State):
         if self.get_current_player() == 1:
             self.next_state = StateIDs.TITLE
         else:
+            self.change_preview(0)
             p1_last_selection = self.p1_char_index
             self.p1_char_index = None
             self.roster.select_character(p1_last_selection)
@@ -247,7 +248,6 @@ class CharacterSelectState(State):
         if self.get_current_player() == 1:
             self.p1_char_index = self.roster.get_character_index()
             self.roster.select_first()
-            self.change_preview(0)
             self.toggle_player_display()
         else:
             self.p2_char_index = self.roster.get_character_index()
