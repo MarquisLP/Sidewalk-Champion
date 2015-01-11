@@ -185,7 +185,8 @@ class GameStateManager(object):
                    game_state.exact_offset[1] == 0.0):
                     screen_is_covered = True
 
-        return tuple(visible_states.reverse())
+        visible_states.reverse()
+        return tuple(visible_states)
 
     def update_state(self, updated_state, seconds):
         """Update the specified State.
