@@ -151,6 +151,34 @@ class CharacterSelectState(State):
 
         return tuple(all_preview_data)
 
+    def get_input_name(self, key_name):
+        """Get the name of the in-game input command based on the key
+        that was pressed.
+
+        Only the player who is in control will have their key bindings
+        checked. For example, if player 2 is currently choosing their
+        character, player 1's key bindings will not be looked at.
+
+        Args:
+            key_name: A String for the name of the key that was pressed.
+
+        Returns:
+            The String name of the in-game input command.
+            (e.g. 'forward', 'start', 'light punch')
+            None will be returned if key_name does not match any of the
+            current player's key bindings.
+        """
+        if self.get_current_player() == 1:
+            bindings_dict = self.state_pass.settings.player1_keys
+        else:
+            bindings_dict = self.state_pass.settings.player2_keys
+
+        for input_name in bindings_dict.keys():
+            if key_name == bindings_dict[input_name]:
+                return input_name
+
+        return None
+
     def confirm_character(self):
         """Save the currently-selected character as a player's fighter
         in the next battle and move onto the appropriate operation.
