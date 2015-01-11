@@ -174,14 +174,20 @@ class CharacterSelectState(State):
                 self.confirm_character()
         elif input_name == 'cancel':
             self.cancel_selection()
-        elif input_name == 'back':
-            self.roster.select_previous()
-        elif input_name == 'forward':
-            self.roster.select_next()
-        elif input_name == 'up':
-            self.roster.scroll_up_row()
-        elif input_name == 'down':
-            self.roster.scroll_down_row()
+        if input_name in ['back', 'forward', 'up', 'down']:
+            current_character = self.roster.get_character_index()
+
+            if input_name == 'back':
+                self.roster.select_previous()
+            elif input_name == 'forward':
+                self.roster.select_next()
+            elif input_name == 'up':
+                self.roster.scroll_up_row()
+            elif input_name == 'down':
+                self.roster.scroll_down_row()
+
+            if current_character != self.roster.get_character_index():
+                self.change_preview(self.roster.get_character_index())
 
     def get_input_name(self, key_name):
         """Get the name of the in-game input command based on the key
