@@ -257,9 +257,7 @@ class IntroAnimator(object):
         """Declare and initialize instance variables."""
         self.is_running = False
         self.voice = Sound(self.VOICE_PATH)
-        print self.voice.get_length()
         self.voice_duration = (self.voice.get_length() * FRAME_RATE)
-        print self.voice_duration
         self.voice_timer = 0
         self.voice_has_played = False
 
