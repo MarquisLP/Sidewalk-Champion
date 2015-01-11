@@ -182,8 +182,8 @@ class GameStateManager(object):
         Args:
             state_id: The index of the State to update within
                 state_list.
-            seconds: An integer for the amount of seconds elapsed since the
-                last update.
+            seconds: A float for the amount of seconds elapsed since the last
+                update.
         """
         self.state_list[state_id].update_state(seconds)
 
