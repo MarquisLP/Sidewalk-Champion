@@ -25,17 +25,15 @@ class GameStateManager(object):
             screen.
         clock: A timer provided by the PyGame time module. It records
             the time elapsed between updates in milliseconds.
-        active_state: The State object that will be updated and
-            displayed.
-        active_state_id: The index of the currently-active State within
-            state_list. Note that all of these indexes are labelled by
-            the StateIDs enum.
-        previous_state_id: The index of the previously-active State
-            within state_list.
         state_pass: A StatePass object containing info to pass between
             States as they are loaded.
         state_list: A List of all the State objects present within the
             game.
+        active_state_stack: A List containing all of the currently-active
+            States, in the order they were called. The top-most State will
+            always be called when the game updates, while other States
+            underneath it will only be drawn and updated if they are visible on
+            the screen.
         zoom_one_surf: A Surface with dimensions equivalent to the
             native resolution of the game. (See SCREEN_SIZE in
             globals.py.)
@@ -68,10 +66,7 @@ class GameStateManager(object):
         self.screen = screen
         self.state_pass = StatePass(settings_data)
         self.state_list = self.create_state_list()
-        self.active_state = self.state_list[StateIDs.TITLE]
-        self.active_state_id = StateIDs.TITLE
-        self.previous_state = None
-        self.previous_state_id = StateIDs.TITLE
+        self.active_state_stack = [self.state_list[StateIDs.TITLE]]
         self.create_scaled_surfaces()
 
         self.set_update_timer()
