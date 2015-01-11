@@ -86,11 +86,11 @@ class CharacterSelectState(State):
         general_font = pygame.font.Font(self.FONT_PATH, self.FONT_SIZE)
         vs_font = pygame.font.Font(self.FONT_PATH, self.VS_SIZE)
 
-        # Call load_state() to initialize the following four attributes.
         self.roster = None
         self.all_preview_data = None
         self.p1_preview = None
         self.p2_preview = None
+        self.load_data_from_file()
 
         self.bg_lines = BackgroundLines()
         self.select_prompt = PlayerSelectPrompt(general_font)
@@ -102,16 +102,11 @@ class CharacterSelectState(State):
         self.p2_char_index = None
         self.next_state = StateIDs.SELECT_CHARACTER
 
-    def load_state(self):
-        """Load all of the required data that will be used by this
-        State for the duration of the game.
-
-        Most notably, this includes loading PreviewData from external
-        character files and drawing and storing all of the required
-        images. As such, it is most efficient to call this method once
-        per game when this State is loaded for the first time.
+    def load_data_from_file(self):
+        """Load all of the required character data from external
+        character files and use it to create the roster and character
+        previews.
         """
-        self.is_loaded = True
         general_font = pygame.font.Font(self.FONT_PATH, self.FONT_SIZE)
 
         all_chars = load_all_characters()
