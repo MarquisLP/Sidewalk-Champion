@@ -1,1 +1,2 @@
 ryu/ryu.xml
+chun-li/chun-li.xml
