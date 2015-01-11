@@ -24,9 +24,6 @@ class State(object):
             updates this State.
         state_pass: The StatePass object that stores data to pass onto
             other States.
-        is_loaded: A Boolean indicating whether the load_state() method
-              has already been called for this State since the game
-              started.
         state_surface: All graphics in this State will be drawn
              onto this PyGame Surface.
         exact_offset: A tuple of floats that represent the coordinates
@@ -36,8 +33,6 @@ class State(object):
             so the coordinates will first need to be rounded and
             converted to integer values. Use the screen_offset() method
             to obtain drawing-friendly coordinates.
-        is_intro_on: A Boolean indicating whether the introduction
-            animation for this State is currently being shown.
         is_accepting_input: A Boolean indicating whether this State is
             currently responding to player input.
     """
@@ -48,30 +43,12 @@ class State(object):
                             and updates this State.
         state_pass          The StatePass object that stores info to
                             pass onto other States.
-
-        @type state_manager: GameStateManager
-        @type state_pass: StatePass
         """
         self.state_pass = state_pass
-        """@rtype: StatePass"""
-
         self.state_manager = state_manager
-        """@rtype: GameStateManager"""
-
         self.state_surface = Surface(SCREEN_SIZE)
-        """@rtype: Surface"""
-
         self.exact_offset = (0.0, 0.0)
-        """@rtype: tuple of (int, int)"""
-
-        self.is_loaded = False
-        """@rtype: bool"""
-
-        self.is_intro_on = False
-        """@rtype: bool"""
-
         self.is_accepting_input = True
-        """@rtype: bool"""
 
     def load_state(self):
         """Use the information passed on from the parameters to set up
@@ -121,14 +98,38 @@ class State(object):
         raise NotImplementedError
 
     def change_state(self, state_id):
-        """Call another State for state_manager to display and update.
+        """Remove this State from the stack and switch processing to another
+        State.
 
         Keyword arguments:
-            state_id        The index of the next State to run. For
+            state_id        The ID of the next State to run. For
                             reference, use the StateIDs enum class
                             within the state_ids module.
         """
         self.state_manager.change_state(state_id)
+
+    def push_new_state(self, state_id):
+        """Call another State to update and draw 'on top' of this one.
+
+        This State will be left on the stack and if it is still visible on-
+        screen, it will continue to be updated and drawn in addition to the
+        new State.
+
+        Keyword arguments:
+            state_id        The ID of the next State to run. For
+                            reference, use the StateIDs enum class
+                            within the state_ids module.
+        """
+        self.state_manager.push_state(state_id)
+
+    def discard_state(self):
+        """Pop this State off the top of stack and switch processing the State
+        that was active before it.
+
+        Be careful not to call this method if this State is the only one on
+        the stack - weird things may happen.
+        """
+        self.state_manager.pop_top_state()
 
     def get_last_state_id(self):
         """Return the index of the State that was active before this
@@ -178,10 +179,6 @@ class StatePass(object):
             character can use when playing action sounds.
         p2_channel_two: One of the two PyGame Channels that Player 2's
             character can use when playing action sounds.
-        will_reset_state: A Boolean indicating whether the next State
-            to be called should have its reset_state() method called.
-        enter_transition_on: A Boolean indicating whether the next State
-            to be called should play its introduction animation.
         character_one: The CharacterData object for player one's
             character.
         character_two: The CharacterData object for player two's
@@ -205,8 +202,6 @@ class StatePass(object):
         Keyword arguments:
             settings_data: The SettingsData object that will be
                 passed between all States.
-
-        @type settings_data: SettingsData
         """
         self.announcer_channel = Channel(0)
         self.ui_channel = Channel(1)
@@ -214,8 +209,6 @@ class StatePass(object):
         self.p1_channel_two = Channel(3)
         self.p2_channel_one = Channel(4)
         self.p2_channel_two = Channel(5)
-        self.will_reset_state = False
-        self.enter_transition_on = True
         self.character_one = CharacterData()
         self.character_two = CharacterData()
         #self.stage = StageData()

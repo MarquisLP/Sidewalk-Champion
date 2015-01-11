@@ -92,6 +92,7 @@ class TitleState(State):
         self.logo = Animation(self.LOGO_PATH, (self.LOGO_X, self.LOGO_Y),
                               self.LOGO_FRAMES, self.LOGO_DURATION)
         self.intro_animator = IntroAnimator()
+        self.intro_animator.reset(self.background, self.logo)
 
         confirm = Sound(self.SFX_CONFIRM_PATH)
         cancel = Sound(self.SFX_CANCEL_PATH)
@@ -107,15 +108,6 @@ class TitleState(State):
 
         self.option_lists = [prompt, main_options, battle_setup]
         self.current_options = TitleOptionList.PRESS_START
-
-        self.reset_state()
-
-    def load_state(self):
-        self.is_loaded = True
-
-    def reset_state(self):
-        """Prepare this State to be shown again."""
-        self.intro_animator.reset(self.background, self.logo)
         for option_list in self.option_lists:
             option_list.reset()
 
@@ -208,12 +200,11 @@ class TitleState(State):
             state_id: The index of the next Game State to be run. For
                 possible values, refer to the StateIDs enum.
         """
-        self.update_battle_settings()
-
-        self.state_pass.will_reset_state = True
-        self.state_pass.enter_transition_on = True
-
-        super(TitleState, self).change_state(state_id)
+        if state_id == StateIDs.SETTINGS:
+            self.push_new_state(StateIDs.SETTINGS)
+        else:
+            self.update_battle_settings()
+            self.change_state(state_id)
 
     def update_battle_settings(self):
         """Set the battle parameters within the StatePass object using
@@ -240,8 +231,6 @@ class IntroAnimator(object):
             the announcer states the title of the game.
         FADE_DELAY: An integer for the alpha value that the logo
             Animation must attain before the voice clip is played.
-        VOICE_DURATION: An integer for the duration of the voice clip,
-            in update cycles.
 
     Attributes:
         is_running: A Boolean indicating whether the animation is
@@ -253,6 +242,8 @@ class IntroAnimator(object):
             playing.
         voice_has_played: A Boolean indicating whether the voice clip
             has already played.
+        voice_duration: An integer for the duration of the voice clip,
+            in update cycles.
     """
     BG_OFFSET = 50.0
     BG_SCROLL_SPEED = 70.0
@@ -266,6 +257,7 @@ class IntroAnimator(object):
         """Declare and initialize instance variables."""
         self.is_running = False
         self.voice = Sound(self.VOICE_PATH)
+        self.voice_duration = (self.voice.get_length() * FRAME_RATE)
         self.voice_timer = 0
         self.voice_has_played = False
 
@@ -298,9 +290,9 @@ class IntroAnimator(object):
             sound_channel.play(self.voice)
             self.voice_has_played = True
         elif (self.voice_has_played and
-              self.voice_timer < self.VOICE_DURATION):
+              self.voice_timer < self.voice_duration):
             self.voice_timer += 1
-        elif self.voice_timer >= self.VOICE_DURATION:
+        elif self.voice_timer >= self.voice_duration:
             pygame.mixer.music.play(-1)
             logo.is_animated = True
             self.is_running = False
