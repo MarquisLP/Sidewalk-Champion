@@ -121,7 +121,7 @@ class GameStateManager(object):
         new_state = self.create_state_by_id(StateIDs.TITLE)
         self.active_state_stack.append(new_state)
 
-    def remove_active_state(self):
+    def pop_top_state(self):
         """Pop the currently-active State off the top of the stack and switch
         processing to the State underneath it.
         """
