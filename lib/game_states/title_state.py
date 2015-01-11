@@ -108,17 +108,6 @@ class TitleState(State):
         self.option_lists = [prompt, main_options, battle_setup]
         self.current_options = TitleOptionList.PRESS_START
 
-        self.reset_state()
-
-    def load_state(self):
-        self.is_loaded = True
-
-    def reset_state(self):
-        """Prepare this State to be shown again."""
-        self.intro_animator.reset(self.background, self.logo)
-        for option_list in self.option_lists:
-            option_list.reset()
-
     def update_state(self, time):
         """Update all processes within this State.
 
@@ -209,9 +198,6 @@ class TitleState(State):
                 possible values, refer to the StateIDs enum.
         """
         self.update_battle_settings()
-
-        self.state_pass.will_reset_state = True
-        self.state_pass.enter_transition_on = True
 
         super(TitleState, self).change_state(state_id)
 

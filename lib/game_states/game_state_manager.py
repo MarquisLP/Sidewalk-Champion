@@ -111,9 +111,6 @@ class GameStateManager(object):
     def change_state(self, next_state_id):
         """Push a another State onto the stack and switch processing to it.
 
-        State resetting and loading may also be performed depending on the
-        values within state_pass.
-
         Args:
             next_state_id: The index of the next State to run. This
                 index refers to the State's position within state_list.
@@ -122,14 +119,11 @@ class GameStateManager(object):
         new_state = self.state_list[next_state_id]
         self.active_state_stack.append(new_state)
 
-        if new_state.is_loaded:
-            new_state.load_state()
-        elif self.state_pass.will_reset_state:
-            new_state.reset_state()
-        
-        if self.state_pass.enter_transition_on:
-            new_state.is_intro_on = True
-            new_state.enter_transition_on = False
+    def remove_active_state(self):
+        """Pop the currently-active State off the top of the stack and switch
+        processing to the State underneath it.
+        """
+        self.active_state_stack.pop()
 
     def scale_screen(self, scale):
         """Resize the screen whenever the screen scale changes.

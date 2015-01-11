@@ -54,6 +54,8 @@ class SettingsState(State):
         is_editing_binding: A Boolean that indicates whether the next
             key press will be saved to the currently-selected Key
             Binding.
+        is_intro_on: A Boolean indicating whether the introductory slide
+            animation is currently running.
         is_leaving_state: A Boolean that indicates whether the game
             is currently in the process of exiting this State and going
             to another State.
@@ -89,9 +91,11 @@ class SettingsState(State):
         self.exit_sound = Sound(self.EXIT_SFX_PATH)
         self.is_editing_binding = False
         self.is_leaving_state = False
+        self.load_settings_from_file()
+        self.prepare_state()
 
-    def load_state(self):
-        """Prepare this State to be run for the first time."""
+    def load_settings_from_file(self):
+        """Load settings data from the external settings file."""
         loaded = self.state_pass.settings
         scale_setting = self.setting_list.settings[SettingIndex.SCALE]
         display_setting = self.setting_list.settings[SettingIndex.SHOW_BOXES]
@@ -99,12 +103,8 @@ class SettingsState(State):
         scale_setting.set_selected_option(loaded.screen_scale - 1)
         display_setting.set_selected_option(int(loaded.show_box_display))
 
-        self.reset_state()
-
-    def reset_state(self):
-        """Reset this State and prepare its introductory animation."""
-        self.state_pass.will_reset_state = False
-
+    def prepare_state(self):
+        """Set the cursor's default position and start the intro animation."""
         scale = self.state_pass.settings.screen_scale
         self.exact_offset = (SCREEN_SIZE[0] * scale, 0.0)
         self.setting_list.set_selected_setting(SettingIndex.SCALE)
