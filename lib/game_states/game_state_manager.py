@@ -178,6 +178,27 @@ class GameStateManager(object):
         scaled_surf = pygame.transform.scale(surf, new_size,
                                              self.scaled_surf)
 
+    def get_visible_states(self):
+        """Determine which States on the stack are currently visible
+        on-screen.
+
+        Returns:
+            A tuple containing the Game States that are both active and
+            visible.
+        """
+        visible_states = []
+        screen_is_covered = False
+        
+        for game_state in reversed(self.active_state_list):
+            if not screen_is_covered:
+                visible_states.append()
+                
+                if (game_state.exact_offset[0] == 0.0 and
+                   game_state.exact_offset[1] == 0.0):
+                    screen_is_covered = True
+
+        return tuple(visible_states)
+
     def update_state(self, state_id, seconds):
         """Update the specified State.
 
