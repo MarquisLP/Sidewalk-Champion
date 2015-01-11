@@ -169,11 +169,7 @@ class SettingsState(State):
         Args:
             is_backwards: A Boolean indicating whether the State Surface
                 should slide out of the window, rather than into it.
-
-        @type is_backwards: bool
         """
-        self.draw_previous_state()
-
         scale = self.state_pass.settings.screen_scale
         distance = (self.SLIDE_SPEED / FRAME_RATE) * scale
 
@@ -195,12 +191,6 @@ class SettingsState(State):
             # Prevent the screen from going past the right edge of the window.
             if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
                 self.exact_offset = (SCREEN_SIZE[0] * scale, 0.0)
-
-    def draw_previous_state(self):
-        """Draw the previously-active Game State."""
-        previous_state = self.state_manager.previous_state_id
-        self.state_manager.update_state(previous_state)
-        self.state_manager.draw_state(previous_state)
 
     # Input Handling
     def get_player_input(self, event):
@@ -349,13 +339,7 @@ class SettingsState(State):
     def draw_state(self):
         """Draw all of this State's contained graphics onto the State
         Surface.
-
-        If the State Screen is currently in the process of sliding into
-        or out of the window, the previously-active Game State will be
-        drawn underneath it until the animation finishes.
         """
-        if self.is_intro_on or self.is_leaving_state:
-            self.draw_previous_state()
 
         self.bg_image.draw(self.state_surface)
         self.setting_list.draw(self.state_surface)
