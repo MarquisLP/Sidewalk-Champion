@@ -265,6 +265,22 @@ class CharacterSelectState(State):
             self.p1_preview.update()
             self.p2_preview.update()
 
+    def draw_state(self):
+        """Render all of the State's graphical components onto the State
+        Surface.
+        """
+        self.bg_lines.draw(self.state_surface)
+        self.roster.draw(self.state_surface)
+        self.select_prompt.draw(self.state_surface)
+
+        if self.has_no_characters():
+            self.state_surface.blit(self.no_chars_text,
+                                    self.NO_CHARS_POSITION)
+        else:
+            self.state_surface.blit(self.vs_text, self.VS_POSITION)
+            self.p1_preview.draw(self.state_surface)
+            self.p2_preview.draw(self.state_surface)
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
