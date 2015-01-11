@@ -108,7 +108,7 @@ class GameStateManager(object):
         pygame.time.set_timer(USEREVENT, timer_rate)
 
     # Game Processing
-    def change_state(self, next_state_id):
+    def push_state(self, next_state_id):
         """Push a another State onto the stack and switch processing to it.
 
         Args:
