@@ -172,7 +172,7 @@ class GameStateManager(object):
 
         Returns:
             A tuple containing the Game States that are both active and
-            visible.
+            visible, in order from bottom to top of the stack.
         """
         visible_states = []
         screen_is_covered = False
@@ -185,7 +185,7 @@ class GameStateManager(object):
                    game_state.exact_offset[1] == 0.0):
                     screen_is_covered = True
 
-        return tuple(visible_states)
+        return tuple(visible_states.reverse())
 
     def update_state(self, updated_state, seconds):
         """Update the specified State.
