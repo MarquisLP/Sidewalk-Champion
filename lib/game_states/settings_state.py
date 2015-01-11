@@ -157,9 +157,6 @@ class SettingsState(State):
             self.update_game_settings()
             self.save_settings_to_file()
 
-            self.state_pass.will_reset_state = False
-            self.state_pass.enter_transition_on = False
-
             previous_state = self.state_manager.previous_state_id
             self.state_manager.change_state(previous_state)
 
