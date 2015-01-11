@@ -108,7 +108,7 @@ class GameStateManager(object):
             next_state_id: An integer for the ID of the new State, according to
                 the StateIDs enum; view the enum itself for possible values.
         """
-        self.active_state_list.pop()
+        self.active_state_stack.pop()
         self.push_state(next_state_id)
     
     def push_state(self, next_state_id):
