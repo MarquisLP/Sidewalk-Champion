@@ -151,6 +151,21 @@ class CharacterSelectState(State):
 
         return tuple(all_preview_data)
 
+    def confirm_character(self):
+        """Save the currently-selected character as a player's fighter
+        in the next battle and move onto the appropriate operation.
+
+        If player 1 is the one confirming, control of the game will be
+        passed onto player 2 so that they can select their character.
+        If player 2 is the one confirming, the State will transition
+        into the Stage Select State.
+        """
+        if self.get_current_player() == 1:
+            self.p1_char_index = self.roster.get_character_index()
+        else:
+            self.p2_char_index = self.roster.get_character_index()
+            self.next_state = StateIDs.SELECT_STAGE
+
     def get_current_player(self):
         """Return the number of the player currently making their
         selection (either 1 or 2)."""
