@@ -151,6 +151,15 @@ class CharacterSelectState(State):
 
         return tuple(all_preview_data)
 
+    def has_no_characters(self):
+        """Return a Boolean indicating whether no characters could be
+        loaded from file.
+        """
+        if self.all_preview_data is None:
+            return True
+        else:
+            return False
+
     def get_input_name(self, key_name):
         """Get the name of the in-game input command based on the key
         that was pressed.
