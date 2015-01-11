@@ -160,6 +160,29 @@ class CharacterSelectState(State):
         else:
             return False
 
+    def get_player_input(self, event):
+        """Respond to input from the players.
+
+        Args:
+            event: The PyGame event containing key input data.
+        """
+        key_name = pygame.key.name(event.key)
+        input_name = self.get_input_name(key_name)
+
+        if input_name == 'start':
+            if not self.has_no_characters():
+                self.confirm_character()
+        elif input_name == 'cancel':
+            self.cancel_selection()
+        elif input_name == 'back':
+            self.roster.select_previous()
+        elif input_name == 'forward':
+            self.roster.select_next()
+        elif input_name == 'up':
+            self.roster.scroll_up_row()
+        elif input_name == 'down':
+            self.roster.scroll_down_row()
+
     def get_input_name(self, key_name):
         """Get the name of the in-game input command based on the key
         that was pressed.
