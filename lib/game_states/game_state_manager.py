@@ -177,7 +177,7 @@ class GameStateManager(object):
         visible_states = []
         screen_is_covered = False
         
-        for game_state in reversed(self.active_state_list):
+        for game_state in reversed(self.active_state_stack):
             if not screen_is_covered:
                 visible_states.append()
                 
