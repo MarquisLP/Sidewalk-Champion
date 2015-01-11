@@ -137,14 +137,6 @@ class GameStateManager(object):
             self.active_state.is_intro_on = True
             self.state_pass.enter_transition_on = False
 
-    def get_seconds_elapsed(self):
-        """Return the number of seconds elapsed since the last update.
-        """
-        milliseconds = self.clock.tick(FRAME_RATE)
-        seconds = milliseconds / 1000.0
-
-        return seconds
-
     def scale_screen(self, scale):
         """Resize the screen whenever the screen scale changes.
 
@@ -183,18 +175,6 @@ class GameStateManager(object):
 
         scaled_surf = pygame.transform.scale(surf, new_size,
                                              self.scaled_surf)
-
-    def update_state(self, state_id):
-        """Update the specified State.
-
-        Args:
-            state_id: The index of the State to update within
-                state_list.
-        """
-        time = self.get_seconds_elapsed()
-        updated_state = self.state_list[state_id]
-
-        updated_state.update_state(time)
 
     def draw_background(self):
         """Draw a black background underneath all States.
@@ -235,15 +215,20 @@ class GameStateManager(object):
                     if self.active_state.is_accepting_input:
                         self.active_state.get_player_input(event)
 
-                # Update processes after a passage of time equal to the
-                # global frame rate.
-                if event.type == USEREVENT:
-                    self.scale_screen(
-                        self.state_pass.settings.screen_scale)
-                    self.draw_background()
+            # Update processes after a passage of time equal to the
+            # global frame rate.
+            milliseconds = self.clock.tick(FRAME_RATE)
+            seconds = milliseconds / 1000.0
+            self.state_list[self.active_state_id].update_state(seconds)
 
-                    self.update_state(self.active_state_id)
-                    self.draw_state(self.active_state_id)
-                    pygame.display.update()
+            self.scale_screen(
+                self.state_pass.settings.screen_scale)
+            self.draw_background()
+            self.draw_state(self.active_state_id)
+            pygame.display.update()
 
-            pygame.time.wait(0)
+            sleep_time = (1000.0 / FRAME_RATE) - milliseconds
+            if sleep_time > 0.0:
+                pygame.time.wait(int(sleep_time))
+            else:
+                pygame.time.wait(1)
