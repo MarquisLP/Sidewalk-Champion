@@ -179,7 +179,7 @@ class GameStateManager(object):
         
         for game_state in reversed(self.active_state_stack):
             if not screen_is_covered:
-                visible_states.append()
+                visible_states.append(game_state)
                 
                 if (game_state.exact_offset[0] == 0.0 and
                    game_state.exact_offset[1] == 0.0):
