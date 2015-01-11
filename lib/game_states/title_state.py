@@ -92,6 +92,7 @@ class TitleState(State):
         self.logo = Animation(self.LOGO_PATH, (self.LOGO_X, self.LOGO_Y),
                               self.LOGO_FRAMES, self.LOGO_DURATION)
         self.intro_animator = IntroAnimator()
+        self.intro_animator.reset(self.background, self.logo)
 
         confirm = Sound(self.SFX_CONFIRM_PATH)
         cancel = Sound(self.SFX_CANCEL_PATH)
@@ -107,6 +108,8 @@ class TitleState(State):
 
         self.option_lists = [prompt, main_options, battle_setup]
         self.current_options = TitleOptionList.PRESS_START
+        for option_list in self.option_lists:
+            option_list.reset()
 
     def update_state(self, time):
         """Update all processes within this State.
