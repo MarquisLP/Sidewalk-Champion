@@ -230,7 +230,7 @@ class GameStateManager(object):
                     sys.exit()
 
                 if event.type == KEYDOWN:
-                    active_state = self.active_state_stack.peek()
+                    active_state = self.active_state_stack[-1]
                     if active_state.is_accepting_input:
                         active_state.get_player_input(event)
 
@@ -241,7 +241,7 @@ class GameStateManager(object):
             
             visible_states = self.get_visible_states()
             for game_state in visible_states:
-                self.update_state(game_state)
+                self.update_state(game_state, seconds)
 
             self.scale_screen(self.state_pass.settings.screen_scale)
             self.draw_background()
