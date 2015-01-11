@@ -225,8 +225,7 @@ class CharacterSelectState(State):
         else:
             self.roster.select_character(self.p1_char_index)
             self.p1_char_index = None
-            self.select_prompt.toggle_player()
-            self.roster.toggle_player_cursor()
+            self.toggle_player_display()
 
     def confirm_character(self):
         """Save the currently-selected character as a player's fighter
@@ -240,11 +239,17 @@ class CharacterSelectState(State):
         if self.get_current_player() == 1:
             self.p1_char_index = self.roster.get_character_index()
             self.roster.select_first()
-            self.select_prompt.toggle_player()
-            self.roster.toggle_player_cursor()
+            self.toggle_player_display()
         else:
             self.p2_char_index = self.roster.get_character_index()
             self.next_state = StateIDs.SELECT_STAGE
+
+    def toggle_player_display(self):
+        """Toggle certain graphics to indicate that the other player is
+        now choosing.
+        """
+        self.select_prompt.toggle_player()
+        self.roster.toggle_player_cursor()
 
     def get_current_player(self):
         """Return the number of the player currently making their
