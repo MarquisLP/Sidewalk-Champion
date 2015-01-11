@@ -1,0 +1,118 @@
+<sidewalk_champion>
+    <character name="Dudley" stamina="1000" speed="80" stun_threshold="100" mugshot="dudley/images/mug.png">
+        <action name="Stand" filepath="dudley/images/stand.png" width="106" height="116" x_offset="0" condition="0" multi_hit="0" priority="1" meter_gain="0" meter_needed="0" proximity="0" start_counter_frame="0">
+            <frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+			<frame duration="4" cancelable="0" move_x="0" move_y="0" sfx="">
+            </frame>
+            <input_list></input_list>
+        </action>
+        <default_actions>
+            <intro>0</intro>
+            <stand>0</stand>
+            <walk>0</walk>
+            <crouch_down>0</crouch_down>
+            <crouching_idle>0</crouching_idle>
+            <jump_up>0</jump_up>
+            <jump_forward>0</jump_forward>
+            <jump_back>0</jump_back>
+            <block_standing>0</block_standing>
+            <block_high>0</block_high>
+            <block_low>0</block_low>
+            <standing_recoil>0</standing_recoil>
+            <crouching_recoil>0</crouching_recoil>
+            <jumping_recoil>0</jumping_recoil>
+            <tripped>0</tripped>
+            <launched>0</launched>
+            <falling>0</falling>
+            <knockdown>0</knockdown>
+            <recover>0</recover>
+            <dizzy>0</dizzy>
+            <chip_ko>0</chip_ko>
+            <victory>0</victory>
+        </default_actions>
+    </character>
+    <verification code="dfh943ooJLM3" />
+</sidewalk_champion>
