@@ -223,6 +223,7 @@ class CharacterSelectState(State):
         if self.get_current_player() == 1:
             self.next_state = StateIDs.TITLE
         else:
+            self.roster.select_character(self.p1_char_index)
             self.p1_char_index = None
             self.select_prompt.toggle_player()
             self.roster.toggle_player_cursor()
