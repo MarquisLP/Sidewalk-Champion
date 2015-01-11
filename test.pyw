@@ -45,6 +45,7 @@ if pygame_modules_have_loaded():
         # Yes, globals are evil, but for a confined test script they will make
         # everything much easier. This way, you can access the class(es) from
         # all three of the methods provided below.
+        pass
 
     def prepare_test():
         # Add in any code that needs to be run before the game loop starts.
@@ -77,7 +78,7 @@ if pygame_modules_have_loaded():
                     handle_input(key_name)
 
                 if event.type == USEREVENT:
-                    milliseconds = clock.tick()
+                    milliseconds = clock.tick(FRAME_RATE)
                     seconds = milliseconds / 1000.0
                     update(game_screen, seconds)
 
