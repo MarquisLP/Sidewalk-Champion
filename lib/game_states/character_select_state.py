@@ -179,6 +179,22 @@ class CharacterSelectState(State):
 
         return None
 
+    def cancel_selection(self):
+        """Cancel the current player's selection and go back to the
+        previous step.
+
+        If player 1 was choosing, this State will be exited and
+        transition back to the Title State.
+        If player 2 was choosing, character selection will go back to
+        player 1.
+        """
+        if self.get_current_player() == 1:
+            self.next_state = StateIDs.TITLE
+        else:
+            self.p1_char_index = None
+            self.select_prompt.toggle_player()
+            self.roster.toggle_player_cursor()
+
     def confirm_character(self):
         """Save the currently-selected character as a player's fighter
         in the next battle and move onto the appropriate operation.
@@ -196,7 +212,8 @@ class CharacterSelectState(State):
 
     def get_current_player(self):
         """Return the number of the player currently making their
-        selection (either 1 or 2)."""
+        selection (either 1 or 2).
+        """
         if self.p1_char_index is None:
             return 1
         else:
