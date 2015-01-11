@@ -25,17 +25,15 @@ class GameStateManager(object):
             screen.
         clock: A timer provided by the PyGame time module. It records
             the time elapsed between updates in milliseconds.
-        active_state: The State object that will be updated and
-            displayed.
-        active_state_id: The index of the currently-active State within
-            state_list. Note that all of these indexes are labelled by
-            the StateIDs enum.
-        previous_state_id: The index of the previously-active State
-            within state_list.
         state_pass: A StatePass object containing info to pass between
             States as they are loaded.
         state_list: A List of all the State objects present within the
             game.
+        active_state_stack: A List containing all of the currently-active
+            States, in the order they were called. The top-most State will
+            always be called when the game updates, while other States
+            underneath it will only be drawn and updated if they are visible on
+            the screen.
         zoom_one_surf: A Surface with dimensions equivalent to the
             native resolution of the game. (See SCREEN_SIZE in
             globals.py.)
@@ -67,25 +65,8 @@ class GameStateManager(object):
         self.clock = clock
         self.screen = screen
         self.state_pass = StatePass(settings_data)
-        self.state_list = self.create_state_list()
-        self.active_state = self.state_list[StateIDs.TITLE]
-        self.active_state_id = StateIDs.TITLE
-        self.previous_state = None
-        self.previous_state_id = StateIDs.TITLE
+        self.active_state_stack = [self.create_state_by_id(StateIDs.TITLE)]
         self.create_scaled_surfaces()
-
-        self.set_update_timer()
-
-    def create_state_list(self):
-        """Create and initialize all State objects and return them in a
-        List.
-        """
-        title_state = TitleState(self, self.state_pass)
-        settings_state = SettingsState(self, self.state_pass)
-
-        state_list = [title_state, settings_state]
-
-        return state_list
 
     def create_scaled_surfaces(self):
         """Create three Surfaces with dimensions that reflect each of
@@ -102,40 +83,49 @@ class GameStateManager(object):
                                         SCREEN_SIZE[1] * 3))
         self.scaled_surf = self.zoom_one_surf
 
-    def set_update_timer(self):
-        """Create the update timer.
+    # Support
+    def create_state_by_id(self, state_id):
+        """Initialize a new Game State and return it.
 
-        This frame rate constant can be found within lib.globals.
+        Args:
+            state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
         """
-        # Get the frame rate in milliseconds.
-        timer_rate = int((1.0 / FRAME_RATE) * 1000)
-
-        pygame.time.set_timer(USEREVENT, timer_rate)
+        if state_id == StateIDs.TITLE:
+            return TitleState(self, self.state_pass)
+        elif state_id == StateIDs.SETTINGS:
+            return SettingsState(self, self.state_pass)
+        # More will be added as new States are created.
 
     # Game Processing
     def change_state(self, next_state_id):
-        """Change processing to the specified State. State resetting
-        and loading may also be performed depending on the values
-        within state_pass.
+        """Pop the currently-active State from the stack and push a new State
+        on top in its place.
+
+        Game processing will immediately switch to this new State.
 
         Args:
-            next_state_id: The index of the next State to run. This
-                index refers to the State's position within state_list.
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
         """
-        self.previous_state_id = self.active_state_id
-        self.previous_state = self.state_list[self.previous_state_id]
+        self.active_state_stack.pop()
+        self.push_state(next_state_id)
+    
+    def push_state(self, next_state_id):
+        """Push a another State onto the stack and switch processing to it.
 
-        self.active_state_id = next_state_id
-        self.active_state = self.state_list[self.active_state_id]
+        Args:
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
+        """
+        new_state = self.create_state_by_id(next_state_id)
+        self.active_state_stack.append(new_state)
 
-        if self.active_state.is_loaded == False:
-           self.active_state.load_state()
-        elif self.state_pass.will_reset_state == True:
-            self.active_state.reset_state()
-
-        if self.state_pass.enter_transition_on:
-            self.active_state.is_intro_on = True
-            self.state_pass.enter_transition_on = False
+    def pop_top_state(self):
+        """Pop the currently-active State off the top of the stack and switch
+        processing to the State underneath it.
+        """
+        self.active_state_stack.pop()
 
     def scale_screen(self, scale):
         """Resize the screen whenever the screen scale changes.
@@ -176,16 +166,37 @@ class GameStateManager(object):
         scaled_surf = pygame.transform.scale(surf, new_size,
                                              self.scaled_surf)
 
-    def update_state(self, state_id, seconds):
+    def get_visible_states(self):
+        """Determine which States on the stack are currently visible
+        on-screen.
+
+        Returns:
+            A tuple containing the Game States that are both active and
+            visible, in order from bottom to top of the stack.
+        """
+        visible_states = []
+        screen_is_covered = False
+        
+        for game_state in reversed(self.active_state_stack):
+            if not screen_is_covered:
+                visible_states.append(game_state)
+                
+                if (game_state.exact_offset[0] == 0.0 and
+                   game_state.exact_offset[1] == 0.0):
+                    screen_is_covered = True
+
+        visible_states.reverse()
+        return tuple(visible_states)
+
+    def update_state(self, updated_state, seconds):
         """Update the specified State.
 
         Args:
-            state_id: The index of the State to update within
-                state_list.
+            updated_state: The State that will be updated.
             seconds: A float for the amount of seconds elapsed since the last
                 update.
         """
-        self.state_list[state_id].update_state(seconds)
+        updated_state.update_state(seconds)
 
     def draw_background(self):
         """Draw a black background underneath all States.
@@ -195,7 +206,7 @@ class GameStateManager(object):
         pygame.draw.rect(self.screen, (0, 0, 0),
                          Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
 
-    def draw_state(self, state_id):
+    def draw_state(self, drawn_state):
         """Draw the specified state's surface onto the screen and
         update the screen as a whole.
 
@@ -203,19 +214,15 @@ class GameStateManager(object):
         within state_pass.
 
         Args:
-            state_id: The index of the State for drawing within
-                state_list.
+            drawn_state: The State that will be drawn.
         """
         scale = self.state_pass.settings.screen_scale
-        drawn_state = self.state_list[state_id]
 
         self.scale_surface(drawn_state.state_surface, scale)
         self.screen.blit(self.scaled_surf, drawn_state.screen_offset())
 
     def run_game(self):
         """Run the main game loop."""
-        self.active_state.load_state()
-
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -223,19 +230,23 @@ class GameStateManager(object):
                     sys.exit()
 
                 if event.type == KEYDOWN:
-                    if self.active_state.is_accepting_input:
-                        self.active_state.get_player_input(event)
+                    active_state = self.active_state_stack[-1]
+                    if active_state.is_accepting_input:
+                        active_state.get_player_input(event)
 
             # Update processes after a passage of time equal to the
             # global frame rate.
             milliseconds = self.clock.tick(FRAME_RATE)
             seconds = milliseconds / 1000.0
-            self.update_state(self.active_state_id, seconds)
+            
+            visible_states = self.get_visible_states()
+            for game_state in visible_states:
+                self.update_state(game_state, seconds)
 
-            self.scale_screen(
-                self.state_pass.settings.screen_scale)
+            self.scale_screen(self.state_pass.settings.screen_scale)
             self.draw_background()
-            self.draw_state(self.active_state_id)
+            for game_state in visible_states:
+                self.draw_state(game_state)
             pygame.display.update()
 
             sleep_time = (1000.0 / FRAME_RATE) - milliseconds

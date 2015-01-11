@@ -54,6 +54,8 @@ class SettingsState(State):
         is_editing_binding: A Boolean that indicates whether the next
             key press will be saved to the currently-selected Key
             Binding.
+        is_intro_on: A Boolean indicating whether the introductory slide
+            animation is currently running.
         is_leaving_state: A Boolean that indicates whether the game
             is currently in the process of exiting this State and going
             to another State.
@@ -73,9 +75,6 @@ class SettingsState(State):
                 State belongs.
             state_pass: The StatePass object containing info to be
                 passed between all Game States.
-
-        @type state_manager: GameStateManager
-        @type state_pass: StatePass
         """
         super(SettingsState, self).__init__(state_manager, state_pass)
         p1_bindings = self.state_pass.settings.player1_keys
@@ -89,9 +88,11 @@ class SettingsState(State):
         self.exit_sound = Sound(self.EXIT_SFX_PATH)
         self.is_editing_binding = False
         self.is_leaving_state = False
+        self.load_settings_from_file()
+        self.prepare_state()
 
-    def load_state(self):
-        """Prepare this State to be run for the first time."""
+    def load_settings_from_file(self):
+        """Load settings data from the external settings file."""
         loaded = self.state_pass.settings
         scale_setting = self.setting_list.settings[SettingIndex.SCALE]
         display_setting = self.setting_list.settings[SettingIndex.SHOW_BOXES]
@@ -99,12 +100,8 @@ class SettingsState(State):
         scale_setting.set_selected_option(loaded.screen_scale - 1)
         display_setting.set_selected_option(int(loaded.show_box_display))
 
-        self.reset_state()
-
-    def reset_state(self):
-        """Reset this State and prepare its introductory animation."""
-        self.state_pass.will_reset_state = False
-
+    def prepare_state(self):
+        """Set the cursor's default position and start the intro animation."""
         scale = self.state_pass.settings.screen_scale
         self.exact_offset = (SCREEN_SIZE[0] * scale, 0.0)
         self.setting_list.set_selected_setting(SettingIndex.SCALE)
@@ -118,64 +115,63 @@ class SettingsState(State):
         """Update all processes within this State.
 
         Args:
-            time: The time, in seconds, elapsed since the last
-                    update.
-
-        @type time: float
+            time: A float for the time, in seconds, elapsed since the last
+                update cycle.
         """
         if self.is_intro_on:
-            self.enter_state()
+            self.enter_state(time)
         elif self.is_leaving_state:
-            self.leave_state()
+            self.leave_state(time)
 
         self.draw_state()
 
     # Sliding Animations
-    def enter_state(self):
+    def enter_state(self, time):
         """Show the introductory slide animation.
 
         It will end once the once the screen fills the entire window.
+
+        Args:
+            time: A float for the time, in seconds, elapsed since the last
+                update cycle.
         """
-        self.animate_slide()
+        self.animate_slide(time)
         if self.exact_offset[0] <= 0.0:
             self.is_accepting_input = True
             self.is_intro_on = False
 
-    def leave_state(self):
+    def leave_state(self, time):
         """Leave the Settings Screen.
 
         First, the screen will slide out of the window. Once it is
         completely out of sight, the animation will end.
         Afterwards, data from this screen will be saved and processing
         will be sent to the previously-active Game State.
+
+        Args:
+            time: A float for the time, in seconds, elapsed since the last
+                update cycle.
         """
-        self.animate_slide(is_backwards=True)
+        self.animate_slide(time, is_backwards=True)
         scale = self.state_pass.settings.screen_scale
 
         if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
             self.is_leaving_state = False
             self.update_game_settings()
             self.save_settings_to_file()
+            self.discard_state()
 
-            self.state_pass.will_reset_state = False
-            self.state_pass.enter_transition_on = False
-
-            previous_state = self.state_manager.previous_state_id
-            self.state_manager.change_state(previous_state)
-
-    def animate_slide(self, is_backwards=False):
+    def animate_slide(self, time, is_backwards=False):
         """Slide the Settings Screen in or out of the game window.
 
         Args:
+            time: A float for the time, in seconds, elapsed since the last
+                update cycle.
             is_backwards: A Boolean indicating whether the State Surface
                 should slide out of the window, rather than into it.
-
-        @type is_backwards: bool
         """
-        self.draw_previous_state()
-
         scale = self.state_pass.settings.screen_scale
-        distance = (self.SLIDE_SPEED / FRAME_RATE) * scale
+        distance = self.SLIDE_SPEED * time * scale
 
         if not is_backwards:
             if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
@@ -195,12 +191,6 @@ class SettingsState(State):
             # Prevent the screen from going past the right edge of the window.
             if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
                 self.exact_offset = (SCREEN_SIZE[0] * scale, 0.0)
-
-    def draw_previous_state(self):
-        """Draw the previously-active Game State."""
-        previous_state = self.state_manager.previous_state_id
-        self.state_manager.update_state(previous_state)
-        self.state_manager.draw_state(previous_state)
 
     # Input Handling
     def get_player_input(self, event):
@@ -349,13 +339,7 @@ class SettingsState(State):
     def draw_state(self):
         """Draw all of this State's contained graphics onto the State
         Surface.
-
-        If the State Screen is currently in the process of sliding into
-        or out of the window, the previously-active Game State will be
-        drawn underneath it until the animation finishes.
         """
-        if self.is_intro_on or self.is_leaving_state:
-            self.draw_previous_state()
 
         self.bg_image.draw(self.state_surface)
         self.setting_list.draw(self.state_surface)
