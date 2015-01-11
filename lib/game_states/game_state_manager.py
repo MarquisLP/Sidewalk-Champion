@@ -65,20 +65,8 @@ class GameStateManager(object):
         self.clock = clock
         self.screen = screen
         self.state_pass = StatePass(settings_data)
-        self.state_list = self.create_state_list()
-        self.active_state_stack = [self.state_list[StateIDs.TITLE]]
+        self.active_state_stack = [self.create_state_by_id(StateIDs.TITLE)]
         self.create_scaled_surfaces()
-
-    def create_state_list(self):
-        """Create and initialize all State objects and return them in a
-        List.
-        """
-        title_state = TitleState(self, self.state_pass)
-        settings_state = SettingsState(self, self.state_pass)
-
-        state_list = [title_state, settings_state]
-
-        return state_list
 
     def create_scaled_surfaces(self):
         """Create three Surfaces with dimensions that reflect each of
@@ -199,16 +187,15 @@ class GameStateManager(object):
 
         return tuple(visible_states)
 
-    def update_state(self, state_id, seconds):
+    def update_state(self, updated_state, seconds):
         """Update the specified State.
 
         Args:
-            state_id: The index of the State to update within
-                state_list.
+            updated_state: The State that will be updated.
             seconds: A float for the amount of seconds elapsed since the last
                 update.
         """
-        self.state_list[state_id].update_state(seconds)
+        updated_state.update_state(seconds)
 
     def draw_background(self):
         """Draw a black background underneath all States.
@@ -218,7 +205,7 @@ class GameStateManager(object):
         pygame.draw.rect(self.screen, (0, 0, 0),
                          Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
 
-    def draw_state(self, state_id):
+    def draw_state(self, drawn_state):
         """Draw the specified state's surface onto the screen and
         update the screen as a whole.
 
@@ -226,11 +213,9 @@ class GameStateManager(object):
         within state_pass.
 
         Args:
-            state_id: The index of the State for drawing within
-                state_list.
+            drawn_state: The State that will be drawn.
         """
         scale = self.state_pass.settings.screen_scale
-        drawn_state = self.state_list[state_id]
 
         self.scale_surface(drawn_state.state_surface, scale)
         self.screen.blit(self.scaled_surf, drawn_state.screen_offset())
