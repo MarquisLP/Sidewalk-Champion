@@ -69,8 +69,6 @@ class GameStateManager(object):
         self.active_state_stack = [self.state_list[StateIDs.TITLE]]
         self.create_scaled_surfaces()
 
-        self.set_update_timer()
-
     def create_state_list(self):
         """Create and initialize all State objects and return them in a
         List.
@@ -96,16 +94,6 @@ class GameStateManager(object):
         self.zoom_three_surf = Surface((SCREEN_SIZE[0] * 3,
                                         SCREEN_SIZE[1] * 3))
         self.scaled_surf = self.zoom_one_surf
-
-    def set_update_timer(self):
-        """Create the update timer.
-
-        This frame rate constant can be found within lib.globals.
-        """
-        # Get the frame rate in milliseconds.
-        timer_rate = int((1.0 / FRAME_RATE) * 1000)
-
-        pygame.time.set_timer(USEREVENT, timer_rate)
 
     # Game Processing
     def change_state(self, next_state_id):
