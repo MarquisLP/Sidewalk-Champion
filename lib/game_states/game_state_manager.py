@@ -176,6 +176,17 @@ class GameStateManager(object):
         scaled_surf = pygame.transform.scale(surf, new_size,
                                              self.scaled_surf)
 
+    def update_state(self, state_id, seconds):
+        """Update the specified State.
+
+        Args:
+            state_id: The index of the State to update within
+                state_list.
+            seconds: An integer for the amount of seconds elapsed since the
+                last update.
+        """
+        self.state_list[state_id].update_state(seconds)
+
     def draw_background(self):
         """Draw a black background underneath all States.
         This will keep the screen from being blank, which can reduce
@@ -219,7 +230,7 @@ class GameStateManager(object):
             # global frame rate.
             milliseconds = self.clock.tick(FRAME_RATE)
             seconds = milliseconds / 1000.0
-            self.state_list[self.active_state_id].update_state(seconds)
+            self.update_state(self.active_state_id, seconds)
 
             self.scale_screen(
                 self.state_pass.settings.screen_scale)
