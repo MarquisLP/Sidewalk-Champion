@@ -231,8 +231,6 @@ class IntroAnimator(object):
             the announcer states the title of the game.
         FADE_DELAY: An integer for the alpha value that the logo
             Animation must attain before the voice clip is played.
-        VOICE_DURATION: An integer for the duration of the voice clip,
-            in update cycles.
 
     Attributes:
         is_running: A Boolean indicating whether the animation is
@@ -244,6 +242,8 @@ class IntroAnimator(object):
             playing.
         voice_has_played: A Boolean indicating whether the voice clip
             has already played.
+        voice_duration: An integer for the duration of the voice clip,
+            in update cycles.
     """
     BG_OFFSET = 50.0
     BG_SCROLL_SPEED = 70.0
@@ -257,6 +257,9 @@ class IntroAnimator(object):
         """Declare and initialize instance variables."""
         self.is_running = False
         self.voice = Sound(self.VOICE_PATH)
+        print self.voice.get_length()
+        self.voice_duration = (self.voice.get_length() * FRAME_RATE)
+        print self.voice_duration
         self.voice_timer = 0
         self.voice_has_played = False
 
@@ -289,9 +292,9 @@ class IntroAnimator(object):
             sound_channel.play(self.voice)
             self.voice_has_played = True
         elif (self.voice_has_played and
-              self.voice_timer < self.VOICE_DURATION):
+              self.voice_timer < self.voice_duration):
             self.voice_timer += 1
-        elif self.voice_timer >= self.VOICE_DURATION:
+        elif self.voice_timer >= self.voice_duration:
             pygame.mixer.music.play(-1)
             logo.is_animated = True
             self.is_running = False
