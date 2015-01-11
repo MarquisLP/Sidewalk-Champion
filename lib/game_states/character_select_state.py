@@ -644,6 +644,23 @@ class RosterDisplay():
         self.current_slot = 0
         self.rendered_row = self.render_row(0)
 
+    def select_character(self, character_index):
+        """Move selection to a specific character.
+
+        Args:
+            character_index: An integer for the index of the character.
+                This index is based on the order of the character file
+                paths in the character list text file.
+        """
+        row = int(character_index / self.SLOTS_PER_ROW)
+        new_slot = character_index - (self.SLOTS_PER_ROW * row)
+        slot_diff = new_slot - self.current_slot
+
+        self.current_row = row
+        self.current_slot = new_slot
+        self.rendered_row = self.render_row(row)
+        self.cursor.move(self.slot_size() * slot_diff, 0)
+
     def select_next(self):
         """Select the next character slot, if there is one."""
         if self.get_character_index() < len(self.mugshots) - 1:
