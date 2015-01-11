@@ -75,9 +75,6 @@ class SettingsState(State):
                 State belongs.
             state_pass: The StatePass object containing info to be
                 passed between all Game States.
-
-        @type state_manager: GameStateManager
-        @type state_pass: StatePass
         """
         super(SettingsState, self).__init__(state_manager, state_pass)
         p1_bindings = self.state_pass.settings.player1_keys
@@ -118,38 +115,44 @@ class SettingsState(State):
         """Update all processes within this State.
 
         Args:
-            time: The time, in seconds, elapsed since the last
-                    update.
-
-        @type time: float
+            time: A float for the time, in seconds, elapsed since the last
+                update cycle.
         """
         if self.is_intro_on:
-            self.enter_state()
+            self.enter_state(time)
         elif self.is_leaving_state:
-            self.leave_state()
+            self.leave_state(time)
 
         self.draw_state()
 
     # Sliding Animations
-    def enter_state(self):
+    def enter_state(self, time):
         """Show the introductory slide animation.
 
         It will end once the once the screen fills the entire window.
+
+        Args:
+            time: A float for the time, in seconds, elapsed since the last
+                update cycle.
         """
-        self.animate_slide()
+        self.animate_slide(time)
         if self.exact_offset[0] <= 0.0:
             self.is_accepting_input = True
             self.is_intro_on = False
 
-    def leave_state(self):
+    def leave_state(self, time):
         """Leave the Settings Screen.
 
         First, the screen will slide out of the window. Once it is
         completely out of sight, the animation will end.
         Afterwards, data from this screen will be saved and processing
         will be sent to the previously-active Game State.
+
+        Args:
+            time: A float for the time, in seconds, elapsed since the last
+                update cycle.
         """
-        self.animate_slide(is_backwards=True)
+        self.animate_slide(time, is_backwards=True)
         scale = self.state_pass.settings.screen_scale
 
         if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
@@ -158,15 +161,17 @@ class SettingsState(State):
             self.save_settings_to_file()
             self.discard_state()
 
-    def animate_slide(self, is_backwards=False):
+    def animate_slide(self, time, is_backwards=False):
         """Slide the Settings Screen in or out of the game window.
 
         Args:
+            time: A float for the time, in seconds, elapsed since the last
+                update cycle.
             is_backwards: A Boolean indicating whether the State Surface
                 should slide out of the window, rather than into it.
         """
         scale = self.state_pass.settings.screen_scale
-        distance = (self.SLIDE_SPEED / FRAME_RATE) * scale
+        distance = self.SLIDE_SPEED * time * scale
 
         if not is_backwards:
             if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
