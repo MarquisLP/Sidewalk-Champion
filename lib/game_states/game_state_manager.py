@@ -108,6 +108,20 @@ class GameStateManager(object):
         pygame.time.set_timer(USEREVENT, timer_rate)
 
     # Game Processing
+    def change_state(self, next_state_id):
+        """Pop the currently-active State from the stack and push a new State
+        on top in its place.
+
+        Game processing will immediately switch to this new State.
+
+        Args:
+            next_state_id: The index of the next State to run. This
+                index refers to the State's position within state_list.
+                See the StateIDs enum for possible values.
+        """
+        self.active_state_list.pop()
+        self.push_state(next_state_id)
+    
     def push_state(self, next_state_id):
         """Push a another State onto the stack and switch processing to it.
 
