@@ -253,6 +253,18 @@ class CharacterSelectState(State):
         else:
             return 2
 
+    def update_state(self, time):
+        """Update all processes within the Game State.
+
+        Args:
+            time: A float for the time elapsed, in seconds, since the
+                last update cycle.
+        """
+        self.select_prompt.update()
+        if not self.has_no_characters():
+            self.p1_preview.update()
+            self.p2_preview.update()
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
