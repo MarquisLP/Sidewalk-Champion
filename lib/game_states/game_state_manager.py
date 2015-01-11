@@ -222,8 +222,6 @@ class GameStateManager(object):
 
     def run_game(self):
         """Run the main game loop."""
-        self.active_state.load_state()
-
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -231,8 +229,9 @@ class GameStateManager(object):
                     sys.exit()
 
                 if event.type == KEYDOWN:
-                    if self.active_state.is_accepting_input:
-                        self.active_state.get_player_input(event)
+                    active_state = self.active_state_stack.peek()
+                    if active_state.is_accepting_input:
+                        active_state.get_player_input(event)
 
             # Update processes after a passage of time equal to the
             # global frame rate.
