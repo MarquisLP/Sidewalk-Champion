@@ -223,8 +223,10 @@ class CharacterSelectState(State):
         if self.get_current_player() == 1:
             self.next_state = StateIDs.TITLE
         else:
-            self.roster.select_character(self.p1_char_index)
+            p1_last_selection = self.p1_char_index
             self.p1_char_index = None
+            self.roster.select_character(p1_last_selection)
+            self.change_preview(p1_last_selection)
             self.toggle_player_display()
 
     def confirm_character(self):
@@ -239,6 +241,7 @@ class CharacterSelectState(State):
         if self.get_current_player() == 1:
             self.p1_char_index = self.roster.get_character_index()
             self.roster.select_first()
+            self.change_preview(0)
             self.toggle_player_display()
         else:
             self.p2_char_index = self.roster.get_character_index()
@@ -250,6 +253,26 @@ class CharacterSelectState(State):
         """
         self.select_prompt.toggle_player()
         self.roster.toggle_player_cursor()
+
+    def change_preview(self, character_index):
+        """Change the previewed character for the player currently
+        selecting.
+
+        Args:
+            character_index: An integer for the index of the character.
+                This index is based on the order of the character file
+                paths in the character list text file.
+        """
+        preview_data = self.all_preview_data[character_index]
+
+        if self.get_current_player() == 1:
+            self.p1_preview.change_character(preview_data.spritesheet,
+                                             preview_data.name,
+                                             preview_data.frame_durations)
+        else:
+            self.p2_preview.change_character(preview_data.spritesheet,
+                                             preview_data.name,
+                                             preview_data.frame_durations)
 
     def get_current_player(self):
         """Return the number of the player currently making their
