@@ -347,6 +347,10 @@ class IntroTransition(object):
         * Once the three components have finished sliding in, the VS
           VS text wipes into the middle of the screen.
 
+    Class Constants:
+        VOICE_PATH: A String for the file path to the announcer voice
+            clip.
+
     Attributes:
         bg_lines: The CharacterSelectState's BackgroundLines.
         roster: The CharacterSelectState's RosterDisplay.
@@ -355,6 +359,7 @@ class IntroTransition(object):
         vs_text: A Surface containing text that reads VS.
         vs_wipe_y: An integer for the top end of the wipe in effect,
             relative to the VS text Surface.
+        voice: A PyGame Sound that plays the announcer voice clip.
         is_running: A Boolean indicating whether the intro is currently
             running.
     """
