@@ -313,6 +313,26 @@ class CharacterSelectState(State):
             self.p2_preview.draw(self.state_surface)
 
 
+class TransitionSpeeds(object):
+    """Contains constants for the speeds of various objects within this
+    State when they are being moved during transition animations.
+
+    Attributes:
+        LINES: An integer for the speed, in pixels per second, that the
+            BackgroundLines will scroll across the screen.
+        ROSTER: An integer for the speed, in pixels per second, that the
+            RosterDisplay will slide at.
+        PREVIEWS: An integer for the speed, in pixels per second, that
+            the CharacterPreviews will slide at.
+        VS: An integer for the speed, in pixels per second, of the wipe
+            in and wipe out effect on the VS text.
+    """
+    LINES = 500
+    ROSTER = 500
+    PREVIEWS = 800
+    VS = 300
+
+
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
     currently choosing their character.
