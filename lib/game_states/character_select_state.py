@@ -370,6 +370,26 @@ class IntroTransition(object):
     MUSIC_PATH = 'audio/select-theme.wav'
     VOICE_PATH = 'audio/announcer-character_select.wav'
 
+    def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text):
+        """Declare and initialize instance variables.
+
+        Args:
+            bg_lines: BackgroundLines that will be drawn onto
+                CharacterSelectState's Surface.
+            roster: The RosterDisplay containing all characters.
+            p1_preview: The CharacterPreview for player 1.
+            p2_preview: The CharacterPreview for player 2.
+            vs_text: A Surface containing text that reads VS.
+        """
+        self.bg_lines = bg_lines
+        self.roster = roster
+        self.p1_preview = p1_preview
+        self.p2_preview = p2_preview
+        self.vs_text = vs_text
+        self.vs_wipe_y = vs_text.get_height()
+        self.is_running = False
+        self.voice = pygame.mixer.Sound(self.VOICE_PATH)
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
