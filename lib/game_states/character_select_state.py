@@ -333,6 +333,33 @@ class TransitionSpeeds(object):
     VS = 300
 
 
+class IntroTransition(object):
+    """Manages the Character Select State's introductory animation.
+
+    The animation is performed as follows:
+        * The BackgroundLines scroll into the screen from left to right.
+        * Music begins playing.
+        * The RosterDisplay slides in from the bottom of the screen,
+          while the CharacterPreviews slide in from the left or right
+          edge of the screen.
+        * As those three components slide in, the announcer declares
+          that they will choose their fighters.
+        * Once the three components have finished sliding in, the VS
+          VS text wipes into the middle of the screen.
+
+    Attributes:
+        bg_lines: The CharacterSelectState's BackgroundLines.
+        roster: The CharacterSelectState's RosterDisplay.
+        p1_preview: The CharacterPreview for Player 1.
+        p2_preview: The CharacterPreview for Player 2.
+        vs_text: A Surface containing text that reads VS.
+        vs_wipe_y: An integer for the top end of the wipe in effect,
+            relative to the VS text Surface.
+        is_running: A Boolean indicating whether the intro is currently
+            running.
+    """
+
+
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
     currently choosing their character.
