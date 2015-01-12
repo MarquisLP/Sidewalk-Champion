@@ -296,6 +296,8 @@ class CharacterSelectState(State):
             self.p1_preview.update()
             self.p2_preview.update()
 
+        self.draw_state()
+
     def draw_state(self):
         """Render all of the State's graphical components onto the State
         Surface.
