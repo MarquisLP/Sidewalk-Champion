@@ -363,6 +363,7 @@ class IntroTransition(object):
         is_running: A Boolean indicating whether the intro is currently
             running.
     """
+    VOICE_PATH = 'audio/announcer-character_select.wav'
 
 
 class PlayerSelectPrompt(object):
