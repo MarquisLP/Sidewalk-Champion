@@ -390,6 +390,14 @@ class IntroTransition(object):
         self.is_running = False
         self.voice = pygame.mixer.Sound(self.VOICE_PATH)
 
+    def play(self):
+        """Begin running the intro animation."""
+        self.is_running = True
+        self.bg_lines.move_right_end(SCREEN_SIZE[0])
+        self.roster.place_offscreen()
+        self.p1_preview.place_offscreen()
+        self.p2_preview.place_offscreen()
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
