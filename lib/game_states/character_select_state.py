@@ -350,6 +350,8 @@ class IntroTransition(object):
           VS text wipes into the middle of the screen.
 
     Class Constants:
+        MUSIC_PATH: A String for the file path to the Character Select
+            Screen and Stage Select Screen music.
         VOICE_PATH: A String for the file path to the announcer voice
             clip.
 
@@ -365,6 +367,7 @@ class IntroTransition(object):
         is_running: A Boolean indicating whether the intro is currently
             running.
     """
+    MUSIC_PATH = 'audio/select-theme.wav'
     VOICE_PATH = 'audio/announcer-character_select.wav'
 
 
