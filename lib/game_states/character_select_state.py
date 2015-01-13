@@ -422,6 +422,9 @@ class IntroTransition(object):
         distance = -1 * TransitionSpeeds.ROSTER * time
         self.roster.move(dy=distance)
 
+        if self.roster.is_onscreen():
+            self.roster.correct_position()
+
     def draw(self, parent_surf, vs_position):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
