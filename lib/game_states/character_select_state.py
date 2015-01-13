@@ -339,8 +339,8 @@ class IntroTransition(object):
     """Manages the Character Select State's introductory animation.
 
     The animation is performed as follows:
-        * The BackgroundLines scroll into the screen from left to right.
         * Music begins playing.
+        * The BackgroundLines scroll into the screen from left to right.
         * The RosterDisplay slides in from the bottom of the screen,
           while the CharacterPreviews slide in from the left or right
           edge of the screen.
@@ -393,6 +393,8 @@ class IntroTransition(object):
     def play(self):
         """Begin running the intro animation."""
         self.is_running = True
+        pygame.mixer.music.load(self.MUSIC_PATH)
+        pygame.mixer.music.play(-1)
         self.bg_lines.move_right_end(-1 * SCREEN_SIZE[0])
         self.roster.place_offscreen()
         self.p1_preview.place_offscreen()
