@@ -330,8 +330,8 @@ class TransitionSpeeds(object):
             in and wipe out effect on the VS text.
     """
     LINES = 500
-    ROSTER = 500
-    PREVIEWS = 800
+    ROSTER = 100
+    PREVIEWS = 200
     VS = 300
 
 
