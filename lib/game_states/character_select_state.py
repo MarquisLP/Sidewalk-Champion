@@ -332,7 +332,7 @@ class TransitionSpeeds(object):
     LINES = 500
     ROSTER = 150
     PREVIEWS = 200
-    VS = 300
+    VS = 120
 
 
 class IntroTransition(object):
