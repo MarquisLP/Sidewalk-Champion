@@ -412,6 +412,16 @@ class IntroTransition(object):
         if self.bg_lines.are_fully_extended():
             self.bg_lines.reset()
 
+    def slide_in_roster(self, time):
+        """Slide the roster into the screen from the bottom edge.
+
+        Args:
+            time: A float for time elapsed, in seconds, since the last
+                update cycle.
+        """
+        distance = -1 * TransitionSpeeds.ROSTER * time
+        self.roster.move(dy=distance)
+
     def draw(self, parent_surf, vs_position):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
