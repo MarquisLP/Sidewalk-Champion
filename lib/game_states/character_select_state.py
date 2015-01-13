@@ -618,6 +618,13 @@ class BackgroundLines(object):
         else:
             return False
 
+    def reset(self):
+        """Set the lines back to their original state i.e. extending
+        from the left edge of the screen all the way to the right edge.
+        """
+        self.left_end = 0
+        self.right_end = SCREEN_SIZE[0]
+
 
 class RosterDisplay():
     """An on-screen list of the entire roster of playable characters
