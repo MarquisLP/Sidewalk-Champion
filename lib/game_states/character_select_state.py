@@ -103,7 +103,8 @@ class CharacterSelectState(State):
         self.next_state = StateIDs.SELECT_CHARACTER
         self.intro = IntroTransition(self.bg_lines, self.roster,
                                      self.p1_preview, self.p2_preview,
-                                     self.vs_text)
+                                     self.vs_text,
+                                     self.state_pass.announcer_channel)
         self.intro.play()
 
     def load_data_from_file(self):
@@ -375,13 +376,16 @@ class IntroTransition(object):
         vs_wipe_y: An integer for the top end of the wipe in effect,
             relative to the VS text Surface.
         voice: A PyGame Sound that plays the announcer voice clip.
+        voice_channel: A PyGame Channel used for playing announcer
+            voice clips.
         is_running: A Boolean indicating whether the intro is currently
             running.
     """
     MUSIC_PATH = 'audio/select-theme.wav'
     VOICE_PATH = 'audio/announcer-character_select.wav'
 
-    def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text):
+    def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text,
+                 voice_channel):
         """Declare and initialize instance variables.
 
         Args:
@@ -391,6 +395,8 @@ class IntroTransition(object):
             p1_preview: The CharacterPreview for player 1.
             p2_preview: The CharacterPreview for player 2.
             vs_text: A Surface containing text that reads VS.
+            voice_channel: A PyGame Channel used for playing announcer
+                voice clips.
         """
         self.bg_lines = bg_lines
         self.roster = roster
@@ -400,6 +406,7 @@ class IntroTransition(object):
         self.vs_wipe_y = vs_text.get_height()
         self.is_running = False
         self.voice = pygame.mixer.Sound(self.VOICE_PATH)
+        self.voice_channel = voice_channel
 
     def play(self):
         """Begin running the intro animation."""
