@@ -946,6 +946,12 @@ class RosterDisplay():
         """
         self.move(0, self.slot_size())
 
+    def correct_position(self):
+        """Position the roster so that it is fully visible on the bottom
+        edge of the screen.
+        """
+        self.y = SCREEN_SIZE[1] - self.slot_size()
+
     def is_onscreen(self):
         """Return a Boolean indicating whether all of the roster can be
         seen on-screen.
