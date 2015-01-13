@@ -101,6 +101,10 @@ class CharacterSelectState(State):
         self.p1_char_index = None
         self.p2_char_index = None
         self.next_state = StateIDs.SELECT_CHARACTER
+        self.intro = IntroTransition(self.bg_lines, self.roster,
+                                     self.p1_preview, self.p2_preview,
+                                     self.vs_text)
+        self.intro.play()
 
     def load_data_from_file(self):
         """Load all of the required character data from external
@@ -161,6 +165,9 @@ class CharacterSelectState(State):
         Args:
             event: The PyGame event containing key input data.
         """
+        if self.intro.is_running:
+            return
+        
         key_name = pygame.key.name(event.key)
         input_name = self.get_input_name(key_name)
 
@@ -291,12 +298,16 @@ class CharacterSelectState(State):
             time: A float for the time elapsed, in seconds, since the
                 last update cycle.
         """
-        self.select_prompt.update()
-        if not self.has_no_characters():
-            self.p1_preview.update()
-            self.p2_preview.update()
+        if self.intro.is_running:
+            self.intro.update(time)
+            self.intro.draw(self.state_surface, self.VS_POSITION)
+        else:
+            self.select_prompt.update()
+            if not self.has_no_characters():
+                self.p1_preview.update()
+                self.p2_preview.update()
 
-        self.draw_state()
+            self.draw_state()
 
     def draw_state(self):
         """Render all of the State's graphical components onto the State
