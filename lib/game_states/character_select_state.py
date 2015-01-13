@@ -485,9 +485,11 @@ class IntroTransition(object):
             position: A tuple of two integers for the x and y-positions
                 of the VS text relative to the screen.
         """
+        x = position[0]
+        y = position[1] + self.vs_wipe_y
         draw_region = Rect(0, self.vs_wipe_y, self.vs_text.get_width(),
                            self.vs_text.get_height() - self.vs_wipe_y)
-        parent_surf.blit(self.vs_text, position, draw_region)
+        parent_surf.blit(self.vs_text, (x, y), draw_region)
 
 
 class PlayerSelectPrompt(object):
