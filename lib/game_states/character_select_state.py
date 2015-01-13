@@ -438,6 +438,9 @@ class IntroTransition(object):
             self.slide_in_previews(time)
         elif self.vs_wipe_y > 0:
             self.wipe_in_vs(time)
+            if not self.voice_has_played:
+                self.voice_channel.play(self.voice)
+                self.voice_has_played = True
         else:
             self.is_running = False
 
