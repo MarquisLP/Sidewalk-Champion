@@ -398,6 +398,17 @@ class IntroTransition(object):
         self.p1_preview.place_offscreen()
         self.p2_preview.place_offscreen()
 
+    def move_lines_in(self, time):
+        """Scroll the BackgroundLines into the screen from left to
+        right.
+
+        Args:
+            time: A float for time elapsed, in seconds, since the last
+                update cycle.
+        """
+        distance = TransitionSpeeds.LINES * time
+        self.bg_lines.move_right_end(distance)
+
     def draw(self, parent_surf, vs_position):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
