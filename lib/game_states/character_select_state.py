@@ -600,6 +600,24 @@ class BackgroundLines(object):
         """
         self.right_end += distance
 
+    def are_fully_extended(self):
+        """Return a Boolean indicating whether the lines cover the full
+        width of the screen.
+        """
+        if self.left_end <= 0 and self.right_end >= SCREEN_SIZE[0]:
+            return True
+        else:
+            return False
+
+    def are_not_visible(self):
+        """Return a Boolean indicating whether the lines cannot be seen
+        on the screen at all.
+        """
+        if self.right_end <= self.left_end or self.right_end <= 0:
+            return True
+        else:
+            return False
+
 
 class RosterDisplay():
     """An on-screen list of the entire roster of playable characters
