@@ -445,6 +445,18 @@ class IntroTransition(object):
             if self.p2_preview.is_onscreen():
                 self.p2_preview.correct_position()
 
+    def wipe_in_vs(self, time):
+        """Move the upper bound of the VS text's draw region in order
+        to create a 'wipe-in' effect.
+
+        Args:
+            time: A float for time elapsed, in seconds, since the last
+                update cycle.
+        """
+        self.vs_wipe_y -= TransitionSpeeds.VS * time
+        if self.vs_wipe_y <= 0:
+            self.vs_wipe_y = 0
+
     def draw(self, parent_surf, vs_position):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
