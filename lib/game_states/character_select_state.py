@@ -393,7 +393,7 @@ class IntroTransition(object):
     def play(self):
         """Begin running the intro animation."""
         self.is_running = True
-        self.bg_lines.move_right_end(SCREEN_SIZE[0])
+        self.bg_lines.move_right_end(-1 * SCREEN_SIZE[0])
         self.roster.place_offscreen()
         self.p1_preview.place_offscreen()
         self.p2_preview.place_offscreen()
