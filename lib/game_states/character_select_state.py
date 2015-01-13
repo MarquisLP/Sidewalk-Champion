@@ -409,6 +409,9 @@ class IntroTransition(object):
         distance = TransitionSpeeds.LINES * time
         self.bg_lines.move_right_end(distance)
 
+        if self.bg_lines.are_fully_extended():
+            self.bg_lines.reset()
+
     def draw(self, parent_surf, vs_position):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
