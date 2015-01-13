@@ -407,6 +407,7 @@ class IntroTransition(object):
         self.is_running = False
         self.voice = pygame.mixer.Sound(self.VOICE_PATH)
         self.voice_channel = voice_channel
+        self.voice_has_played = False
 
     def play(self):
         """Begin running the intro animation."""
