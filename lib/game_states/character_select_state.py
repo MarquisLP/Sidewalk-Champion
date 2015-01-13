@@ -167,7 +167,7 @@ class CharacterSelectState(State):
         """
         if self.intro.is_running:
             return
-        
+
         key_name = pygame.key.name(event.key)
         input_name = self.get_input_name(key_name)
 
@@ -418,6 +418,9 @@ class IntroTransition(object):
             time: A float for time elapsed, in seconds, since the last
                 update cycle.
         """
+        self.p1_preview.update()
+        self.p2_preview.update()
+
         if not self.bg_lines.are_fully_extended():
             self.move_lines_in(time)
         elif not (self.roster.is_onscreen and
