@@ -863,7 +863,7 @@ class RosterDisplay():
         """Position the roster so that it is just off the bottom edge of
         the screen.
         """
-        self.move(0, SCREEN_SIZE[1] - self.slot_size())
+        self.move(0, self.slot_size())
 
     def is_onscreen(self):
         """Return a Boolean indicating whether all of the roster can be
