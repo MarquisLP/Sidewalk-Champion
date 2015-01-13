@@ -425,6 +425,26 @@ class IntroTransition(object):
         if self.roster.is_onscreen():
             self.roster.correct_position()
 
+    def slide_in_previews(self, time):
+        """Slide both CharacterPreviews into the screen from the left
+        and right edges.
+
+        Args:
+            time: A float for time elapsed, in seconds, since the last
+                update cycle.
+        """
+        distance = TransitionSpeeds.PREVIEWS * time
+
+        if not self.p1_preview.is_onscreen():
+            self.p1_preview.move(distance)
+            if self.p1_preview.is_onscreen():
+                self.p1_preview.correct_position()
+
+        if not self.p2_preview.is_onscreen():
+            self.p2_preview.move(-1 * distance)
+            if self.p2_preview.is_onscreen():
+                self.p2_preview.correct_position()
+
     def draw(self, parent_surf, vs_position):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
