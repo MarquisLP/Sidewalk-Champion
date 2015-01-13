@@ -398,6 +398,25 @@ class IntroTransition(object):
         self.p1_preview.place_offscreen()
         self.p2_preview.place_offscreen()
 
+    def update(self, time):
+        """Update the intro animation.
+
+        Args:
+            time: A float for time elapsed, in seconds, since the last
+                update cycle.
+        """
+        if not self.bg_lines.are_fully_extended():
+            self.move_lines_in(time)
+        elif not (self.roster.is_onscreen and
+                  self.p1_preview.is_onscreen() and
+                  self.p2_preview.is_onscreen()):
+            self.slide_in_roster(time)
+            self.slide_in_previews(time)
+        elif self.vs_wipe_y > 0:
+            self.wipe_in_vs(time)
+        else:
+            self.is_running = False
+
     def move_lines_in(self, time):
         """Scroll the BackgroundLines into the screen from left to
         right.
