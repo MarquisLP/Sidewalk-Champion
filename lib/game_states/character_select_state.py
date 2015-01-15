@@ -16,6 +16,7 @@ from lib.custom_data.character_data import load_frame_durations
 from lib.custom_data.character_loader import load_all_characters
 from lib.game_states.state import State
 from lib.game_states.state_ids import StateIDs
+from lib.game_states.select_state_sfx import SelectStateSFX
 
 
 PreviewData = collections.namedtuple('PreviewData',
@@ -62,6 +63,8 @@ class CharacterSelectState(State):
             selected and confirmed by player 1.
         p2_char_index: An integer for the index of the character
             selected and confirmed by player 2.
+        sfx: SelectStateSFX that will be used to play various sound
+            effects within this State.
         next_state: An integer for the index of the next State to be run
             by the game. See the StateIDs enum for possible values.
     """
@@ -100,6 +103,7 @@ class CharacterSelectState(State):
                                             True, self.VS_COLOR)
         self.p1_char_index = None
         self.p2_char_index = None
+        self.sfx = SelectStateSFX(self.state_pass.ui_channel)
         self.next_state = StateIDs.SELECT_CHARACTER
 
         if self.has_no_characters():
@@ -179,11 +183,13 @@ class CharacterSelectState(State):
 
         if input_name == 'start':
             if not self.has_no_characters():
+                self.sfx.play_confirm()
                 self.confirm_character()
         elif input_name == 'cancel':
             self.cancel_selection()
         if (input_name in ['back', 'forward', 'up', 'down'] and
            not self.has_no_characters()):
+            self.sfx.play_scroll()
             current_character = self.roster.get_character_index()
 
             if input_name == 'back':
