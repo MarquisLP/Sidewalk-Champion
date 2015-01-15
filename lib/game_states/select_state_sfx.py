@@ -20,7 +20,7 @@ class SelectStateSFX(object):
             choice.
     """
     SCROLL_PATH = 'audio/scroll_char_stage.ogg'
-    CONFIRM_PATH = 'confirm.wav'
+    CONFIRM_PATH = 'audio/confirm.wav'
 
     def __init__(self, channel):
         """Declare and initialize instance variables.
