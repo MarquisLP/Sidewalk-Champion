@@ -101,9 +101,14 @@ class CharacterSelectState(State):
         self.p1_char_index = None
         self.p2_char_index = None
         self.next_state = StateIDs.SELECT_CHARACTER
+
+        if self.has_no_characters():
+            wiped_in_text = self.no_chars_text
+        else:
+            wiped_in_text = self.vs_text
         self.intro = IntroTransition(self.bg_lines, self.roster,
                                      self.p1_preview, self.p2_preview,
-                                     self.vs_text,
+                                     wiped_in_text,
                                      self.state_pass.announcer_channel)
         self.intro.play()
 
@@ -301,7 +306,10 @@ class CharacterSelectState(State):
         """
         if self.intro.is_running:
             self.intro.update(time)
-            self.intro.draw(self.state_surface, self.VS_POSITION)
+            if self.has_no_characters():
+                self.intro.draw(self.state_surface, self.NO_CHARS_POSITION)
+            else:
+                self.intro.draw(self.state_surface, self.VS_POSITION)
         else:
             self.select_prompt.update()
             if not self.has_no_characters():
@@ -409,6 +417,15 @@ class IntroTransition(object):
         self.voice_channel = voice_channel
         self.voice_has_played = False
 
+    def has_characters(self):
+        """Return a Boolean indicating whether at least one playable
+        character is included in the game.
+        """
+        if self.p1_preview is not None and self.p2_preview is not None:
+            return True
+        else:
+            return False
+
     def play(self):
         """Begin running the intro animation."""
         self.is_running = True
@@ -416,8 +433,9 @@ class IntroTransition(object):
         pygame.mixer.music.play(-1)
         self.bg_lines.move_right_end(-1 * SCREEN_SIZE[0])
         self.roster.place_offscreen()
-        self.p1_preview.place_offscreen()
-        self.p2_preview.place_offscreen()
+        if self.has_characters():
+            self.p1_preview.place_offscreen()
+            self.p2_preview.place_offscreen()
 
     def update(self, time):
         """Update the intro animation.
@@ -426,16 +444,21 @@ class IntroTransition(object):
             time: A float for time elapsed, in seconds, since the last
                 update cycle.
         """
-        self.p1_preview.update()
-        self.p2_preview.update()
+        if self.p1_preview is not None and self.p2_preview is not None:
+            self.p1_preview.update()
+            self.p2_preview.update()
 
         if not self.bg_lines.are_fully_extended():
             self.move_lines_in(time)
-        elif not (self.roster.is_onscreen and
-                  self.p1_preview.is_onscreen() and
-                  self.p2_preview.is_onscreen()):
+
+        elif not self.has_characters() and not self.roster.is_onscreen():
+            self.slide_in_roster(time)
+        elif self.has_characters() and not (self.p1_preview.is_onscreen() and
+                                            self.p2_preview.is_onscreen() and
+                                            self.roster.is_onscreen()):
             self.slide_in_roster(time)
             self.slide_in_previews(time)
+
         elif self.vs_wipe_y > 0:
             self.wipe_in_vs(time)
             if not self.voice_has_played:
@@ -515,8 +538,9 @@ class IntroTransition(object):
         """
         self.bg_lines.draw(parent_surf)
         self.roster.draw(parent_surf)
-        self.p1_preview.draw(parent_surf)
-        self.p2_preview.draw(parent_surf)
+        if self.has_characters():
+            self.p1_preview.draw(parent_surf)
+            self.p2_preview.draw(parent_surf)
         self.draw_vs_text(parent_surf, vs_position)
 
     def draw_vs_text(self, parent_surf, position):
