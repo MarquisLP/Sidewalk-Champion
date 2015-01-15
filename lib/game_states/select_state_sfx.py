@@ -31,3 +31,7 @@ class SelectStateSFX(object):
         self.channel = channel
         self.scroll = Sound(self.SCROLL_PATH)
         self.confirm = Sound(self.CONFIRM_PATH)
+
+    def play_scroll(self):
+        """Play the 'scroll items' sound effect."""
+        self.channel.play(self.scroll)
