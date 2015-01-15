@@ -1,5 +1,6 @@
 from pygame.mixer import Sound
 
+
 class SelectStateSFX(object):
     """Plays sound effects that are used by both the Character Select
     State and the Stage Select State.
