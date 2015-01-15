@@ -182,7 +182,8 @@ class CharacterSelectState(State):
                 self.confirm_character()
         elif input_name == 'cancel':
             self.cancel_selection()
-        if input_name in ['back', 'forward', 'up', 'down']:
+        if (input_name in ['back', 'forward', 'up', 'down'] and
+           not self.has_no_characters()):
             current_character = self.roster.get_character_index()
 
             if input_name == 'back':
