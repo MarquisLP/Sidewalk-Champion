@@ -1,3 +1,5 @@
+from pygame.mixer import Sound
+
 class SelectStateSFX(object):
     """Plays sound effects that are used by both the Character Select
     State and the Stage Select State.
@@ -18,3 +20,14 @@ class SelectStateSFX(object):
     """
     SCROLL_PATH = 'audio/scroll_char_stage.ogg'
     CONFIRM_PATH = 'confirm.wav'
+
+    def __init__(self, channel):
+        """Declare and initialize instance variables.
+
+        Args:
+            channel: A PyGame Channel that will be used to play the
+                Sounds.
+        """
+        self.channel = channel
+        self.scroll = Sound(self.SCROLL_PATH)
+        self.confirm = Sound(self.CONFIRM_PATH)
