@@ -185,7 +185,10 @@ class CharacterSelectState(State):
             if not self.has_no_characters():
                 self.sfx.play_confirm()
                 self.confirm_character()
+            else:
+                self.sfx.play_no_confirm()
         elif input_name == 'cancel':
+            self.sfx.play_cancel()
             self.cancel_selection()
         if (input_name in ['back', 'forward', 'up', 'down'] and
            not self.has_no_characters()):
@@ -603,7 +606,7 @@ class PlayerSelectPrompt(object):
     P2_TEXT = 'P2 Select'
     P1_COLOR = (255, 0, 0)
     P2_COLOR = (0, 255, 255)
-    
+
     def __init__(self, font):
         """Declare and initialize instance variables.
 
@@ -618,13 +621,13 @@ class PlayerSelectPrompt(object):
         self.text_is_visible = True
         self.x = 0
         self.center_horizontally()
-        
+
     def center_horizontally(self):
         """Position the text so that it is centered horizontally on the
         screen.
         """
         self.x = (SCREEN_SIZE[0] - self.current_surf.get_width()) / 2
-        
+
     def toggle_player(self):
         """Display the other player's prompt."""
         if self.current_surf == self.p1_surf:
@@ -632,14 +635,14 @@ class PlayerSelectPrompt(object):
         else:
             self.current_surf = self.p1_surf
         self.center_horizontally()
-        
+
     def update(self):
         """Update the text flashing."""
         self.flash_timer += 1
         if self.flash_timer >= self.FLASH_RATE:
             self.flash_timer = 0
             self.text_is_visible = not self.text_is_visible
-            
+
     def draw(self, parent_surf):
         """Draw the current player's prompt onto a Surface.
 
@@ -656,7 +659,7 @@ class PlayerSelectPrompt(object):
         self.flash_timer = 0
         self.current_surf = self.p1_surf
         self.center_horizontally()
-    
+
 
 class BackgroundLines(object):
     """A series of action lines that will be drawn in the background.

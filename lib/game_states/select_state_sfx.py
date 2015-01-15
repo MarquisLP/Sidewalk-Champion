@@ -10,6 +10,10 @@ class SelectStateSFX(object):
             sound effect.
         CONFIRM_PATH: A String for the file path to the confirm choice
             sound effect.
+        CANCEL_PATH: A String for the file path to the cancel selection sound
+            effect.
+        NO_CONFIRM_PATH: A String for the file path to the cannot confirm sound
+            effect.
 
     Attributes:
         channel: A PyGame Channel where all of the sounds will be
@@ -18,9 +22,16 @@ class SelectStateSFX(object):
             through the list of available options.
         confirm: A PyGame Sound that plays when the players confirm a
             choice.
+        cancel: A PyGame Sound that plays when the players cancel a choice or
+            exit the State entirely.
+        no_confirm: A PyGame Sound that plays when the players attempt to
+            confirm when no choices are available, such as when no characters
+            or stages could be loaded.
     """
     SCROLL_PATH = 'audio/scroll_char_stage.ogg'
     CONFIRM_PATH = 'audio/confirm.wav'
+    CANCEL_PATH = 'audio/cancel.wav'
+    NO_CONFIRM_PATH = 'audio/invalid.wav'
 
     def __init__(self, channel):
         """Declare and initialize instance variables.
@@ -32,6 +43,8 @@ class SelectStateSFX(object):
         self.channel = channel
         self.scroll = Sound(self.SCROLL_PATH)
         self.confirm = Sound(self.CONFIRM_PATH)
+        self.cancel = Sound(self.CANCEL_PATH)
+        self.no_confirm = Sound(self.NO_CONFIRM_PATH)
 
     def play_scroll(self):
         """Play the 'scroll items' sound effect."""
@@ -40,3 +53,12 @@ class SelectStateSFX(object):
     def play_confirm(self):
         """Play the 'confirm choice' sound effect."""
         self.channel.play(self.confirm)
+
+    def play_cancel(self):
+        """Play the 'cancel selection' sound effect."""
+        self.channel.play(self.cancel)
+
+    def play_no_confirm(self):
+        """Play the 'cannot confirm choice' sound effect."""
+        self.channel.play(self.no_confirm)
+
