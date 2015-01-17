@@ -1,4 +1,5 @@
 import sys
+from threading import Thread
 from pygame.locals import *
 from lib.globals import *
 from lib.game_states.state import *
@@ -34,6 +35,13 @@ class GameStateManager(object):
             always be called when the game updates, while other States
             underneath it will only be drawn and updated if they are visible on
             the screen.
+        next_state: A Game State object that is currently being initialized; it
+            will be added to the top of the State stack and begin running once
+            it is finished initializing.
+            A value of None means that there is no Game State currently being
+            prepared.
+        init_state_thread: A Thread that handles initialization of new Game
+            States concurrently to the main game thread.
         zoom_one_surf: A Surface with dimensions equivalent to the
             native resolution of the game. (See SCREEN_SIZE in
             globals.py.)
@@ -63,6 +71,8 @@ class GameStateManager(object):
         self.screen = screen
         self.state_pass = StatePass(settings_data)
         self.active_state_stack = [self.create_state_by_id(StateIDs.TITLE)]
+        self.next_state = None
+        self.init_state_thread = Thread()
         self.create_scaled_surfaces()
 
     def create_scaled_surfaces(self):
@@ -85,7 +95,7 @@ class GameStateManager(object):
         """Initialize a new Game State and return it.
 
         Args:
-            state_id: An integer for the ID of the new State, according to
+            state_id: An integer for the ID of the next State, according to
                 the StateIDs enum; view the enum itself for possible values.
         """
         if state_id == StateIDs.TITLE:
@@ -93,36 +103,6 @@ class GameStateManager(object):
         elif state_id == StateIDs.SETTINGS:
             return SettingsState(self, self.state_pass)
         # More will be added as new States are created.
-
-    # Game Processing
-    def change_state(self, next_state_id):
-        """Pop the currently-active State from the stack and push a new State
-        on top in its place.
-
-        Game processing will immediately switch to this new State.
-
-        Args:
-            next_state_id: An integer for the ID of the new State, according to
-                the StateIDs enum; view the enum itself for possible values.
-        """
-        self.active_state_stack.pop()
-        self.push_state(next_state_id)
-    
-    def push_state(self, next_state_id):
-        """Push a another State onto the stack and switch processing to it.
-
-        Args:
-            next_state_id: An integer for the ID of the new State, according to
-                the StateIDs enum; view the enum itself for possible values.
-        """
-        new_state = self.create_state_by_id(next_state_id)
-        self.active_state_stack.append(new_state)
-
-    def pop_top_state(self):
-        """Pop the currently-active State off the top of the stack and switch
-        processing to the State underneath it.
-        """
-        self.active_state_stack.pop()
 
     def scale_screen(self, scale):
         """Resize the screen whenever the screen scale changes.
@@ -163,6 +143,15 @@ class GameStateManager(object):
         scaled_surf = pygame.transform.scale(surf, new_size,
                                              self.scaled_surf)
 
+    def is_loading_next_state(self):
+        """Return a Boolean indicating whether the next Game State is currently
+        being prepared to run next.
+        """
+        if self.init_state_thread.is_alive():
+            return True
+        else:
+            return False
+
     def get_visible_states(self):
         """Determine which States on the stack are currently visible
         on-screen.
@@ -185,6 +174,55 @@ class GameStateManager(object):
         visible_states.reverse()
         return tuple(visible_states)
 
+    # Stack Management
+    def pop_top_state(self):
+        """Pop the currently-active State off the top of the stack and switch
+        processing to the State underneath it.
+        """
+        self.active_state_stack.pop()
+    
+    def change_state(self, next_state_id):
+        """Pop the currently-active State from the stack and push a new State
+        on top in its place.
+
+        Game processing will immediately switch to this new State.
+
+        Args:
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
+        """
+        self.pop_top_state()
+        self.push_state(next_state_id)
+    
+    def push_state(self, next_state_id):
+        """Prepare the next active Game State and push it to the top of the
+        State stack once it is finished initializing.
+
+        Args:
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
+        """
+        self.init_state_thread = Thread(target=self.prepare_next_state,
+                                        args=(next_state_id,))
+        self.init_state_thread.start()
+
+    def prepare_next_state(self, next_state_id):
+        """Create a new Game State and store it as the next State to be run.
+
+        Args:
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
+        """
+        self.next_state = self.create_state_by_id(next_state_id)
+
+    def run_next_state(self):
+        """Add the newly-prepared Game State to the top of the State stack and
+        switch game processing to that State.
+        """
+        self.active_state_stack.append(self.next_state)
+        self.next_state = None
+
+    # Game Processing
     def update_state(self, updated_state, seconds):
         """Update the specified State.
 
@@ -221,12 +259,15 @@ class GameStateManager(object):
     def run_game(self):
         """Run the main game loop."""
         while True:
+            if self.next_state is not None:
+                self.run_next_state()
+            
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
 
-                if event.type == KEYDOWN:
+                if event.type == KEYDOWN and not self.is_loading_next_state():
                     active_state = self.active_state_stack[-1]
                     if active_state.is_accepting_input:
                         active_state.get_player_input(event)
