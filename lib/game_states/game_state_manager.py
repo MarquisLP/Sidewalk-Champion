@@ -1,4 +1,5 @@
 import sys
+import thread
 from pygame.locals import *
 from lib.globals import *
 from lib.game_states.state import *
@@ -34,6 +35,11 @@ class GameStateManager(object):
             always be called when the game updates, while other States
             underneath it will only be drawn and updated if they are visible on
             the screen.
+        next_state: A Game State object that is currently being initialized; it
+            will be added to the top of the State stack and begin running once
+            it is finished initializing.
+            A value of None means that there is no Game State currently being
+            prepared.
         zoom_one_surf: A Surface with dimensions equivalent to the
             native resolution of the game. (See SCREEN_SIZE in
             globals.py.)
@@ -66,6 +72,7 @@ class GameStateManager(object):
         self.screen = screen
         self.state_pass = StatePass(settings_data)
         self.active_state_stack = [self.create_state_by_id(StateIDs.TITLE)]
+        self.next_state = None
         self.create_scaled_surfaces()
 
     def create_scaled_surfaces(self):
@@ -88,7 +95,7 @@ class GameStateManager(object):
         """Initialize a new Game State and return it.
 
         Args:
-            state_id: An integer for the ID of the new State, according to
+            state_id: An integer for the ID of the next State, according to
                 the StateIDs enum; view the enum itself for possible values.
         """
         if state_id == StateIDs.TITLE:
@@ -173,20 +180,36 @@ class GameStateManager(object):
         self.push_state(next_state_id)
     
     def push_state(self, next_state_id):
-        """Push a another State onto the stack and switch processing to it.
+        """Prepare the next active Game State and push it to the top of the
+        State stack once it is finished initializing.
 
         Args:
             next_state_id: An integer for the ID of the new State, according to
                 the StateIDs enum; view the enum itself for possible values.
         """
-        new_state = self.create_state_by_id(next_state_id)
-        self.active_state_stack.append(new_state)
+        thread.start_new_thread(self.prepare_next_state, (next_state_id,))
+
+    def prepare_next_state(self, next_state_id):
+        """Create a new Game State and store it as the next State to be run.
+
+        Args:
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
+        """
+        self.next_state = self.create_state_by_id(next_state_id)
 
     def pop_top_state(self):
         """Pop the currently-active State off the top of the stack and switch
         processing to the State underneath it.
         """
         self.active_state_stack.pop()
+
+    def run_next_state(self):
+        """Add the newly-prepared Game State to the top of the State stack and
+        switch game processing to that State.
+        """
+        self.active_state_stack.append(self.next_state)
+        self.next_state = None
 
     # Game Processing
     def update_state(self, updated_state, seconds):
@@ -225,6 +248,9 @@ class GameStateManager(object):
     def run_game(self):
         """Run the main game loop."""
         while True:
+            if self.next_state is not None:
+                self.run_next_state()
+            
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
