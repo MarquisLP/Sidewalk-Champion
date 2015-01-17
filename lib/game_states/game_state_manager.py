@@ -1,5 +1,5 @@
 import sys
-import thread
+from threading import Thread
 from pygame.locals import *
 from lib.globals import *
 from lib.game_states.state import *
@@ -40,6 +40,8 @@ class GameStateManager(object):
             it is finished initializing.
             A value of None means that there is no Game State currently being
             prepared.
+        init_state_thread: A Thread that handles initialization of new Game
+            States concurrently to the main game thread.
         zoom_one_surf: A Surface with dimensions equivalent to the
             native resolution of the game. (See SCREEN_SIZE in
             globals.py.)
@@ -73,6 +75,7 @@ class GameStateManager(object):
         self.state_pass = StatePass(settings_data)
         self.active_state_stack = [self.create_state_by_id(StateIDs.TITLE)]
         self.next_state = None
+        self.init_state_thread = Thread()
         self.create_scaled_surfaces()
 
     def create_scaled_surfaces(self):
@@ -143,6 +146,15 @@ class GameStateManager(object):
         scaled_surf = pygame.transform.scale(surf, new_size,
                                              self.scaled_surf)
 
+    def is_loading_next_state(self):
+        """Return a Boolean indicating whether the next Game State is currently
+        being prepared to run next.
+        """
+        if self.init_state_thread.is_alive():
+            return True
+        else:
+            return False
+
     def get_visible_states(self):
         """Determine which States on the stack are currently visible
         on-screen.
@@ -187,7 +199,9 @@ class GameStateManager(object):
             next_state_id: An integer for the ID of the new State, according to
                 the StateIDs enum; view the enum itself for possible values.
         """
-        thread.start_new_thread(self.prepare_next_state, (next_state_id,))
+        self.init_state_thread = Thread(target=self.prepare_next_state,
+                                        args=(next_state_id,))
+        self.init_state_thread.start()
 
     def prepare_next_state(self, next_state_id):
         """Create a new Game State and store it as the next State to be run.
@@ -256,7 +270,7 @@ class GameStateManager(object):
                     pygame.quit()
                     sys.exit()
 
-                if event.type == KEYDOWN:
+                if event.type == KEYDOWN and not self.is_loading_next_state():
                     active_state = self.active_state_stack[-1]
                     if active_state.is_accepting_input:
                         active_state.get_player_input(event)
