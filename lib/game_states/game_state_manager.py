@@ -97,36 +97,6 @@ class GameStateManager(object):
             return SettingsState(self, self.state_pass)
         # More will be added as new States are created.
 
-    # Game Processing
-    def change_state(self, next_state_id):
-        """Pop the currently-active State from the stack and push a new State
-        on top in its place.
-
-        Game processing will immediately switch to this new State.
-
-        Args:
-            next_state_id: An integer for the ID of the new State, according to
-                the StateIDs enum; view the enum itself for possible values.
-        """
-        self.active_state_stack.pop()
-        self.push_state(next_state_id)
-    
-    def push_state(self, next_state_id):
-        """Push a another State onto the stack and switch processing to it.
-
-        Args:
-            next_state_id: An integer for the ID of the new State, according to
-                the StateIDs enum; view the enum itself for possible values.
-        """
-        new_state = self.create_state_by_id(next_state_id)
-        self.active_state_stack.append(new_state)
-
-    def pop_top_state(self):
-        """Pop the currently-active State off the top of the stack and switch
-        processing to the State underneath it.
-        """
-        self.active_state_stack.pop()
-
     def scale_screen(self, scale):
         """Resize the screen whenever the screen scale changes.
 
@@ -188,6 +158,37 @@ class GameStateManager(object):
         visible_states.reverse()
         return tuple(visible_states)
 
+    # Stack Management
+    def change_state(self, next_state_id):
+        """Pop the currently-active State from the stack and push a new State
+        on top in its place.
+
+        Game processing will immediately switch to this new State.
+
+        Args:
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
+        """
+        self.active_state_stack.pop()
+        self.push_state(next_state_id)
+    
+    def push_state(self, next_state_id):
+        """Push a another State onto the stack and switch processing to it.
+
+        Args:
+            next_state_id: An integer for the ID of the new State, according to
+                the StateIDs enum; view the enum itself for possible values.
+        """
+        new_state = self.create_state_by_id(next_state_id)
+        self.active_state_stack.append(new_state)
+
+    def pop_top_state(self):
+        """Pop the currently-active State off the top of the stack and switch
+        processing to the State underneath it.
+        """
+        self.active_state_stack.pop()
+
+    # Game Processing
     def update_state(self, updated_state, seconds):
         """Update the specified State.
 
