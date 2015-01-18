@@ -332,6 +332,8 @@ class CharacterSelectState(State):
         """Render all of the State's graphical components onto the State
         Surface.
         """
+        pygame.draw.rect(self.state_surface, (0, 0, 0),
+                         Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
         self.bg_lines.draw(self.state_surface)
         self.roster.draw(self.state_surface)
         self.select_prompt.draw(self.state_surface)
@@ -546,6 +548,8 @@ class IntroTransition(object):
             vs_position: A tuple of two integers for the x and
                 y-positions of the VS text relative to the screen.
         """
+        pygame.draw.rect(parent_surf, (0, 0, 0),
+                         Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
         self.bg_lines.draw(parent_surf)
         self.roster.draw(parent_surf)
         if self.has_characters():
