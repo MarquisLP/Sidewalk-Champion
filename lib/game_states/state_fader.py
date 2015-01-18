@@ -58,6 +58,20 @@ class StateFader(object):
         self.next_state = next_state
         self.is_running = True
 
+    def update(self, time, state_surf):
+        """Update the fade-in or fade-out.
+
+        Args:
+            time: A float for the time elapsed, in seconds, since the
+                last update cycle.
+            state_surf: A Surface containing all of a Game State's
+                graphical components.
+        """
+        if self.next_state is None:
+            self.fade_in_state(time, state_surf)
+        else:
+            self.fade_out_state(time, state_surf)
+
     def fade_in_state(self, time, state_surf):
         """Fade in a Game State's Surface.
 
