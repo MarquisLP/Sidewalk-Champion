@@ -31,6 +31,15 @@ class StateFader(object):
         self.change_state = change_state
         self.is_running = False
 
-    def start_fade_in(self):
-        """"""
+    def start_fade_in(self, state_surf):
+        """Begin fading in the State Surface from black.
+
+        This will set the State's Surface transparency to 0, in order
+        to start the fade-in with a black screen.
+
+        Args:
+            state_surf: A Surface containing all of a Game State's
+                graphical components.
+        """
+        state_surf.set_alpha(0)
         self.is_running = True
