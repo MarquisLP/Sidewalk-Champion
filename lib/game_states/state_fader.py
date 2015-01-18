@@ -1,4 +1,4 @@
-import pygame.mixer.music
+import pygame.mixer
 
 
 class StateFader(object):
