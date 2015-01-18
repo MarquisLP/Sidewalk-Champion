@@ -18,3 +18,15 @@ class StateFader(object):
         is_running: A Boolean indicating whether the fade is still running.
     """
     FADE_RATE = 7
+
+    def __init__(self, change_state):
+        """Declare and initialize instance variables.
+
+        Args:
+            change_state: A method that changes game processing to a new
+                Game States, specified by the ID passed to the method's
+                args.
+        """
+        self.next_state = None
+        self.change_state = change_state
+        self.is_running = False
