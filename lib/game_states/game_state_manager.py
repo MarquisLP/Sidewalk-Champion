@@ -73,16 +73,6 @@ class GameStateManager(object):
         self.active_state_stack = [self.create_state_by_id(StateIDs.TITLE)]
         self.next_state = None
         self.init_state_thread = Thread()
-        self.create_scaled_surfaces()
-
-    def create_scaled_surfaces(self):
-        """Create three Surfaces with dimensions that reflect each of
-        the possible window magnification rates: 1x, 2x, and 3x.
-
-        Another Surface, called scaled_surf, will reference whichever
-        one of these Surfaces needs to be used; scaled_surf will be
-        the one that is actually drawn to the screen.
-        """
         self.zoom_one_surf = Surface((SCREEN_SIZE[0],
                                       SCREEN_SIZE[1])).convert()
         self.zoom_two_surf = Surface((SCREEN_SIZE[0] * 2,
