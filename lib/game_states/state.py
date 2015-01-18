@@ -46,7 +46,8 @@ class State(object):
         """
         self.state_pass = state_pass
         self.state_manager = state_manager
-        self.state_surface = Surface(SCREEN_SIZE)
+        self.state_surface = Surface(SCREEN_SIZE).convert()
+        self.state_surface.set_alpha(255)
         self.exact_offset = (0.0, 0.0)
         self.is_accepting_input = True
 
