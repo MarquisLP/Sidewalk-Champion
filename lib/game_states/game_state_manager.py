@@ -6,6 +6,7 @@ from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
 from lib.game_states.title_state import TitleState
 from lib.game_states.settings_state import SettingsState
+from lib.game_states.character_select_state import CharacterSelectState
 
 class GameStateManager(object):
     """This class runs the main game loop and updates the appropriate
@@ -93,6 +94,8 @@ class GameStateManager(object):
             return TitleState(self, self.state_pass)
         elif state_id == StateIDs.SETTINGS:
             return SettingsState(self, self.state_pass)
+        elif state_id == StateIDs.SELECT_CHARACTER:
+            return CharacterSelectState(self, self.state_pass)
         # More will be added as new States are created.
 
     def scale_screen(self, scale):
