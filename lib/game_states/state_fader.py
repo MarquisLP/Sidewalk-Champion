@@ -1,3 +1,6 @@
+import pygame.mixer.music
+
+
 class StateFader(object):
     """Fades a State Surface in and out from complete transparency.
 
@@ -11,6 +14,8 @@ class StateFader(object):
     Class Constants:
         FADE_SPEED: An integer for the speed of the fade, in alpha value
             gained/lost per second.
+        MUSIC_FADEOUT_TIME: An integer for the time, in milliseconds, taken
+            to fade out music.
 
     Attributes:
         next_state: An integer for the ID of the next Game State to go
@@ -25,6 +30,7 @@ class StateFader(object):
             running.
     """
     FADE_SPEED = 450
+    MUSIC_FADEOUT_TIME = 120
 
     def __init__(self, change_state):
         """Declare and initialize instance variables.
@@ -54,11 +60,15 @@ class StateFader(object):
     def start_fade_out(self, next_state):
         """Begin fading out the State Surface.
 
+        If music is playing, it will begin fading out.
+
         Args:
             next_state: The ID of the next Game State to run once the
                 fade finishes. For possible values, see the StateIDs
                 enum.
         """
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.fadeout(self.MUSIC_FADEOUT_TIME)
         self.next_state = next_state
         self.is_running = True
 
