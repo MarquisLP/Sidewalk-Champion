@@ -43,3 +43,29 @@ class StateFader(object):
         """
         state_surf.set_alpha(0)
         self.is_running = True
+
+    def start_fade_out(self, next_state):
+        """Begin fading out the State Surface to black.
+
+        Args:
+            next_state: The ID of the next Game State to run once the
+                fade finishes. For possible values, see the StateIDs
+                enum.
+        """
+        self.next_state = next_state
+        self.is_running = True
+
+    def fade_in_state(self, state_surf):
+        """Fade in a Game State's Surface.
+
+        The fade will end once the Surface is completely opaque.
+
+        Args:
+            state_surf: A Surface containing all of a Game State's
+                graphical components.
+        """
+        old_alpha = state_surf.get_alpha()
+        if old_alpha >= 255:
+            self.is_running = False
+        else:
+            state_surf.set_alpha(old_alpha + self.FADE_RATE)
