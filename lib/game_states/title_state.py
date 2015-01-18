@@ -126,7 +126,7 @@ class TitleState(State):
 
             updated_options.update(time)
             if updated_options.next_state > -1:
-                self.change_state(updated_options.next_state)
+                self.determine_state_change(updated_options.next_state)
                 updated_options.next_state = -1
             elif updated_options.is_offscreen():
                 self.change_options()
@@ -193,8 +193,8 @@ class TitleState(State):
         elif self.current_options == TitleOptionList.MAIN_OPTIONS:
             self.current_options = TitleOptionList.BATTLE_SETUP
 
-    def change_state(self, state_id):
-        """Switch game processing to another Game State.
+    def determine_state_change(self, state_id):
+        """Determine which State to run next and switch game processing to it.
 
         Args:
             state_id: The index of the next Game State to be run. For
