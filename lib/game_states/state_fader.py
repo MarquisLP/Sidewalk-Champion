@@ -1,5 +1,9 @@
 class StateFader(object):
-    """Fades a State Surface in and out from black.
+    """Fades a State Surface in and out from complete transparency.
+
+    If the State Surface is the only one on the active State stack,
+    this will create a fade-in or fade-out-to-black effect, due to a black
+    background being drawn beneath all Game States.
 
     When fading out, the next Game State will automatically take over
     game processing once the fade finishes.
@@ -35,7 +39,7 @@ class StateFader(object):
         self.is_running = False
 
     def start_fade_in(self, state_surf):
-        """Begin fading in the State Surface from black.
+        """Begin fading in the State Surface.
 
         This will set the State's Surface transparency to 0, in order
         to start the fade-in with a black screen.
@@ -48,7 +52,7 @@ class StateFader(object):
         self.is_running = True
 
     def start_fade_out(self, next_state):
-        """Begin fading out the State Surface to black.
+        """Begin fading out the State Surface.
 
         Args:
             next_state: The ID of the next Game State to run once the
