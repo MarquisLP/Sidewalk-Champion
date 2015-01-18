@@ -30,3 +30,7 @@ class StateFader(object):
         self.next_state = None
         self.change_state = change_state
         self.is_running = False
+
+    def start_fade_in(self):
+        """"""
+        self.is_running = True
