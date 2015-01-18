@@ -83,11 +83,12 @@ class GameStateManager(object):
         one of these Surfaces needs to be used; scaled_surf will be
         the one that is actually drawn to the screen.
         """
-        self.zoom_one_surf = Surface((SCREEN_SIZE[0], SCREEN_SIZE[1]))
+        self.zoom_one_surf = Surface((SCREEN_SIZE[0],
+                                      SCREEN_SIZE[1])).convert()
         self.zoom_two_surf = Surface((SCREEN_SIZE[0] * 2,
-                                      SCREEN_SIZE[1] * 2))
+                                      SCREEN_SIZE[1] * 2)).convert()
         self.zoom_three_surf = Surface((SCREEN_SIZE[0] * 3,
-                                        SCREEN_SIZE[1] * 3))
+                                        SCREEN_SIZE[1] * 3)).convert()
         self.scaled_surf = self.zoom_one_surf
 
     # Support
@@ -139,9 +140,22 @@ class GameStateManager(object):
             self.scaled_surf = self.zoom_two_surf
         else:
             self.scaled_surf = self.zoom_three_surf
+        pygame.transform.scale(surf, new_size, self.scaled_surf)
+        
+        # Scaling causes the alpha value of the Surface to be lost,
+        # so scaled_surf's alpha value will have to be explicitly set
+        # to match the original transparency of the surf.
+        self.match_surface_alpha(surf)
 
-        scaled_surf = pygame.transform.scale(surf, new_size,
-                                             self.scaled_surf)
+    def match_surface_alpha(self, surf):
+        """Match the alpha transparency of the scaled Surface currently in use
+        with that of another Surface.
+
+        Args:
+            surf: The Surface whose alpha value will be used as reference.
+        """
+        if self.scaled_surf.get_alpha() != surf.get_alpha():
+            self.scaled_surf.set_alpha(surf.get_alpha())
 
     def is_loading_next_state(self):
         """Return a Boolean indicating whether the next Game State is currently
