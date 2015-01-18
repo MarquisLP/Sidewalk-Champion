@@ -29,8 +29,8 @@ class StateFader(object):
         is_running: A Boolean indicating whether the fade is still
             running.
     """
-    FADE_SPEED = 450
-    MUSIC_FADEOUT_TIME = 120
+    FADE_SPEED = 200
+    MUSIC_FADEOUT_TIME = 2000
 
     def __init__(self, change_state):
         """Declare and initialize instance variables.
