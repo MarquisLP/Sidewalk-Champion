@@ -69,3 +69,20 @@ class StateFader(object):
             self.is_running = False
         else:
             state_surf.set_alpha(old_alpha + self.FADE_RATE)
+
+    def fade_out_state(self, state_surf):
+        """Fade out a Game State's Surface.
+
+        The fade will end once the Surface is completely transparent.
+        Once this happens, the game will switch to the next Game State.
+
+        Args:
+            state_surf: A Surface containing all of a Game State's
+                graphical components.
+        """
+        old_alpha = state_surf.get_alpha()
+        if old_alpha <= 0:
+            self.is_running = False
+            self.change_state(self.next_state)
+        else:
+            state_surf.set_alpha(old_alpha - self.FADE_RATE)
