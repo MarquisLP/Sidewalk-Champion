@@ -238,8 +238,10 @@ class GameStateManager(object):
         This will keep the screen from being blank, which can reduce
         the likelihood of strange graphical glitches.
         """
+        scale = self.state_pass.settings.screen_scale
         pygame.draw.rect(self.screen, (0, 0, 0),
-                         Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
+                         Rect(0, 0, SCREEN_SIZE[0] * scale,
+                              SCREEN_SIZE[1] * scale))
 
     def draw_state(self, drawn_state):
         """Draw the specified state's surface onto the screen and
