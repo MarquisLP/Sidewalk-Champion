@@ -576,6 +576,30 @@ class IntroTransition(object):
         parent_surf.blit(self.vs_text, (x, y), draw_region)
 
 
+class OutroTransition(object):
+    """Manages the CharacterSelectState's outgoing animation.
+
+    The animation is performed as follows:
+        * The VS text disappears via a wipe-out effect.
+        * The RosterDisplay and CharacterPreviews slide offscreen in their
+          respective directions.
+        * The BackgroundLines scroll out of the screen from left to right,
+          leaving only a black screen.
+
+    Attributes:
+        bg_lines: The CharacterSelectState's BackgroundLines.
+        roster: The CharacterSelectState's RosterDisplay.
+        p1_preview: The CharacterPreview for Player 1.
+        p2_preview: The CharacterPreview for Player 2.
+        vs_text: A Surface containing text that reads VS.
+        vs_wipe_y: An integer for the top end of the wipe in effect,
+            relative to the VS text Surface.
+        is_running: A Boolean indicating whether the outro is currently
+            running.
+    """
+    pass
+
+
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
     currently choosing their character.
