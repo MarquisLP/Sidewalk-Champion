@@ -597,7 +597,24 @@ class OutroTransition(object):
         is_running: A Boolean indicating whether the outro is currently
             running.
     """
-    pass
+    def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text):
+        """Declare and initialize instance variables.
+
+        Args:
+            bg_lines: BackgroundLines that will be drawn onto
+                CharacterSelectState's Surface.
+            roster: The RosterDisplay containing all characters.
+            p1_preview: The CharacterPreview for Player 1.
+            p2_preview: The CharacterPreview for Player 2.
+            vs_text: A Surface containing text that reads VS.
+        """
+        self.bg_lines = bg_lines
+        self.roster = roster
+        self.p1_preview = p1_preview
+        self.p2_preview = p2_preview
+        self.vs_text = vs_text
+        self.vs_wipe_y = 0
+        self.is_running = False
 
 
 class PlayerSelectPrompt(object):
