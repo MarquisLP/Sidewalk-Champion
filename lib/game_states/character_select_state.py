@@ -596,8 +596,13 @@ class OutroTransition(object):
             relative to the VS text Surface.
         is_running: A Boolean indicating whether the outro is currently
             running.
+        next_state: An integer for the index of the Game State to run once the
+            outro finishes. See the StateIDs enum for possible values.
+        change_state: A method that changes game processing to another Game
+            State.
     """
-    def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text):
+    def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text,
+                 change_state):
         """Declare and initialize instance variables.
 
         Args:
@@ -607,6 +612,8 @@ class OutroTransition(object):
             p1_preview: The CharacterPreview for Player 1.
             p2_preview: The CharacterPreview for Player 2.
             vs_text: A Surface containing text that reads VS.
+            change_state: A method that changes game processing to another Game
+                State.
         """
         self.bg_lines = bg_lines
         self.roster = roster
@@ -614,7 +621,9 @@ class OutroTransition(object):
         self.p2_preview = p2_preview
         self.vs_text = vs_text
         self.vs_wipe_y = 0
+        self.next_state = StateIDs.SELECT_CHARACTER
         self.is_running = False
+        self.change_state = change_state
 
 
 class PlayerSelectPrompt(object):
