@@ -644,7 +644,7 @@ class OutroTransition(object):
         else:
             return False
 
-    def move_lines_out(self):
+    def move_lines_out(self, time):
         """Scroll the lines out of the screen, from left to right.
 
         Args:
@@ -652,6 +652,15 @@ class OutroTransition(object):
                 last update.
         """
         self.bg_lines.move_left_end(TransitionSpeeds.LINES * time)
+
+    def slide_roster_out(self, time):
+        """Slide the roster in the direction of the bottom edge of the screen.
+
+        Args:
+            time: A float for the amount of time elapsed, in seconds, since the
+                last update.
+        """
+        self.roster.move(dy=(TransitionSpeeds.ROSTER * time))
 
 
 class PlayerSelectPrompt(object):
