@@ -635,6 +635,15 @@ class OutroTransition(object):
         self.is_running = True
         self.next_state = next_state
 
+    def has_characters(self):
+        """Return a Boolean indicating whether at least one playable character
+        could be loaded into the game.
+        """
+        if self.p1_preview is not None and self.p2_preview is not None:
+            return True
+        else:
+            return False
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
