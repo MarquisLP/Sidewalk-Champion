@@ -644,6 +644,15 @@ class OutroTransition(object):
         else:
             return False
 
+    def move_lines_out(self):
+        """Scroll the lines out of the screen, from left to right.
+
+        Args:
+            time: A float for the amount of time elapsed, in seconds, since the
+                last update.
+        """
+        self.bg_lines.move_left_end(TransitionSpeeds.LINES * time)
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
