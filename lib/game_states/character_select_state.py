@@ -625,6 +625,16 @@ class OutroTransition(object):
         self.is_running = False
         self.change_state = change_state
 
+    def play(self, next_state):
+        """Start playing the outro animation.
+
+        Args:
+            next_state: An integer for the index of the Game State to run once
+                the outro finishes. See the StateIDs enum for possible values.
+        """
+        self.is_running = True
+        self.next_state = next_state
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
