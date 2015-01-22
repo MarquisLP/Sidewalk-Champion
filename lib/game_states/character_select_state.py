@@ -318,17 +318,15 @@ class CharacterSelectState(State):
         """
         if self.intro.is_running:
             self.intro.update(time)
-            if self.has_no_characters():
-                self.intro.draw(self.state_surface, self.NO_CHARS_POSITION)
-            else:
-                self.intro.draw(self.state_surface, self.VS_POSITION)
+        elif self.outro.is_running:
+            self.outro.update(time)
         else:
             self.select_prompt.update()
             if not self.has_no_characters():
                 self.p1_preview.update()
                 self.p2_preview.update()
 
-            self.draw_state()
+        self.draw_state()
 
     def draw_state(self):
         """Render all of the State's graphical components onto the State
@@ -336,17 +334,29 @@ class CharacterSelectState(State):
         """
         pygame.draw.rect(self.state_surface, (0, 0, 0),
                          Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
-        self.bg_lines.draw(self.state_surface)
-        self.roster.draw(self.state_surface)
-        self.select_prompt.draw(self.state_surface)
 
-        if self.has_no_characters():
-            self.state_surface.blit(self.no_chars_text,
-                                    self.NO_CHARS_POSITION)
+        if self.intro.is_running or self.outro.is_running:
+            if self.has_no_characters():
+                center_text_pos = self.NO_CHARS_POSITION
+            else:
+                center_text_pos = self.VS_POSITION
+
+            if self.intro.is_running:
+                self.intro.draw(self.state_surface, center_text_pos)
+            else:
+                self.outro.draw(self.state_surface, center_text_pos)
         else:
-            self.state_surface.blit(self.vs_text, self.VS_POSITION)
-            self.p1_preview.draw(self.state_surface)
-            self.p2_preview.draw(self.state_surface)
+            self.bg_lines.draw(self.state_surface)
+            self.roster.draw(self.state_surface)
+            self.select_prompt.draw(self.state_surface)
+
+            if self.has_no_characters():
+                self.state_surface.blit(self.no_chars_text,
+                                        self.NO_CHARS_POSITION)
+            else:
+                self.state_surface.blit(self.vs_text, self.VS_POSITION)
+                self.p1_preview.draw(self.state_surface)
+                self.p2_preview.draw(self.state_surface)
 
 
 class TransitionSpeeds(object):
