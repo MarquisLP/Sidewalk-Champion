@@ -646,6 +646,31 @@ class OutroTransition(object):
         else:
             return False
 
+    def update(self, time):
+        """Update the outro animation.
+
+        Args:
+            time: A float for the amount of time elapsed, in seconds,
+                since the last update.
+        """
+        if self.vs_wipe_y > 0:
+            self.wipe_out_vs(time)
+
+        elif not self.has_characters() and not self.roster.is_offscreen():
+            self.slide_out_roster(time)
+        elif self.has_characters() and not (self.p1_preview.is_offscreen() and
+                                            self.p2_preview.is_offscreen() and
+                                            self.roster.is_offscreen()):
+            self.slide_out_roster(time)
+            self.slide_out_previews(time)
+
+        elif not self.bg_lines.are_not_visible():
+            self.move_lines_out(time)
+
+        else:
+            self.is_running = False
+            self.change_state(self.next_state)
+
     def move_lines_out(self, time):
         """Scroll the lines out of the screen, from left to right.
 
