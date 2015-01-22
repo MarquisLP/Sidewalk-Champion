@@ -592,7 +592,7 @@ class OutroTransition(object):
         p1_preview: The CharacterPreview for Player 1.
         p2_preview: The CharacterPreview for Player 2.
         vs_text: A Surface containing text that reads VS.
-        vs_wipe_y: An integer for the top end of the wipe in effect,
+        vs_wipe_y: An integer for the top end of the wipe out effect,
             relative to the VS text Surface.
         is_running: A Boolean indicating whether the outro is currently
             running.
@@ -621,7 +621,7 @@ class OutroTransition(object):
         self.p1_preview = p1_preview
         self.p2_preview = p2_preview
         self.vs_text = vs_text
-        self.vs_wipe_y = 0
+        self.vs_wipe_y = vs_text.get_height()
         self.next_state = StateIDs.SELECT_CHARACTER
         self.is_running = False
         self.change_state = change_state
@@ -675,6 +675,18 @@ class OutroTransition(object):
         """
         self.p1_preview.move(dx=(-1 * TransitionSpeeds.PREVIEWS * time))
         self.p2_preview.move(dx=(TransitionSpeeds.PREVIEWS * time))
+
+    def wipe_out_vs(self, time):
+        """Move the lower bound of the VS text's draw region upward in
+        order to produce a 'wipe-out' effect.
+
+        Args:
+            time: A float for the amount of time elapsed, in seconds,
+                since the last update.
+        """
+        self.vs_wipe_y -= TransitionSpeeds.VS * time
+        if self.vs_wipe_y < 0:
+            self.vs_wipe_y = 0
 
 
 class PlayerSelectPrompt(object):
