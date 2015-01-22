@@ -655,7 +655,7 @@ class OutroTransition(object):
         """
         self.bg_lines.move_left_end(TransitionSpeeds.LINES * time)
 
-    def slide_roster_out(self, time):
+    def slide_out_roster(self, time):
         """Slide the roster in the direction of the bottom edge of the
         screen.
 
