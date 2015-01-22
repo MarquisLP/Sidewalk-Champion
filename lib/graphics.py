@@ -1,12 +1,92 @@
 """This module contains classes for representing in-game sprites and
-animations via the PyGame Surface and Image modules."""
+animations via the PyGame Surface and Image modules.
+
+It also contains module level methods to assist in loading and managing
+in-game images in other modules.
+"""
 from __builtin__ import True, False
 from pygame.locals import *
-from pygame import Surface
+from pygame.surface import Surface
 from pygame import image
 from pygame import transform
 from pygame import color
 from pygame import Rect
+
+
+def load_tuple_of_images(filepaths):
+    """Load a collection of Surfaces from file and store them in an
+    immutable container -- a tuple.
+
+    Args:
+        filepaths: A tuple of Strings for the file paths to each image.
+
+    Returns:
+        A list of Surfaces, each containing an image loaded from file.
+    """
+    all_images = []
+
+    for filepath in filepaths:
+        new_image = image.load(filepath).convert_alpha()
+        all_images.append(new_image)
+
+    return tuple(all_images)
+
+
+def render_outlined_text(font, text, text_color, outline_color):
+        """Render a text Surface with an outline 1-pixel thick.
+
+        Args:
+            font: A PyGame Font object used for rendering the text.
+            text: A String for the text that will be rendered.
+            text_color: A tuple of integers which specify the RGB color
+                of the text.
+            text_color: A tuple of integers which specify the RGB color
+                of the outline.
+
+        Returns:
+            A Surface with the desired text outlined.
+        """
+        text_surf = font.render(text, True, text_color)
+        outline = font.render(text, True, outline_color)
+
+        outlined_text = Surface((text_surf.get_width() + 2,
+                                 text_surf.get_height() + 2),
+                                SRCALPHA)
+
+        outlined_text.blit(outline, (0, 0))
+        outlined_text.blit(outline, (0, 2))
+        outlined_text.blit(outline, (2, 0))
+        outlined_text.blit(outline, (2, 2))
+        outlined_text.blit(text_surf, (1, 1))
+
+        return outlined_text
+
+
+def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
+        """Give the surface a colorkeyed background that will be
+        transparent when drawing.
+        Colorkey alpha, unlike per-pixel alpha, will allow the
+        surface's transparent background to remain while using
+        methods such as Surface.set_alpha().
+
+        Keyword arguments:
+            surf        The Surface to convert.
+            colorkey    The color value for the colorkey. The default
+                        is magenta or RGB(255, 0, 255).
+                        This should be set to a color that isn't
+                        present in the image, otherwise those areas
+                        with a matching colour will be drawn
+                        transparent as well.
+        """
+        colorkeyed_surf = Surface(surf.get_size())
+
+        colorkeyed_surf.fill(colorkey)
+        colorkeyed_surf.blit(surf, (0, 0))
+        colorkeyed_surf.set_colorkey(colorkey)
+        colorkeyed_surf.convert()
+
+        return colorkeyed_surf
+
 
 class Graphic(object):
     """An in-game image that can be drawn to the screen.
@@ -35,7 +115,7 @@ class Graphic(object):
                         screen.
         """
         self.image = image.load(filepath)
-        self.image = self.convert_to_colorkey_alpha(self.image)
+        self.image = convert_to_colorkey_alpha(self.image)
         self.filepath = filepath
 
         width = self.image.get_width()
@@ -43,32 +123,6 @@ class Graphic(object):
         self.exact_pos = position
         self.rect = Rect(int(self.exact_pos[0]), int(self.exact_pos[1]),
                          width, height)
-
-    def convert_to_colorkey_alpha(self, surf,
-                                  colorkey=color.Color('magenta')):
-        """Give the surface a colorkeyed background that will be
-        transparent when drawing.
-        Colorkey alpha, unlike per-pixel alpha, will allow the
-        surface's transparent background to remain while using
-        methods such as Surface.set_alpha().
-
-        Keyword arguments:
-            surf        The Surface to convert.
-            colorkey    The color value for the colorkey. The default
-                        is magenta or RGB(255, 0, 255).
-                        This should be set to a color that isn't
-                        present in the image, otherwise those areas
-                        with a matching colour will be drawn
-                        transparent as well.
-        """
-        colorkeyed_surf = Surface(surf.get_size())
-
-        colorkeyed_surf.fill(colorkey)
-        colorkeyed_surf.blit(surf, (0, 0))
-        colorkeyed_surf.set_colorkey(colorkey)
-        colorkeyed_surf.convert()
-
-        return colorkeyed_surf
 
     def get_right_edge(self):
         """Return the x-coordinate of the Graphic's right edge."""
@@ -290,3 +344,164 @@ class Animation(Graphic):
             self.animate()
 
         parent_surf.blit(self.image, self.rect, self.draw_rect)
+
+
+class CharacterAnimation(object):
+    """A special type of animation for a character's action.
+
+    Unlike regular Animations, this one can have different durations for
+    each individual frame.
+
+    Attributes:
+        is_facing_left: A Boolean indicating whether the character is
+            facing to the left instead of to the right.
+        spritesheet: A PyGame Surface containing all of the animation
+            frames in order.
+        frame_durations: A tuple of integers containing the duration,
+            in update cycles, of each animation frame in order.
+        current_frame: An integer for the index of the animation frame
+            currently being displayed.
+        frame_timer: An integer for the number of update cycles elapsed
+            since the current animation frame was shown.
+    """
+    def __init__(self, is_facing_left, spritesheet, frame_durations):
+        """Declare and initialize instance variables:
+
+        Args:
+            is_facing_left: A Boolean indicating whether the character
+                is facing to the left, rather than to the right (which
+                is the default direction for characters in this game).
+            spritesheet_path: A Surface containing the animation's
+                spritesheet image.
+            frame_width: An integer for the width, in pixels, of each
+                frame in the animation sprite sheet.
+            frame_durations: A tuple of integers containing the
+                duration, in update cycles, of each animation frame in
+                order. For example, passing (10, 8, 5) means that the
+                first animation frame is shown for 10 update cycles,
+                the second frame for 8 update cycles, and so on.
+        """
+        self.spritesheet = spritesheet
+        self.is_facing_left = is_facing_left
+        self.frame_durations = frame_durations
+        self.current_frame = 0
+        self.frame_timer = 0
+        if is_facing_left:
+            self.flip_sprite()
+
+    def change_animation(self, spritesheet, frame_durations):
+        """Display a different animation.
+
+        Args:
+            spritesheet: A Surface containing the animation's
+                spritesheet image.
+            frame_durations: A tuple of integers containing the
+                duration, in update cycles, of each animation frame in
+                order. For example, passing (10, 8, 5) means that the
+                first animation frame is shown for 10 update cycles,
+                the second frame for 8 update cycles, and so on.
+        """
+        self.frame_durations = frame_durations
+        self.spritesheet = spritesheet
+        self.current_frame = 0
+        self.frame_timer = 0
+        if self.is_facing_left:
+            self.flip_sprite()
+
+    def get_num_of_frames(self):
+        """Return an integer for the number of frames in the
+        animation.
+        """
+        return len(self.frame_durations)
+
+    def switch_direction(self):
+        """Make the animation face in the opposite direction."""
+        self.is_facing_left = not self.is_facing_left
+        self.flip_sprite()
+
+    def flip_sprite(self):
+        """Alter the spritesheet so that the character faces in the
+        other direction.
+        """
+        flipped_sheet = transform.flip(self.spritesheet, True, False)
+        self.spritesheet = self.order_reversed_spritesheet(flipped_sheet)
+
+    def order_reversed_spritesheet(self, flipped_sheet):
+        """Reorganize the frames in a flipped sprite sheet so that
+        they are in the same order as the original sheet.
+
+        Args:
+            flipped_sheet: A PyGame Surface containing a flipped sprite
+                sheet.
+
+        Returns:
+            A PyGame Surface containing the sprite sheet with each frame
+            flipped and in the correct order.
+        """
+        ordered_sheet = Surface((self.spritesheet.get_width(),
+                                 self.spritesheet.get_height()),
+                                SRCALPHA)
+        ordered_sheet.convert_alpha()
+
+        for frame_index in xrange(0, self.get_num_of_frames()):
+            frame_x = self.get_width() * frame_index
+            old_frame_index = self.get_num_of_frames() - 1 - frame_index
+            old_region = self.get_frame_region(old_frame_index)
+
+            ordered_sheet.blit(flipped_sheet, (frame_x, 0), old_region)
+
+        return ordered_sheet
+
+    def get_frame_region(self, frame_index):
+        """Get the region occupied by of one of the animation frames
+        within the sprite sheet.
+
+        Args:
+            frame_index: An integer for the index of the desired frame.
+
+        Returns:
+            A Rect containing the frame's position and dimensions within
+            the sprite sheet.
+        """
+        frame_x = self.get_width() * frame_index
+        sheet_height = self.spritesheet.get_height()
+        region = Rect(frame_x, 0, self.get_width(), sheet_height)
+        return region
+
+    def get_width(self):
+        """Return an integer for the width, in pixels, of each
+        individual animation frame.
+        """
+        width = self.spritesheet.get_width() / self.get_num_of_frames()
+        return int(width)
+
+    def get_height(self):
+        """Return an integer for the height of each frame, in pixels."""
+        return self.spritesheet.get_height()
+
+    def draw(self, parent_surf, x, y):
+        """Draw the animation onto a Surface at a specific location.
+
+        Args:
+            parent_surf: The Surface upon which the animation will be
+                drawn.
+            x: An integer for the animation's x-position relative to the
+                parent Surface.
+            y: An integer for the animation's y-position relative to the
+                parent Surface.
+        """
+        frame_region = self.get_frame_region(self.current_frame)
+        parent_surf.blit(self.spritesheet, (x, y), frame_region)
+
+    def update(self):
+        """Update the animation by cycling through to the next frame
+        once enough time has elapsed.
+        """
+        self.frame_timer += 1
+
+        if self.frame_timer >= self.frame_durations[self.current_frame]:
+            self.frame_timer = 0
+
+            self.current_frame += 1
+            if self.current_frame > self.get_num_of_frames() - 1:
+                self.current_frame = 0

@@ -1,1 +1,5 @@
 ryu/ryu.xml
+
+chun-li/chun-li.xml
+
+dudley/dudley.xml

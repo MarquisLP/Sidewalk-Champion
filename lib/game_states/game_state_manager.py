@@ -6,6 +6,7 @@ from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
 from lib.game_states.title_state import TitleState
 from lib.game_states.settings_state import SettingsState
+from lib.game_states.character_select_state import CharacterSelectState
 
 class GameStateManager(object):
     """This class runs the main game loop and updates the appropriate
@@ -54,8 +55,7 @@ class GameStateManager(object):
             screen_scale in state_pass.settings.)
     """
     # Initialization
-    def __init__(self, screen, clock, all_characters, all_stages,
-                 settings_data):
+    def __init__(self, screen, clock, settings_data):
         """Initialize instance variables.
 
         Args:
@@ -68,29 +68,18 @@ class GameStateManager(object):
             settings_data: A SettingsData object for various options
                 that can be set by the players via the Settings screen.
         """
-        self.character_list = all_characters
-        self.stage_list = all_stages
         self.clock = clock
         self.screen = screen
         self.state_pass = StatePass(settings_data)
         self.active_state_stack = [self.create_state_by_id(StateIDs.TITLE)]
         self.next_state = None
         self.init_state_thread = Thread()
-        self.create_scaled_surfaces()
-
-    def create_scaled_surfaces(self):
-        """Create three Surfaces with dimensions that reflect each of
-        the possible window magnification rates: 1x, 2x, and 3x.
-
-        Another Surface, called scaled_surf, will reference whichever
-        one of these Surfaces needs to be used; scaled_surf will be
-        the one that is actually drawn to the screen.
-        """
-        self.zoom_one_surf = Surface((SCREEN_SIZE[0], SCREEN_SIZE[1]))
+        self.zoom_one_surf = Surface((SCREEN_SIZE[0],
+                                      SCREEN_SIZE[1])).convert()
         self.zoom_two_surf = Surface((SCREEN_SIZE[0] * 2,
-                                      SCREEN_SIZE[1] * 2))
+                                      SCREEN_SIZE[1] * 2)).convert()
         self.zoom_three_surf = Surface((SCREEN_SIZE[0] * 3,
-                                        SCREEN_SIZE[1] * 3))
+                                        SCREEN_SIZE[1] * 3)).convert()
         self.scaled_surf = self.zoom_one_surf
 
     # Support
@@ -105,6 +94,8 @@ class GameStateManager(object):
             return TitleState(self, self.state_pass)
         elif state_id == StateIDs.SETTINGS:
             return SettingsState(self, self.state_pass)
+        elif state_id == StateIDs.SELECT_CHARACTER:
+            return CharacterSelectState(self, self.state_pass)
         # More will be added as new States are created.
 
     def scale_screen(self, scale):
@@ -142,9 +133,22 @@ class GameStateManager(object):
             self.scaled_surf = self.zoom_two_surf
         else:
             self.scaled_surf = self.zoom_three_surf
+        pygame.transform.scale(surf, new_size, self.scaled_surf)
+        
+        # Scaling causes the alpha value of the Surface to be lost,
+        # so scaled_surf's alpha value will have to be explicitly set
+        # to match the original transparency of the surf.
+        self.match_surface_alpha(surf)
 
-        scaled_surf = pygame.transform.scale(surf, new_size,
-                                             self.scaled_surf)
+    def match_surface_alpha(self, surf):
+        """Match the alpha transparency of the scaled Surface currently in use
+        with that of another Surface.
+
+        Args:
+            surf: The Surface whose alpha value will be used as reference.
+        """
+        if self.scaled_surf.get_alpha() != surf.get_alpha():
+            self.scaled_surf.set_alpha(surf.get_alpha())
 
     def is_loading_next_state(self):
         """Return a Boolean indicating whether the next Game State is currently
@@ -241,8 +245,10 @@ class GameStateManager(object):
         This will keep the screen from being blank, which can reduce
         the likelihood of strange graphical glitches.
         """
+        scale = self.state_pass.settings.screen_scale
         pygame.draw.rect(self.screen, (0, 0, 0),
-                         Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
+                         Rect(0, 0, SCREEN_SIZE[0] * scale,
+                              SCREEN_SIZE[1] * scale))
 
     def draw_state(self, drawn_state):
         """Draw the specified state's surface onto the screen and

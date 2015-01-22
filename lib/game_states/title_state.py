@@ -11,6 +11,7 @@ from lib.graphics import Graphic
 from lib.graphics import Animation
 from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
+from lib.game_states.state_fader import StateFader
 
 
 class TitleState(State):
@@ -58,6 +59,8 @@ class TitleState(State):
             logo: The game logo Animation.
             intro_player: An IntroAnimator that manages and performs
                 the introductory animation.
+            fader: A StateFader used for fading to black when switching to
+                the Character Select State.
             option_lists: A list containing three different OptionLists.
                 This contains one instance each of PressStartPrompt,
                 MainOptionList, and BattleSetupList.
@@ -93,6 +96,7 @@ class TitleState(State):
                               self.LOGO_FRAMES, self.LOGO_DURATION)
         self.intro_animator = IntroAnimator()
         self.intro_animator.reset(self.background, self.logo)
+        self.fader = StateFader(self.change_state)
 
         confirm = Sound(self.SFX_CONFIRM_PATH)
         cancel = Sound(self.SFX_CANCEL_PATH)
@@ -121,12 +125,14 @@ class TitleState(State):
         if self.intro_animator.is_running:
             self.intro_animator.update(time, self.background, self.logo,
                                        self.state_pass.announcer_channel)
+        elif self.fader.is_running:
+            self.fader.update(time, self.state_surface)
         else:
             updated_options = self.option_lists[self.current_options]
 
             updated_options.update(time)
             if updated_options.next_state > -1:
-                self.change_state(updated_options.next_state)
+                self.determine_state_change(updated_options.next_state)
                 updated_options.next_state = -1
             elif updated_options.is_offscreen():
                 self.change_options()
@@ -193,8 +199,8 @@ class TitleState(State):
         elif self.current_options == TitleOptionList.MAIN_OPTIONS:
             self.current_options = TitleOptionList.BATTLE_SETUP
 
-    def change_state(self, state_id):
-        """Switch game processing to another Game State.
+    def determine_state_change(self, state_id):
+        """Determine which State to run next and switch game processing to it.
 
         Args:
             state_id: The index of the next Game State to be run. For
@@ -204,7 +210,7 @@ class TitleState(State):
             self.push_new_state(StateIDs.SETTINGS)
         else:
             self.update_battle_settings()
-            self.change_state(state_id)
+            self.fader.start_fade_out(StateIDs.SELECT_CHARACTER)
 
     def update_battle_settings(self):
         """Set the battle parameters within the StatePass object using
