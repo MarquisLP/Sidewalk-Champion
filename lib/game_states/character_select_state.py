@@ -581,10 +581,10 @@ class OutroTransition(object):
 
     The animation is performed as follows:
         * The VS text disappears via a wipe-out effect.
-        * The RosterDisplay and CharacterPreviews slide offscreen in their
-          respective directions.
-        * The BackgroundLines scroll out of the screen from left to right,
-          leaving only a black screen.
+        * The RosterDisplay and CharacterPreviews slide offscreen in
+          their respective directions.
+        * The BackgroundLines scroll out of the screen from left to
+          right, leaving only a black screen.
 
     Attributes:
         bg_lines: The CharacterSelectState's BackgroundLines.
@@ -596,10 +596,11 @@ class OutroTransition(object):
             relative to the VS text Surface.
         is_running: A Boolean indicating whether the outro is currently
             running.
-        next_state: An integer for the index of the Game State to run once the
-            outro finishes. See the StateIDs enum for possible values.
-        change_state: A method that changes game processing to another Game
-            State.
+        next_state: An integer for the index of the Game State to run
+            once the outro finishes. See the StateIDs enum for possible
+            values.
+        change_state: A method that changes game processing to another
+            Game State.
     """
     def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text,
                  change_state):
@@ -612,8 +613,8 @@ class OutroTransition(object):
             p1_preview: The CharacterPreview for Player 1.
             p2_preview: The CharacterPreview for Player 2.
             vs_text: A Surface containing text that reads VS.
-            change_state: A method that changes game processing to another Game
-                State.
+            change_state: A method that changes game processing to
+                another Game State.
         """
         self.bg_lines = bg_lines
         self.roster = roster
@@ -629,15 +630,16 @@ class OutroTransition(object):
         """Start playing the outro animation.
 
         Args:
-            next_state: An integer for the index of the Game State to run once
-                the outro finishes. See the StateIDs enum for possible values.
+            next_state: An integer for the index of the Game State to
+                run once the outro finishes. See the StateIDs enum for
+                possible values.
         """
         self.is_running = True
         self.next_state = next_state
 
     def has_characters(self):
-        """Return a Boolean indicating whether at least one playable character
-        could be loaded into the game.
+        """Return a Boolean indicating whether at least one playable
+        character could be loaded into the game.
         """
         if self.p1_preview is not None and self.p2_preview is not None:
             return True
@@ -648,17 +650,18 @@ class OutroTransition(object):
         """Scroll the lines out of the screen, from left to right.
 
         Args:
-            time: A float for the amount of time elapsed, in seconds, since the
-                last update.
+            time: A float for the amount of time elapsed, in seconds,
+                since the last update.
         """
         self.bg_lines.move_left_end(TransitionSpeeds.LINES * time)
 
     def slide_roster_out(self, time):
-        """Slide the roster in the direction of the bottom edge of the screen.
+        """Slide the roster in the direction of the bottom edge of the
+        screen.
 
         Args:
-            time: A float for the amount of time elapsed, in seconds, since the
-                last update.
+            time: A float for the amount of time elapsed, in seconds,
+                since the last update.
         """
         self.roster.move(dy=(TransitionSpeeds.ROSTER * time))
 
