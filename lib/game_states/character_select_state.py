@@ -675,6 +675,10 @@ class OutroTransition(object):
             time: A float for the amount of time elapsed, in seconds,
                 since the last update.
         """
+        if self.has_characters():
+            self.p1_preview.update()
+            self.p2_preview.update()
+
         if self.vs_wipe_y > 0:
             self.wipe_out_vs(time)
 
