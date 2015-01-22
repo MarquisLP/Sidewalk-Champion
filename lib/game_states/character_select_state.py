@@ -665,6 +665,17 @@ class OutroTransition(object):
         """
         self.roster.move(dy=(TransitionSpeeds.ROSTER * time))
 
+    def slide_out_previews(self, time):
+        """Slide the CharacterPreviews out toward either side of the
+        screen.
+
+        Args:
+            time: A float for the amount of time elapsed, in seconds,
+                since the last update.
+        """
+        self.p1_preview.move(dx=(-1 * TransitionSpeeds.PREVIEWS * time))
+        self.p2_preview.move(dx=(TransitionSpeeds.PREVIEWS * time))
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
