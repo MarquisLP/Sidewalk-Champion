@@ -694,7 +694,6 @@ class OutroTransition(object):
             self.move_lines_out(time)
 
         else:
-            self.is_running = False
             self.change_state(self.next_state)
 
     def move_lines_out(self, time):
