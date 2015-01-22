@@ -713,6 +713,20 @@ class OutroTransition(object):
         if self.vs_wipe_y < 0:
             self.vs_wipe_y = 0
 
+    def draw_vs_text(self, parent_surf, position):
+        """Draw a portion of the VS text onto a Surface.
+
+        The portion drawn is controlled by the wipe-out effect.
+
+        Args:
+            parent_surf: The Surface ipon which the VS text will be
+                drawn.
+            position: A tuple of two integers for the x and y-positions
+                of the VS text relative to the screen.
+        """
+        draw_region = Rect(0, 0, self.vs_text.get_width(), self.vs_wipe_y)
+        parent_surf.blit(self.vs_text, position, draw_region)
+
 
 class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
