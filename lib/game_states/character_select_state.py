@@ -713,6 +713,23 @@ class OutroTransition(object):
         if self.vs_wipe_y < 0:
             self.vs_wipe_y = 0
 
+    def draw(self, parent_surf, vs_position):
+        """Draw all of the Character Select Screen graphics onto a
+        Surface.
+
+        Args:
+            parent_surf: The PyGame Surface upon which the various
+                graphics will be drawn.
+            vs_position: A tuple of two integers for the x and
+                y-positions of the VS text relative to the screen.
+        """
+        self.bg_lines.draw(parent_surf)
+        self.roster.draw(parent_surf)
+        if self.has_characters():
+            self.p1_preview.draw(parent_surf)
+            self.p2_preview.draw(parent_surf)
+        self.draw_vs_text(parent_surf, vs_position)
+
     def draw_vs_text(self, parent_surf, position):
         """Draw a portion of the VS text onto a Surface.
 
