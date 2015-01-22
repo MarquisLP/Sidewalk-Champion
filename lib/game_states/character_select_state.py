@@ -586,6 +586,10 @@ class OutroTransition(object):
         * The BackgroundLines scroll out of the screen from left to
           right, leaving only a black screen.
 
+    Class Constants:
+        MUSIC_FADEOUT_TIME: An integer for the time taken, in
+            milliseconds, to fade out the Select Screen music.
+
     Attributes:
         bg_lines: The CharacterSelectState's BackgroundLines.
         roster: The CharacterSelectState's RosterDisplay.
@@ -602,6 +606,8 @@ class OutroTransition(object):
         change_state: A method that changes game processing to another
             Game State.
     """
+    MUSIC_FADEOUT_TIME = 2000
+
     def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text,
                  change_state):
         """Declare and initialize instance variables.
@@ -626,16 +632,20 @@ class OutroTransition(object):
         self.is_running = False
         self.change_state = change_state
 
-    def play(self, next_state):
+    def play(self, next_state, music_will_fade=False):
         """Start playing the outro animation.
 
         Args:
             next_state: An integer for the index of the Game State to
                 run once the outro finishes. See the StateIDs enum for
                 possible values.
+            music_will_fade: A Boolean indicating whether the Select
+                Screen music should be faded out.
         """
         self.is_running = True
         self.next_state = next_state
+        if music_will_fade:
+            pygame.mixer.music.fadeout(self.MUSIC_FADEOUT_TIME)
 
     def has_characters(self):
         """Return a Boolean indicating whether at least one playable
