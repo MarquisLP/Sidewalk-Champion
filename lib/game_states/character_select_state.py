@@ -65,8 +65,8 @@ class CharacterSelectState(State):
             selected and confirmed by player 2.
         sfx: SelectStateSFX that will be used to play various sound
             effects within this State.
-        next_state: An integer for the index of the next State to be run
-            by the game. See the StateIDs enum for possible values.
+        intro: The IntroTransition that plays upon entering this State.
+        outro: The OutroTransition that plays upon exiting this State.
     """
     FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
     FONT_SIZE = 16
@@ -104,7 +104,6 @@ class CharacterSelectState(State):
         self.p1_char_index = None
         self.p2_char_index = None
         self.sfx = SelectStateSFX(self.state_pass.ui_channel)
-        self.next_state = StateIDs.SELECT_CHARACTER
 
         if self.has_no_characters():
             wiped_in_text = self.no_chars_text
@@ -114,6 +113,9 @@ class CharacterSelectState(State):
                                      self.p1_preview, self.p2_preview,
                                      wiped_in_text,
                                      self.state_pass.announcer_channel)
+        self.outro = OutroTransition(self.bg_lines, self.roster,
+                                     self.p1_preview, self.p2_preview,
+                                     wiped_in_text, self.change_state)
         self.intro.play()
 
     def load_data_from_file(self):
@@ -245,7 +247,7 @@ class CharacterSelectState(State):
         player 1.
         """
         if self.get_current_player() == 1:
-            self.next_state = StateIDs.TITLE
+            self.outro.play(StateIDs.TITLE, music_will_fade=True)
         else:
             self.change_preview(0)
             p1_last_selection = self.p1_char_index
@@ -269,7 +271,7 @@ class CharacterSelectState(State):
             self.toggle_player_display()
         else:
             self.p2_char_index = self.roster.get_character_index()
-            self.next_state = StateIDs.SELECT_STAGE
+            self.outro.play(StateIDs.SELECT_STAGE)
 
     def toggle_player_display(self):
         """Toggle certain graphics to indicate that the other player is
