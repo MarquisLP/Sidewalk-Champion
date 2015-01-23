@@ -1079,7 +1079,38 @@ class KeyBinding(object):
         else:
             self.p2_binding = new_key
 
-        self.key_text.change_text(new_key)
+        if self.key_is_from_numpad(new_key):
+            self.key_text.change_text(self.format_numpad_key(new_key))
+        else:
+            self.key_text.change_text(new_key)
+
+    @staticmethod
+    def key_is_from_numpad(key_name):
+        """Return a Boolean indicating whether the specified key is a Numpad
+        key.
+
+        Args:
+            key_name: A String for the name of the key to check.
+        """
+        if len(key_name) == 3 and key_name[0] == "[":
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def format_numpad_key(key_name):
+        """Convert the name of a Numpad key into a more descriptive name.
+
+        For example, Numpad 3 is read from pygame.key as '[3]'. This would be
+        converted into 'Numpad 3' via this function.
+
+        Args:
+            key_name: A String for the name of a Numpad key.
+
+        Returns:
+            A String for the converted Numpad key name.
+        """
+        return 'Numpad ' + key_name[1]
 
     def change_player(self, player_num):
         """Display the key binding for one of the players.
@@ -1089,9 +1120,14 @@ class KeyBinding(object):
                 respectively. Any other value will default to 2.
         """
         if player_num == 1:
-            self.key_text.change_text(self.p1_binding)
+            new_key = self.p1_binding
         else:
-            self.key_text.change_text(self.p2_binding)
+            new_key = self.p2_binding
+
+        if self.key_is_from_numpad(new_key):
+            self.key_text.change_text(self.format_numpad_key(new_key))
+        else:
+            self.key_text.change_text(new_key)
 
     def add_underline(self):
         """Draw an underline on the input name text."""
