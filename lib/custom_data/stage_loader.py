@@ -20,6 +20,14 @@ STAGE_LIST_PATH = 'stages/stage_list.txt'
 FILEPATH_PREFIX = 'stages/'
 
 
+def get_stage_paths():
+    """Return a list of all of the file paths to the XML files for
+    battle Stages.
+    """
+    with open(STAGE_LIST_PATH) as f:
+        stage_paths = [line.rstrip('\n') for line in f]
+        return stage_paths
+
 def load_stage_data(stage_element):
     """Retrieve Stage data from an XML element and return it as a
     StageData object.
