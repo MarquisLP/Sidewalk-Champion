@@ -1,11 +1,12 @@
 <sidewalk_champion>
 	<stage>
-		<background></background>
-		<parallax></parallax>
-		<width></width>
-		<height></height>
-		<ground_level></ground_level>
-		<music></music>
+		<name>Makoto Stage</name>
+		<subtitle>Street Fighter 3</subtitle>
+		<background>makoto_stage_sf3.png</background>
+		<parallax>makoto_stage_sf3_parallax.png</parallax>
+		<x_offset>256</x_offset>
+		<ground_level>353</ground_level>
+		<music>makoto_stage_sf3.wav</music>
 	</stage>
 	<verification code="sg9389hANa82" />
 </sidewalk_champion>
