@@ -20,6 +20,32 @@ STAGE_LIST_PATH = 'stages/stage_list.txt'
 FILEPATH_PREFIX = 'stages/'
 
 
+def load_stage(line_index):
+    """Load a specific stage from the list specified in the Stage list
+    text file.
+
+    Args:
+        line_index (int): The line index of the stage file's file
+            path within the stage list text file.
+            Note that like indexing in other parts of Python, this also
+            starts at 0.
+
+    Returns:
+        The specified stage's data as a StageData object. If there was
+        an error loading data, None is returned instead.
+        None will also be returned if line_index exceeds the number of
+        lines in the text file.
+    """
+    stage_paths = get_stage_paths()
+    if line_index > len(stage_paths) - 1:
+        return None
+
+    stage_path = stage_paths[line_index]
+    if is_valid_xml(FILEPATH_PREFIX + stage_path, STAGE_VERIFY_CODE,
+                    'stage'):
+        stage_element = load_xml(stage_path, 'stage')
+        return load_stage_data(stage_element)
+
 def get_stage_paths():
     """Return a list of all of the file paths to the XML files for
     battle Stages.
