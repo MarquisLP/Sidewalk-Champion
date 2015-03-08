@@ -4,17 +4,20 @@
 	<!--Attribute Types-->
 	<xs:simpleType name="xAttribute">
 		<xs:restriction base="xs:integer">
-			<xs:pattern value="[0-384]" />
+			<xs:minInclusive value="0" />
+			<xs:maxInclusive value="384" />
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="yAttribute">
 		<xs:restriction base="xs:integer">
-			<xs:pattern value="[0-226]" />
+			<xs:minInclusive value="0" />
+			<xs:maxInclusive value="226" />
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="speedAttribute">
 		<xs:restriction base="xs:integer">
-			<xs:pattern value="[1-700]" />
+			<xs:minInclusive value="0" />
+			<xs:maxInclusive value="700" />
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="positiveOrZero">
@@ -68,7 +71,13 @@
 		
 		<!--Attributes-->
 		<xs:attribute name="duration" type="positiveOrZero" use="required" />
-		<xs:attribute name="cancelable" type="xs:boolean" use="required" />
+		<xs:attribute name="cancelable" use="required" >
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:pattern value="[0-2]" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
 		<xs:attribute name="move_x" type="xAttribute" use="required" />
 		<xs:attribute name="move_y" type="yAttribute" use="required" />
 		<xs:attribute name="sfx" type="xs:string" />
@@ -109,6 +118,7 @@
 		<!--Attributes-->
 		<xs:attribute name="name" type="xs:string" use="required" />
 		<xs:attribute name="filepath" type="xs:string" use="required" />
+		<xs:attribute name="x_offset" type="xAttribute" use="required" />
 		<xs:attribute name="condition" type="positiveOrZero" use="required" />
 		<xs:attribute name="multi_hit" type="xs:boolean" use="required" />
 		<xs:attribute name="priority" type="positiveOrZero" use="required" />
