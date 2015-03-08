@@ -8,7 +8,13 @@ Attributes:
     FILEPATH_PREFIX (String): The file path of the root directory where
         all character data files are kept.
 """
+import os
+
+
 CHARACTER_LIST_PATH = 'characters/character_list.txt'
+CHARACTER_SCHEMA_PATH = os.path.join(os.path.dirname(os.path.realpath(
+                                                     __file__)),
+                                     'character.xsd')
 FILEPATH_PREFIX = 'characters/'
 
 
