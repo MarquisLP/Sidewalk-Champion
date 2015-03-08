@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<!--Attribute Types-->
+	<xs:simpleType name="xAttribute">
+		<xs:restriction base="xs:integer">
+			<xs:pattern value="[0-384]" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="yAttribute">
+		<xs:restriction base="xs:integer">
+			<xs:pattern value="[0-226]" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="speedAttribute">
+		<xs:restriction base="xs:integer">
+			<xs:pattern value="[1-700]" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="positiveOrZero">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="0" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!--Element Definitions-->
+	<xs:complexType name="projectileType">
+		<xs:attribute name="filepath" type="xs:string" use="required" />
+		<xs:attribute name="x_offset" type="xAttribute" use="required" />
+		<xs:attribute name="y_offset" type="yAttribute" use="required" />
+		<xs:attribute name="x_speed" type="speedAttribute" use="required" />
+		<xs:attribute name="y_speed" type="speedAttribute" use="required" />
+	</xs:complexType>
+	<xs:complexType name="hurtboxType">
+		<xs:attribute name="x_offset" type="xAttribute" use="required" />
+		<xs:attribute name="y_offset" type="yAttribute" use="required" />
+		<xs:attribute name="width" type="xAttribute" use="required" />
+		<xs:attribute name="height" type="yAttribute" use="required" />
+	</xs:complexType>
+	<xs:complexType name="hitboxType">
+		<xs:complexContent>
+			<xs:extension base="hurtboxType">
+				<xs:attribute name="damage" type="positiveOrZero" use="required" />
+				<xs:attribute name="hitstun" type="positiveOrZero" use="required" />
+				<xs:attribute name="blockstun" type="positiveOrZero" use="required" />
+				<xs:attribute name="knockback" type="xAttribute" use="required" />
+				<xs:attribute name="dizzy_stun" type="positiveOrZero" use="required" />
+				<xs:attribute name="effect" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:integer">
+							<xs:pattern value="[0-2]" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="high_block" type="xs:boolean" use="required" />
+				<xs:attribute name="low_block" type="xs:boolean" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="frameType">
+		<!--Child Elements-->
+		<xs:sequence>
+			<xs:element name="hurtbox" type="hurtboxType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="hitbox" type="hitboxType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="projectile" type="projectileType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		
+		<!--Attributes-->
+		<xs:attribute name="duration" type="positiveOrZero" use="required" />
+		<xs:attribute name="cancelable" type="xs:boolean" use="required" />
+		<xs:attribute name="move_x" type="xAttribute" use="required" />
+		<xs:attribute name="move_y" type="yAttribute" use="required" />
+		<xs:attribute name="sfx" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="inputStepType">
+		<xs:sequence>
+			<xs:element name="input" minOccurs="1" maxOccurs="unbounded">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Up" />
+					<xs:enumeration value="Down" />
+					<xs:enumeration value="Forward" />
+					<xs:enumeration value="Back" />
+					<xs:enumeration value="Light Punch" />
+					<xs:enumeration value="Medium Punch" />
+					<xs:enumeration value="Heavy Punch" />
+					<xs:enumeration value="Light Kick" />
+					<xs:enumeration value="Medium Kick" />
+					<xs:enumeration value="Heavy Kick" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="inputListType">
+		<xs:sequence>
+			<xs:element name="input_step" type="inputStepType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="actionType">
+		<!--Child Elements-->
+		<xs:sequence>
+			<xs:element name="frame" type="frameType" minOccurs="1" maxOccurs="unbounded" />
+			<xs:element name="input_list" type="inputListType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		
+		<!--Attributes-->
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="filepath" type="xs:string" use="required" />
+		<xs:attribute name="condition" type="positiveOrZero" use="required" />
+		<xs:attribute name="multi_hit" type="xs:boolean" use="required" />
+		<xs:attribute name="priority" type="positiveOrZero" use="required" />
+		<xs:attribute name="meter_gain" type="positiveOrZero" use="required" />
+		<xs:attribute name="meter_needed" type="positiveOrZero" use="required" />
+		<xs:attribute name="proximity" type="positiveOrZero" use="required" />
+		<xs:attribute name="start_counter_frame" type="positiveOrZero" use="required" />
+	</xs:complexType>
+	<xs:complexType name="defaultActionsType">
+		<xs:all>
+			<xs:element name="intro" type="positiveOrZero" />
+			<xs:element name="stand" type="positiveOrZero" />
+			<xs:element name="walk" type="positiveOrZero" />
+			<xs:element name="crouch_down" type="positiveOrZero" />
+			<xs:element name="crouching_idle" type="positiveOrZero" />
+			<xs:element name="jump_up" type="positiveOrZero" />
+			<xs:element name="jump_forward" type="positiveOrZero" />
+			<xs:element name="jump_back" type="positiveOrZero" />
+			<xs:element name="block_standing" type="positiveOrZero" />
+			<xs:element name="block_high" type="positiveOrZero" />
+			<xs:element name="block_low" type="positiveOrZero" />
+			<xs:element name="standing_recoil" type="positiveOrZero" />
+			<xs:element name="crouching_recoil" type="positiveOrZero" />
+			<xs:element name="jumping_recoil" type="positiveOrZero" />
+			<xs:element name="tripped" type="positiveOrZero" />
+			<xs:element name="launched" type="positiveOrZero" />
+			<xs:element name="falling" type="positiveOrZero" />
+			<xs:element name="knockdown" type="positiveOrZero" />
+			<xs:element name="recover" type="positiveOrZero" />
+			<xs:element name="dizzy" type="positiveOrZero" />
+			<xs:element name="chip_ko" type="positiveOrZero" />
+			<xs:element name="victory" type="positiveOrZero" />
+		</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="characterType">
+		<!--Child Elements-->
+		<xs:sequence>
+			<xs:element name="action" type="actionType" minOccurs="1" maxOccurs="unbounded" />
+			<xs:element name="default_actions" type="defaultActionsType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		
+		<!--Attributes-->
+		<xs:attribute name="name" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1" />
+					<xs:maxLength value="20" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="stamina" type="positiveOrZero" use="required" />
+		<xs:attribute name="speed" type="speedAttribute" use="required" />
+		<xs:attribute name="stun_threshold" type="positiveOrZero" use="required" />
+		<xs:attribute name="mugshot" type="xs:string" use="required" />
+	</xs:complexType>
+	
+	<!--Root-->
+	<xs:element name="character" type="characterType" />
+</xs:schema>
