@@ -117,7 +117,7 @@
 		
 		<!--Attributes-->
 		<xs:attribute name="name" type="xs:string" use="required" />
-		<xs:attribute name="filepath" type="xs:string" use="required" />
+		<xs:attribute name="spritesheet_path" type="xs:string" use="required" />
 		<xs:attribute name="x_offset" type="xAttribute" use="required" />
 		<xs:attribute name="condition" type="positiveOrZero" use="required" />
 		<xs:attribute name="is_multi_hit" type="xs:boolean" use="required" />

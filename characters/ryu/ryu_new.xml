@@ -1,5 +1,5 @@
 ﻿<character_data name="Ryu" stamina="1000" speed="80" stun_threshold="100" mugshot_path="ryu/images/mug.png">
-	<action name="Stand" filepath="ryu/images/stand.png" x_offset="0" condition="0" is_multi_hit="0" input_priority="1" meter_gain="0" meter_needed="0" proximity="0" start_counter_frame="0">
+	<action name="Stand" spritesheet_path="ryu/images/stand.png" x_offset="0" condition="0" is_multi_hit="0" input_priority="1" meter_gain="0" meter_needed="0" proximity="0" start_counter_frame="0">
 		<frame duration="3" cancelable="0" move_x="0" move_y="0" sfx="">
 			<hurtbox x_offset="35" y_offset="8" width="19" height="17" />
 			<hurtbox x_offset="12" y_offset="16" width="54" height="95" />
@@ -42,7 +42,7 @@
 		</frame>
 		<input_list></input_list>
 	</action>
-	<action name="Far Light Punch" filepath="ryu/images/far_light_punch.png" x_offset="0" condition="0" is_multi_hit="0" input_priority="1" meter_gain="0" meter_needed="0" proximity="0" start_counter_frame="0">
+	<action name="Far Light Punch" spritesheet_path="ryu/images/far_light_punch.png" x_offset="0" condition="0" is_multi_hit="0" input_priority="1" meter_gain="0" meter_needed="0" proximity="0" start_counter_frame="0">
 		<frame duration="1" cancelable="0" move_x="0" move_y="0" sfx="">
 			<hurtbox x_offset="38" y_offset="0" width="17" height="16" />
 			<hurtbox x_offset="18" y_offset="9" width="47" height="98" />
