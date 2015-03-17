@@ -55,8 +55,8 @@
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:attribute>
-				<xs:attribute name="high_block" type="xs:boolean" use="required" />
-				<xs:attribute name="low_block" type="xs:boolean" use="required" />
+				<xs:attribute name="can_block_high" type="xs:boolean" use="required" />
+				<xs:attribute name="can_block_low" type="xs:boolean" use="required" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -120,38 +120,36 @@
 		<xs:attribute name="filepath" type="xs:string" use="required" />
 		<xs:attribute name="x_offset" type="xAttribute" use="required" />
 		<xs:attribute name="condition" type="positiveOrZero" use="required" />
-		<xs:attribute name="multi_hit" type="xs:boolean" use="required" />
-		<xs:attribute name="priority" type="positiveOrZero" use="required" />
+		<xs:attribute name="is_multi_hit" type="xs:boolean" use="required" />
+		<xs:attribute name="input_priority" type="positiveOrZero" use="required" />
 		<xs:attribute name="meter_gain" type="positiveOrZero" use="required" />
 		<xs:attribute name="meter_needed" type="positiveOrZero" use="required" />
 		<xs:attribute name="proximity" type="positiveOrZero" use="required" />
 		<xs:attribute name="start_counter_frame" type="positiveOrZero" use="required" />
 	</xs:complexType>
 	<xs:complexType name="defaultActionsType">
-		<xs:all>
-			<xs:element name="intro" type="positiveOrZero" />
-			<xs:element name="stand" type="positiveOrZero" />
-			<xs:element name="walk" type="positiveOrZero" />
-			<xs:element name="crouch_down" type="positiveOrZero" />
-			<xs:element name="crouching_idle" type="positiveOrZero" />
-			<xs:element name="jump_up" type="positiveOrZero" />
-			<xs:element name="jump_forward" type="positiveOrZero" />
-			<xs:element name="jump_back" type="positiveOrZero" />
-			<xs:element name="block_standing" type="positiveOrZero" />
-			<xs:element name="block_high" type="positiveOrZero" />
-			<xs:element name="block_low" type="positiveOrZero" />
-			<xs:element name="standing_recoil" type="positiveOrZero" />
-			<xs:element name="crouching_recoil" type="positiveOrZero" />
-			<xs:element name="jumping_recoil" type="positiveOrZero" />
-			<xs:element name="tripped" type="positiveOrZero" />
-			<xs:element name="launched" type="positiveOrZero" />
-			<xs:element name="falling" type="positiveOrZero" />
-			<xs:element name="knockdown" type="positiveOrZero" />
-			<xs:element name="recover" type="positiveOrZero" />
-			<xs:element name="dizzy" type="positiveOrZero" />
-			<xs:element name="chip_ko" type="positiveOrZero" />
-			<xs:element name="victory" type="positiveOrZero" />
-		</xs:all>
+		<xs:attribute name="intro" type="positiveOrZero" />
+		<xs:attribute name="stand" type="positiveOrZero" />
+		<xs:attribute name="walk" type="positiveOrZero" />
+		<xs:attribute name="crouch_down" type="positiveOrZero" />
+		<xs:attribute name="crouching_idle" type="positiveOrZero" />
+		<xs:attribute name="jump_up" type="positiveOrZero" />
+		<xs:attribute name="jump_forward" type="positiveOrZero" />
+		<xs:attribute name="jump_back" type="positiveOrZero" />
+		<xs:attribute name="block_standing" type="positiveOrZero" />
+		<xs:attribute name="block_high" type="positiveOrZero" />
+		<xs:attribute name="block_low" type="positiveOrZero" />
+		<xs:attribute name="standing_recoil" type="positiveOrZero" />
+		<xs:attribute name="crouching_recoil" type="positiveOrZero" />
+		<xs:attribute name="jumping_recoil" type="positiveOrZero" />
+		<xs:attribute name="tripped" type="positiveOrZero" />
+		<xs:attribute name="launched" type="positiveOrZero" />
+		<xs:attribute name="falling" type="positiveOrZero" />
+		<xs:attribute name="knockdown" type="positiveOrZero" />
+		<xs:attribute name="recover" type="positiveOrZero" />
+		<xs:attribute name="dizzy" type="positiveOrZero" />
+		<xs:attribute name="chip_ko" type="positiveOrZero" />
+		<xs:attribute name="victory" type="positiveOrZero" />
 	</xs:complexType>
 	
 	<xs:complexType name="characterType">
@@ -173,9 +171,9 @@
 		<xs:attribute name="stamina" type="positiveOrZero" use="required" />
 		<xs:attribute name="speed" type="speedAttribute" use="required" />
 		<xs:attribute name="stun_threshold" type="positiveOrZero" use="required" />
-		<xs:attribute name="mugshot" type="xs:string" use="required" />
+		<xs:attribute name="mugshot_path" type="xs:string" use="required" />
 	</xs:complexType>
 	
 	<!--Root-->
-	<xs:element name="character" type="characterType" />
+	<xs:element name="character_data" type="characterType" />
 </xs:schema>
