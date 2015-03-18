@@ -180,3 +180,19 @@ def load_child_objects(parent_element, child_list_name):
         children.append(child_object)
 
     return children
+
+
+def get_singular_from_plural(plural):
+    """Convert a plural word into its singular form.
+
+    Args:
+        plural (String): A plural. For example, 'cats', 'potatoes', 'knives'.
+    """
+    if plural[-3:] in ['oes', 'xes']:
+        return plural[:-2]
+    elif plural[-3:] == 'ves':
+        return plural[:-3] + 'fe'
+    elif plural[-3:] == 'ies':
+        return plural[:-3] + 'y'
+    else:
+        return plural[:-1]
