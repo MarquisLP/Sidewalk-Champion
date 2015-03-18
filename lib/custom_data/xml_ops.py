@@ -20,7 +20,7 @@ def load_xml_doc_as_object(xml_path, schema_path):
         None is returned instead if there were any errors reading the
         specified files.
     """
-    root_element = load_xml_from_file(filepath)
+    root_element = load_xml_from_file(xml_path, schema_path)
     if root_element is None:
         return None
     else:
