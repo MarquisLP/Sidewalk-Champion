@@ -89,3 +89,22 @@ def object_attributes(obj):
         obj (Object): An instance of some class.
     """
     return obj.__dict__.items()
+
+
+def is_list_of_text_data(parent_element, list_name):
+    """Return a Boolean indicating whether the specified XML element contains
+    one or more child elements of the same tag and containing text data.
+
+    Args:
+        parent_element (Element): An XML element containing all of the child
+            text elements.
+        list_name (String): An appropriate list name for the child elements.
+            For example, if the child elements have the tag 'box', then
+            'boxes' should be passed for this parameter.
+    """
+    list_item_name = get_singular_from_plural(list_name)
+
+    if parent_element.find(list_item_name) is None:
+        return False
+
+    return parent_element.find(list_item_name).text is not None
