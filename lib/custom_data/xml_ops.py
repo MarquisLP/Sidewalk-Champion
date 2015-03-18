@@ -128,3 +128,20 @@ def load_xml_text_data(parent_element, text_list_name):
         data_from_text.append(new_data)
 
     return data_from_text
+
+
+def convert_to_int_if_numeric(original_string):
+    """Cast a numeric string into an integer.
+
+    Args:
+        original_string (String): A text string.
+
+    Returns:
+        An integer containing the contents of original_string.
+        If original_string is not numeric, original_string is returned
+        unmodified as a String.
+    """
+    if original_string.isdigit():
+        return int(original_string)
+    else:
+        return original_string
