@@ -196,3 +196,14 @@ def get_singular_from_plural(plural):
         return plural[:-3] + 'y'
     else:
         return plural[:-1]
+
+
+def is_element_attribute(element, attribute_name):
+    """Return a Boolean indicating whether the specified element has an
+    attribute of the specified name.
+
+    Args:
+        element (Element): An XML element that will be searched.
+        attribute_name (String): The name of the attribute to find.
+    """
+    return element.get(attribute_name) is not None
