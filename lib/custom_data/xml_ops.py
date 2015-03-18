@@ -27,3 +27,32 @@ def load_xml_from_file(xml_path, schema_path):
         return xml_doc.getroot()
     else:
         return None
+
+
+def load_data_from_element(element):
+    """Load all of an XML element's data into an object.
+
+    Args:
+        element (lxml.XML): An XML element.
+
+    Returns:
+        An instance of a class with the same name as element's tag, containing
+        all of element's attributes, text, and child elements.
+    """
+    data_object = instantiate_from_string(element.tag)
+
+    for attr_name, attr_value in object_attributes(data_object):
+        if is_list_of_text_data(element, attr_name):
+            loaded_data = load_xml_text_data(element, attr_name)
+        elif type(attr_value) is dict:
+            loaded_data = load_attribute_dict(element, attr_name)
+        elif type(attr_value) is list:
+            loaded_data = load_child_objects(element, attr_name)
+        elif is_element_attribute(element, attr_name):
+            loaded_data = load_element_attribute(element, attr_name)
+        else:   # Optional attribute was omitted.
+            loaded_data = attr_value
+
+        setattr(data_object, attr_name, loaded_data)
+
+    return data_object
