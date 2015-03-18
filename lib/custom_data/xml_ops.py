@@ -24,7 +24,7 @@ def load_xml_doc_as_object(xml_path, schema_path):
     if root_element is None:
         return None
     else:
-        return load_data_from_element(root_element)
+        return convert_element_to_object(root_element)
 
 
 def load_xml_from_file(xml_path, schema_path):
@@ -51,7 +51,7 @@ def load_xml_from_file(xml_path, schema_path):
         return None
 
 
-def load_data_from_element(element):
+def convert_element_to_object(element):
     """Load all of an XML element's data into an object.
 
     Args:
