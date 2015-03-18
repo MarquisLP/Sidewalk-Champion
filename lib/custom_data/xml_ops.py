@@ -68,3 +68,14 @@ def instantiate_from_string(class_name):
     """
     class_name = convert_underscore_to_camel_case(class_name)
     return globals()[class_name]()
+
+
+def convert_underscore_to_camel_case(text):
+    """Return text converted into CamelCase.
+
+    Args:
+        text (String): A string with words separated by underscores.
+    """
+    words = text.split('_')
+    words = [word.capitalize() for word in words]
+    return ''.join(words)
