@@ -145,3 +145,18 @@ def convert_to_int_if_numeric(original_string):
         return int(original_string)
     else:
         return original_string
+
+
+def load_attribute_dict(parent_element, tag_name):
+    """Load all of the attribute names and values within an XML element into a
+    dict.
+
+    Args:
+        parent_element (Element): The parent XML Element containing the desired
+            Element as a child node.
+        tag_name (String): The tag name of the desired XML element.
+    """
+    loaded_element = parent_element.find(tag_name)
+    attribute_dict = {attr[0] : convert_to_int_if_numeric(attr[1])
+                      for attr in loaded_element.items()}
+    return attribute_dict
