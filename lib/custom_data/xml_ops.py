@@ -5,6 +5,28 @@ from lxml import etree
 from character_data import *
 
 
+def load_xml_doc_as_object(xml_path, schema_path):
+    """Return an object containing the contents of an XML document as
+    attributes.
+
+    Args:
+        xml_path (String): The file path to a valid XML document.
+        schema_path (String): The file path to an XML Schema that will be used
+            to verify the XML document.
+
+    Returns:
+        An instance of a class with the same name as the XML document's
+        root element.
+        None is returned instead if there were any errors reading the
+        specified files.
+    """
+    root_element = load_xml_from_file(filepath)
+    if root_element is None:
+        return None
+    else:
+        return load_data_from_element(root_element)
+
+
 def load_xml_from_file(xml_path, schema_path):
     """Retrieve the entire contents of an XML document.
 
