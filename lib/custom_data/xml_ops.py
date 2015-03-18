@@ -79,3 +79,13 @@ def convert_underscore_to_camel_case(text):
     words = text.split('_')
     words = [word.capitalize() for word in words]
     return ''.join(words)
+
+
+def object_attributes(obj):
+    """Return a dictionary containing the names and values of all attributes
+    within an object.
+
+    Args:
+        obj (Object): An instance of some class.
+    """
+    return obj.__dict__.items()
