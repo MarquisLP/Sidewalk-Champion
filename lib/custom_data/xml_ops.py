@@ -56,3 +56,15 @@ def load_data_from_element(element):
         setattr(data_object, attr_name, loaded_data)
 
     return data_object
+
+
+def instantiate_from_string(class_name):
+    """Return an instance of the specified class.
+
+    Args:
+        class_name (String): The name of a class included in this module's
+            namespace. It will automatically be converted into CamelCase to
+            match the class naming convention.
+    """
+    class_name = convert_underscore_to_camel_case(class_name)
+    return globals()[class_name]()
