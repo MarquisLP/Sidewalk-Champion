@@ -108,3 +108,23 @@ def is_list_of_text_data(parent_element, list_name):
         return False
 
     return parent_element.find(list_item_name).text is not None
+
+
+def load_xml_text_data(parent_element, text_list_name):
+    """Load child elements containing text from a parent XML element.
+
+    Args:
+        list_name (String): An appropriate list name for the child elements.
+            For example, if the child elements have the tag 'box', then
+            'boxes' should be passed for this parameter.
+        parent_element (Element): An XML element containing all of the child
+            text elements.
+    """
+    data_from_text = []
+    list_item_name = get_singular_from_plural(text_list_name)
+
+    for text_element in parent_element.findall(list_item_name):
+        new_data = convert_to_int_if_numeric(text_element.text)
+        data_from_text.append(new_data)
+
+    return data_from_text
