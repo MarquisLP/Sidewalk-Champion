@@ -160,3 +160,23 @@ def load_attribute_dict(parent_element, tag_name):
     attribute_dict = {attr[0] : convert_to_int_if_numeric(attr[1])
                       for attr in loaded_element.items()}
     return attribute_dict
+
+
+def load_child_objects(parent_element, child_list_name):
+    """Load child elements of the same tag name from a parent XML element.
+
+    Args:
+        parent_element (Element): The XML element containing all of the child
+            elements.
+        child_list_name (String): An appropriate name for a list containing
+            the child elements. For example, if the child elements' tag is
+            'box', 'boxes' should be passed for this parameter.
+    """
+    children = []
+    child_name = get_singular_from_plural(child_list_name)
+
+    for child_element in parent_element.findall(child_name):
+        child_object = load_data_from_element(child_element)
+        children.append(child_object)
+
+    return children
