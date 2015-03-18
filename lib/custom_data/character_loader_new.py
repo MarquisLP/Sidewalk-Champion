@@ -39,7 +39,9 @@ def load_character(line_index):
         return None
 
     character_path = xml_paths[line_index]
-    return load_xml_doc_as_object(character_path, CHARACTER_SCHEMA_PATH)
+    char_data = load_xml_doc_as_object(character_path, CHARACTER_SCHEMA_PATH)
+    prepend_prefix_to_filepaths(char_data)
+    return char_data
 
 
 def get_character_paths():
@@ -49,3 +51,20 @@ def get_character_paths():
     with open(CHARACTER_LIST_PATH) as f:
         character_path_list = [line.rstrip('\n') for line in f]
         return character_path_list
+
+
+def prepend_prefix_to_filepaths(character):
+    """Preprend FILEPATH_PREFIX to all file path attributes of a
+    CharacterData object.
+
+    Args:
+        character (CharacterData): A CharacterData instance.
+    """
+    character.mugshot_path = prepend_prefix(character.mugshot_path)
+    for action in character.actions:
+        action.spritesheet_path = prepend_prefix(action.spritesheet_path)
+
+
+def prepend_prefix(filepath):
+    """Return the filepath string prepended with FILEPATH_PREFIX."""
+    return FILEPATH_PREFIX + filepath
