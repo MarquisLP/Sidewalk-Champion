@@ -207,3 +207,14 @@ def is_element_attribute(element, attribute_name):
         attribute_name (String): The name of the attribute to find.
     """
     return element.get(attribute_name) is not None
+
+
+def load_element_attribute(element, attribute_name):
+    """Return an attribute from an XML element.
+
+    Args:
+        element (Element): An XML element containing the desired attribute.
+        attribute_name (String): The name of the attribute to load.
+    """
+    attribute_value = element.get(attribute_name)
+    return convert_to_int_if_numeric(attribute_value)
