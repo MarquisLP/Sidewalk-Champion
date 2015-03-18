@@ -39,10 +39,17 @@ def load_xml_from_file(xml_path, schema_path):
         The root XML element of the specified document.
         If the document was deemed invalid according to the specified XML
         Schema, None is returned instead.
+        None is also returned if either of the file paths are faulty, or
+        if either file had trouble being parsed.
     """
     parser = etree.XMLParser(remove_blank_text=True)
-    xml_doc = etree.parse(xml_path, parser)
-    schema_doc = etree.parse(schema_path, parser)
+
+    try:
+        xml_doc = etree.parse(xml_path, parser)
+        schema_doc = etree.parse(schema_path, parser)
+    except:
+        return None
+
     schema = etree.XMLSchema(schema_doc)
 
     if schema.validate(xml_doc):
