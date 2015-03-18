@@ -9,6 +9,7 @@ Attributes:
         all character data files are kept.
 """
 import os
+from lib.custom_data.xml_ops import load_xml_doc_as_object
 
 
 CHARACTER_LIST_PATH = 'characters/character_list.txt'
@@ -16,6 +17,29 @@ CHARACTER_SCHEMA_PATH = os.path.join(os.path.dirname(os.path.realpath(
                                                      __file__)),
                                      'character.xsd')
 FILEPATH_PREFIX = 'characters/'
+
+
+def load_character(line_index):
+    """Load a specific character from the list specified in the
+    character list text file.
+
+    Args:
+        line_index: An integer for the line index of the character file's
+            file path within the character list text file.
+            Note that like most indexing schemes, this starts at 0.
+
+    Returns:
+        The specified character's data as a CharacterData object. If
+        there was an error loading data, None is returned instead.
+        None will also be returned if line_index exceeds the number of
+        lines in the text file.
+    """
+    xml_paths = get_character_paths()
+    if line_index > len(xml_paths) - 1:
+        return None
+
+    character_path = xml_paths[line_index]
+    return load_xml_doc_as_object(character_path, CHARACTER_SCHEMA_PATH)
 
 
 def get_character_paths():
