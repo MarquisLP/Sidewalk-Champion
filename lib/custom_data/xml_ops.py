@@ -247,3 +247,16 @@ def load_element_attribute(element, attribute_name):
     """
     attribute_value = element.get(attribute_name)
     return convert_to_int_if_numeric(attribute_value)
+
+
+def save_object_as_xml_doc(data_object, doc_filepath):
+    """Save the attributes of an object to an XML document.
+
+    Args:
+        data_object (Object): An instance of some class.
+        doc_filepath (String): The file path to an XML document. If the file
+            doesn't exist, it will be created.
+    """
+    root = convert_object_to_element(data_object)
+    xml_tree = etree.ElementTree(root)
+    xml_tree.write(doc_filepath, pretty_print=True)
