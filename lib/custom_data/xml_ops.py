@@ -286,3 +286,22 @@ def convert_object_to_element(data_object):
             new_element.set(attribute_name, str(attribute_value))
 
     return new_element
+
+
+def convert_camel_case_to_underscore(text):
+    """Return text written in CamelCase converted to underscore_case.
+
+    Args:
+        text (String): A text string written in CamelCase.
+    """
+    words = []
+    last_capital_index = 0
+
+    for current_letter_index in xrange(1, len(text)):
+        if text[current_letter_index].isupper():
+            words.append(text[last_capital_index:current_letter_index])
+            last_capital_index = current_letter_index
+        elif current_letter_index == len(text) - 1:
+            words.append(text[last_capital_index:])
+
+    return '_'.join(words).lower()
