@@ -53,7 +53,8 @@ def get_character_paths():
     playable characters.
     """
     with open(CHARACTER_LIST_PATH) as f:
-        character_path_list = [line.rstrip('\n') for line in f]
+        character_path_list = [FILEPATH_PREFIX + line.rstrip('\n')
+                               for line in f]
         return character_path_list
 
 
