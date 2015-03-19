@@ -40,8 +40,12 @@ def load_character(line_index):
 
     character_path = xml_paths[line_index]
     char_data = load_xml_doc_as_object(character_path, CHARACTER_SCHEMA_PATH)
-    prepend_prefix_to_filepaths(char_data)
-    return char_data
+
+    if char_data is None:
+        return None
+    else:
+        prepend_prefix_to_filepaths(char_data)
+        return char_data
 
 
 def get_character_paths():
