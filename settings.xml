@@ -1,6 +1,4 @@
-<settings>
-	<screen_scale>2</screen_scale>
-	<show_box_display>False</show_box_display>
+<settings_data screen_scale='2' show_box_display='0'>
 	<player1_keys up='w' back='a' down='s' forward='d' light_punch='r' medium_punch='t' heavy_punch='y' light_kick='f' medium_kick='g' heavy_kick='h' start='left ctrl' cancel='escape' />
 	<player2_keys up='up' back='left' down='down' forward='right' light_punch='[7]' medium_punch='[8]' heavy_punch='[9]' light_kick='[4]' medium_kick='[5]' heavy_kick='[6]' start='return' cancel='backspace' />
-</settings>
+</settings_data>
