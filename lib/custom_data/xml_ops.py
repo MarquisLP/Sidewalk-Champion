@@ -305,3 +305,22 @@ def convert_camel_case_to_underscore(text):
             words.append(text[last_capital_index:])
 
     return '_'.join(words).lower()
+
+
+def convert_dict_to_element(dictionary, element_name):
+    """Convert a dict into an XML element.
+
+    Args:
+        dictionary (dict): A dict with one or more key-value pairs.
+        element_name (String): The name given to the XML Element's tag.
+
+    Returns:
+        An Element with element_name as its tag and the key-value pairs in
+        dictionary as its attributes.
+    """
+    new_element = etree.Element(element_name)
+
+    for key, value in dictionary.items():
+        new_element.set(key, str(value))
+
+    return new_element
