@@ -260,3 +260,29 @@ def save_object_as_xml_doc(data_object, doc_filepath):
     root = convert_object_to_element(data_object)
     xml_tree = etree.ElementTree(root)
     xml_tree.write(doc_filepath, pretty_print=True)
+
+
+def convert_object_to_element(data_object):
+    """Convert an object into an XML Element.
+
+    Args:
+        data_object (object): An instance of some class.
+
+    Returns:
+        An XML Element whose tag name is the same as data_object's class name,
+        but in underscore_case. Its attributes and child Elements will contain
+        data from all of data_object's attributes.
+    """
+    class_name = type(data_object).__name__
+    element_name = convert_camel_case_to_underscore(class_name)
+    new_element = etree.Element(element_name)
+
+    for attribute_name, attribute_value in object_attributes(data_object):
+        if type(attribute_value) is dict:
+            dict_element = convert_dict_to_element(attribute_value,
+                                                   attribute_name)
+            new_element.append(dict_element)
+        else:
+            new_element.set(attribute_name, str(attribute_value))
+
+    return new_element
