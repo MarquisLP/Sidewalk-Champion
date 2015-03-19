@@ -5,6 +5,9 @@ from lxml import etree
 from character_data import *
 
 
+# ============================================================================
+# Loading From File
+# ============================================================================
 def load_xml_doc_as_object(xml_path, schema_path):
     """Return an object containing the contents of an XML document as
     attributes.
@@ -248,7 +251,9 @@ def load_element_attribute(element, attribute_name):
     attribute_value = element.get(attribute_name)
     return convert_to_int_if_numeric(attribute_value)
 
-
+# ============================================================================
+# Saving To File
+# ============================================================================
 def save_object_as_xml_doc(data_object, doc_filepath):
     """Save the attributes of an object to an XML document.
 
