@@ -205,7 +205,7 @@ def load_child_objects(parent_element, child_list_name):
     child_name = get_singular_from_plural(child_list_name)
 
     for child_element in parent_element.findall(child_name):
-        child_object = load_data_from_element(child_element)
+        child_object = convert_element_to_object(child_element)
         children.append(child_object)
 
     return children
