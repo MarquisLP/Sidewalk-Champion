@@ -19,6 +19,24 @@ CHARACTER_SCHEMA_PATH = os.path.join(os.path.dirname(os.path.realpath(
 FILEPATH_PREFIX = 'characters/'
 
 
+def load_all_characters():
+    """Load the data from all of the XML files specified in the
+    character_list file, and return it as a list of CharacterData
+    objects.
+
+    If no characters could be loaded, None is returned instead.
+    """
+    characters = []
+
+    for filepath_index in range(0, number_of_character_filepaths()):
+        characters.append(load_character(filepath_index))
+
+    if len(characters) > 0:
+        return characters
+    else:
+        return None
+
+
 def load_character(line_index):
     """Load a specific character from the list specified in the
     character list text file.
@@ -56,6 +74,13 @@ def get_character_paths():
         character_path_list = [FILEPATH_PREFIX + line.rstrip('\n')
                                for line in f]
         return character_path_list
+
+
+def number_of_character_filepaths():
+    """Return the number of file paths specified in the character list
+    text file.
+    """
+    return len(get_character_paths())
 
 
 def prepend_prefix_to_filepaths(character):
