@@ -409,7 +409,7 @@ class SettingList(object):
         scale = Setting(self.X, self.Y, "Window Scale", "1x", "2x", "FULL")
         box_display = Setting(self.X,
             self.Y + scale.get_height() + self.SETTING_DISTANCE,
-            "Collision Box Display", "ON", "OFF")
+            "Collision Box Display", "OFF", "ON")
         binding_player = Setting(self.X,
             self.Y + (box_display.get_height() * 2) +
             (self.SETTING_DISTANCE * 2),
@@ -504,7 +504,7 @@ class SettingList(object):
         not, as chosen through the Show Collision Boxes Setting.
         """
         show_boxes_setting = self.settings[SettingIndex.SHOW_BOXES]
-        return bool(show_boxes_setting.selected_option)
+        return show_boxes_setting.selected_option
 
     def get_binding_player(self):
         """Return the number of the player whose Key Bindings are
