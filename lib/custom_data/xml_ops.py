@@ -2,8 +2,8 @@
 for potential errors that may result from reading XML data.
 """
 from lxml import etree
-from character_data import *
-
+from lib.custom_data.character_data import *
+from lib.custom_data.settings_data import *
 
 # ============================================================================
 # Loading From File
