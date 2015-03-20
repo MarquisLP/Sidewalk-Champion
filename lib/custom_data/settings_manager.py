@@ -7,7 +7,8 @@ Attributes:
         XML Schema.
 """
 from lib.custom_data.settings_data import SettingsData
-from lib.custom_data.xml_ops import load_xml_doc_as_object
+from lib.custom_data.xml_ops import (load_xml_doc_as_object,
+    save_object_as_xml_doc)
 
 
 SETTINGS_PATH = 'settings.xml'
@@ -26,3 +27,13 @@ def load_settings():
         return SettingsData()
     else:
         return settings
+
+
+def save_settings(save_data):
+    """Save all of the information within settings_data to the XML file
+    specified by SETTINGS_PATH.
+
+    Args:
+        save_data (SettingsData): Contains the data that will be saved.
+    """
+    save_object_as_xml_doc(save_data, SETTINGS_PATH)
