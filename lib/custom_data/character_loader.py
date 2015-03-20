@@ -29,7 +29,9 @@ def load_all_characters():
     characters = []
 
     for filepath_index in range(0, number_of_character_filepaths()):
-        characters.append(load_character(filepath_index))
+        character = load_character(filepath_index)
+        if character is not None:
+            characters.append(character)
 
     if len(characters) > 0:
         return characters
