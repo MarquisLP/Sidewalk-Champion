@@ -2,7 +2,9 @@
 the settings XML file.
 
 Attributes:
-    SETTINGS_PATH           Filepath for the settings file.
+    SETTINGS_PATH (String): The file path for the settings file.
+    SETTINGS_SCHEMA_PATH (String): The file path for the settings'
+        XML Schema.
 """
-
 SETTINGS_PATH = 'settings.xml'
+SETTINGS_SCHEMA_PATH = 'settings.xsd'
