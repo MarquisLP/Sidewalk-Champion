@@ -1,7 +1,7 @@
 class SettingsData(object):
     """Stores options for game playback that can be modified by the
     players in the Settings screen.
-    
+
     Attributes
         screen_scale        The window and all Graphics will be
                             magnified by this scale. This can be either 1, 2,
@@ -14,7 +14,7 @@ class SettingsData(object):
                             input buttons.
     """
     def __init__(self):
-        self.screen_scale = 1
+        self.screen_scale = 2
         self.show_box_display = False
         self.player1_keys = self.default_p1_keys_dict()
         self.player2_keys = self.default_p2_keys_dict()
