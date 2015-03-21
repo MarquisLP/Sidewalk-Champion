@@ -5,6 +5,8 @@ Attributes:
     CHARACTER_LIST_PATH (String): The filepath for the text file which
         lists the paths to all of the characters' XML files.
         Each path is separated by a new-line.
+    CHARACTER_SCHEMA_PATH: The file path to the XML Schema document that
+        will be used to validate character files.
     FILEPATH_PREFIX (String): The file path of the root directory where
         all character data files are kept.
 """
@@ -44,8 +46,8 @@ def load_character(line_index):
     character list text file.
 
     Args:
-        line_index: An integer for the line index of the character file's
-            file path within the character list text file.
+        line_index: An integer for the line index of the character
+            file's file path within the character list text file.
             Note that like most indexing schemes, this starts at 0.
 
     Returns:

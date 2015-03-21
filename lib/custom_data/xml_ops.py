@@ -14,8 +14,8 @@ def load_xml_doc_as_object(xml_path, schema_path):
 
     Args:
         xml_path (String): The file path to a valid XML document.
-        schema_path (String): The file path to an XML Schema that will be used
-            to verify the XML document.
+        schema_path (String): The file path to an XML Schema that will
+            be used to verify the XML document.
 
     Returns:
         An instance of a class with the same name as the XML document's
@@ -35,13 +35,13 @@ def load_xml_from_file(xml_path, schema_path):
 
     Args:
         xml_path (String): The file path to a valid XML document.
-        schema_path (String): The file path to an XML Schema that will be used
-            to verify the XML document.
+        schema_path (String): The file path to an XML Schema that will
+            be used to verify the XML document.
 
     Returns:
         The root XML element of the specified document.
-        If the document was deemed invalid according to the specified XML
-        Schema, None is returned instead.
+        If the document was deemed invalid according to the specified
+        XML Schema, None is returned instead.
         None is also returned if either of the file paths are faulty, or
         if either file had trouble being parsed.
     """
@@ -68,8 +68,9 @@ def convert_element_to_object(element):
         element (lxml.XML): An XML element.
 
     Returns:
-        An instance of a class with the same name as element's tag, containing
-        all of element's attributes, text, and child elements.
+        An instance of a class with the same name as element's tag,
+        containing all of element's attributes, text, and child
+        elements.
     """
     data_object = instantiate_from_string(element.tag)
 
@@ -94,9 +95,9 @@ def instantiate_from_string(class_name):
     """Return an instance of the specified class.
 
     Args:
-        class_name (String): The name of a class included in this module's
-            namespace. It will automatically be converted into CamelCase to
-            match the class naming convention.
+        class_name (String): The name of a class included in this
+            module's namespace. It will automatically be converted into
+            CamelCase to match the class naming convention.
     """
     class_name = convert_underscore_to_camel_case(class_name)
     return globals()[class_name]()
@@ -114,8 +115,8 @@ def convert_underscore_to_camel_case(text):
 
 
 def object_attributes(obj):
-    """Return a dictionary containing the names and values of all attributes
-    within an object.
+    """Return a dictionary containing the names and values of all
+        attributes within an object.
 
     Args:
         obj (Object): An instance of some class.
@@ -124,15 +125,16 @@ def object_attributes(obj):
 
 
 def is_list_of_text_data(parent_element, list_name):
-    """Return a Boolean indicating whether the specified XML element contains
-    one or more child elements of the same tag and containing text data.
+    """Return a Boolean indicating whether the specified XML element
+    contains one or more child elements of the same tag and containing
+    text data.
 
     Args:
-        parent_element (Element): An XML element containing all of the child
-            text elements.
-        list_name (String): An appropriate list name for the child elements.
-            For example, if the child elements have the tag 'box', then
-            'boxes' should be passed for this parameter.
+        parent_element (Element): An XML element containing all of the
+            child text elements.
+        list_name (String): An appropriate list name for the child
+            elements.  For example, if the child elements have the tag
+            'box', then 'boxes' should be passed for this parameter.
     """
     list_item_name = get_singular_from_plural(list_name)
 
@@ -146,11 +148,11 @@ def load_xml_text_data(parent_element, text_list_name):
     """Load child elements containing text from a parent XML element.
 
     Args:
-        list_name (String): An appropriate list name for the child elements.
-            For example, if the child elements have the tag 'box', then
-            'boxes' should be passed for this parameter.
-        parent_element (Element): An XML element containing all of the child
-            text elements.
+        list_name (String): An appropriate list name for the child
+            elements. For example, if the child elements have the tag
+            'box', then 'boxes' should be passed for this parameter.
+        parent_element (Element): An XML element containing all of the
+            child text elements.
     """
     data_from_text = []
     list_item_name = get_singular_from_plural(text_list_name)
@@ -180,12 +182,12 @@ def convert_to_int_if_numeric(original_string):
 
 
 def load_attribute_dict(parent_element, tag_name):
-    """Load all of the attribute names and values within an XML element into a
-    dict.
+    """Load all of the attribute names and values within an XML element
+    into a dict.
 
     Args:
-        parent_element (Element): The parent XML Element containing the desired
-            Element as a child node.
+        parent_element (Element): The parent XML Element containing the
+            desired Element as a child node.
         tag_name (String): The tag name of the desired XML element.
     """
     loaded_element = parent_element.find(tag_name)
@@ -195,14 +197,16 @@ def load_attribute_dict(parent_element, tag_name):
 
 
 def load_child_objects(parent_element, child_list_name):
-    """Load child elements of the same tag name from a parent XML element.
+    """Load child elements of the same tag name from a parent XML
+    element.
 
     Args:
-        parent_element (Element): The XML element containing all of the child
-            elements.
-        child_list_name (String): An appropriate name for a list containing
-            the child elements. For example, if the child elements' tag is
-            'box', 'boxes' should be passed for this parameter.
+        parent_element (Element): The XML element containing all of the
+            child elements.
+        child_list_name (String): An appropriate name for a list
+            containing the child elements. For example, if the child
+            elements' tag is 'box', 'boxes' should be passed for this
+            parameter.
     """
     children = []
     child_name = get_singular_from_plural(child_list_name)
@@ -218,7 +222,8 @@ def get_singular_from_plural(plural):
     """Convert a plural word into its singular form.
 
     Args:
-        plural (String): A plural. For example, 'cats', 'potatoes', 'knives'.
+        plural (String): A plural. For example, 'cats', 'potatoes',
+            'knives'.
     """
     if plural[-3:] in ['oes', 'xes']:
         return plural[:-2]
@@ -245,7 +250,8 @@ def load_element_attribute(element, attribute_name):
     """Return an attribute from an XML element.
 
     Args:
-        element (Element): An XML element containing the desired attribute.
+        element (Element): An XML element containing the desired
+            attribute.
         attribute_name (String): The name of the attribute to load.
     """
     attribute_value = element.get(attribute_name)
@@ -259,8 +265,8 @@ def save_object_as_xml_doc(data_object, doc_filepath):
 
     Args:
         data_object (Object): An instance of some class.
-        doc_filepath (String): The file path to an XML document. If the file
-            doesn't exist, it will be created.
+        doc_filepath (String): The file path to an XML document. If the
+            file doesn't exist, it will be created.
     """
     root = convert_object_to_element(data_object)
     xml_tree = etree.ElementTree(root)
@@ -274,9 +280,9 @@ def convert_object_to_element(data_object):
         data_object (object): An instance of some class.
 
     Returns:
-        An XML Element whose tag name is the same as data_object's class name,
-        but in underscore_case. Its attributes and child Elements will contain
-        data from all of data_object's attributes.
+        An XML Element whose tag name is the same as data_object's class
+        name, but in underscore_case. Its attributes and child Elements
+        will contain data from all of data_object's attributes.
     """
     class_name = type(data_object).__name__
     element_name = convert_camel_case_to_underscore(class_name)
@@ -320,8 +326,8 @@ def convert_dict_to_element(dictionary, element_name):
         element_name (String): The name given to the XML Element's tag.
 
     Returns:
-        An Element with element_name as its tag and the key-value pairs in
-        dictionary as its attributes.
+        An Element with element_name as its tag and the key-value pairs
+        in dictionary as its attributes.
     """
     new_element = etree.Element(element_name)
 
