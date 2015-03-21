@@ -15,9 +15,9 @@ A customizable fighting game written with Python and the PyGame library.
 See [UNLICENSE.txt](UNLICENSE.txt).
 
 ## Dependencies
-* Python 2.7
-* PyGame
-* lxml
+* [Python 2.7](https://www.python.org/download/releases/2.7/)
+* [PyGame](http://pygame.org/news.html)
+* [lxml](http://lxml.de/)
 
 ## How to Contribute
 As we still have a long road of development ahead of us, contributions of any kind will (usually) be accepted with open arms. Simply fork the project over, make your edits, and send us a pull request.
