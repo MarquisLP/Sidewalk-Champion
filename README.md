@@ -14,11 +14,10 @@ A customizable fighting game written with Python and the PyGame library.
 ## License
 See [UNLICENSE.txt](UNLICENSE.txt).
 
-## How to Build
-1. Make sure you have Python 2.7 and PyGame installed on your system.
-2. Download the project as a ZIP archive and extract the contents.
-3. Open the source files with your text editor or IDE of choice.
-4. To run the game itself, run Sidewalk_Champion.py in the root folder.
+## Dependencies
+* Python 2.7
+* PyGame
+* lxml
 
 ## How to Contribute
 As we still have a long road of development ahead of us, contributions of any kind will (usually) be accepted with open arms. Simply fork the project over, make your edits, and send us a pull request.
