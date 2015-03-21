@@ -1,4 +1,4 @@
-<settings_data show_box_display="False" screen_scale="2">
+<settings_data show_box_display="0" screen_scale="2">
   <player2_keys heavy_kick="[6]" medium_kick="[5]" light_kick="[4]" up="up" back="left" down="down" start="return" heavy_punch="[9]" medium_punch="[8]" light_punch="[7]" forward="right" cancel="backspace"/>
   <player1_keys heavy_kick="h" medium_kick="g" light_kick="f" up="w" back="a" down="s" start="left ctrl" heavy_punch="y" medium_punch="t" light_punch="r" forward="d" cancel="escape"/>
 </settings_data>
