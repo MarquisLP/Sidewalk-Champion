@@ -153,9 +153,9 @@ class CharacterSelectState(State):
 
         for character in all_chars:
             name = character.name
-            spritesheet_path = character.action_list[0].spritesheet_path
+            spritesheet_path = character.actions[0].spritesheet_path
             spritesheet = pygame.image.load(spritesheet_path).convert_alpha()
-            frame_durations = load_frame_durations(character.action_list[0])
+            frame_durations = load_frame_durations(character.actions[0])
 
             all_preview_data.append(PreviewData(name, spritesheet,
                                                 frame_durations))
