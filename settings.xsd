@@ -1,0 +1,50 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="settings_data">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="player1_keys" minOccurs="1" maxOccurs="1">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="up" use="required"/>
+                <xs:attribute type="xs:string" name="back" use="required"/>
+                <xs:attribute type="xs:string" name="down" use="required"/>
+                <xs:attribute type="xs:string" name="forward" use="required"/>
+                <xs:attribute type="xs:string" name="light_punch" use="required"/>
+                <xs:attribute type="xs:string" name="medium_punch" use="required"/>
+                <xs:attribute type="xs:string" name="heavy_punch" use="required"/>
+                <xs:attribute type="xs:string" name="light_kick" use="required"/>
+                <xs:attribute type="xs:string" name="medium_kick" use="required"/>
+                <xs:attribute type="xs:string" name="heavy_kick" use="required"/>
+                <xs:attribute type="xs:string" name="start" use="required"/>
+                <xs:attribute type="xs:string" name="cancel" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="player2_keys" minOccurs="1" maxOccurs="1">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="up" use="required"/>
+                <xs:attribute type="xs:string" name="back" use="required"/>
+                <xs:attribute type="xs:string" name="down" use="required"/>
+                <xs:attribute type="xs:string" name="forward" use="required"/>
+                <xs:attribute type="xs:string" name="light_punch" use="required"/>
+                <xs:attribute type="xs:string" name="medium_punch" use="required"/>
+                <xs:attribute type="xs:string" name="heavy_punch" use="required"/>
+                <xs:attribute type="xs:string" name="light_kick" use="required"/>
+                <xs:attribute type="xs:string" name="medium_kick" use="required"/>
+                <xs:attribute type="xs:string" name="heavy_kick" use="required"/>
+                <xs:attribute type="xs:string" name="start" use="required"/>
+                <xs:attribute type="xs:string" name="cancel" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:all>
+      <xs:attribute type="xs:integer" name="screen_scale" use="required"/>
+      <xs:attribute type="xs:boolean" name="show_box_display" use="required"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

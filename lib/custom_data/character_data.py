@@ -47,7 +47,7 @@ class CharacterData(object):
                             Character Selection screen. All mugshots
                             are kept in the characters folder, so
                             'characters/' is omitted from this String.
-        action_list         A List of all of the Actions that the
+        actions             A List of all of the Actions that the
                             character can perform.
         default_actions     A Dictionary containing the names for all
                             of the types of Actions that are universal
@@ -64,7 +64,7 @@ class CharacterData(object):
         self.stamina = 0
         self.stun_threshold = 0
         self.mugshot_path = ""
-        self.action_list = []
+        self.actions = []
         self.default_actions = {}
 
 
@@ -161,8 +161,6 @@ class Action(object):
     def __init__(self):
         self.name = ""
         self.spritesheet_path = ""
-        self.frame_width = 0
-        self.frame_height = 0
         self.x_offset = 0
         self.condition = 0
         self.is_multi_hit = False
@@ -181,11 +179,11 @@ class InputStep(object):
     that sequence, containing all of the buttons required in that step.
 
     Attributes:
-        buttons     A List containing the names of buttons that must be
+        inputs      A List containing the names of buttons that must be
                     pressed during this step.
     """
     def __init__(self):
-        self.buttons = []
+        self.inputs = []
 
 
 class Frame(object):
@@ -239,9 +237,11 @@ class CollisionBox(object):
         rect        Contains the box's offset relative to the
                     character, as well as its dimensions.
     """
-
     def __init__(self):
-        self.rect = Rect(0, 0, 0, 0)
+        self.x_offset = 0
+        self.y_offset = 0
+        self.width = 0
+        self.height = 0
 
 
 class Hurtbox(CollisionBox):

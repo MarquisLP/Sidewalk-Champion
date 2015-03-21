@@ -11,7 +11,7 @@ from lib.graphics import Graphic
 from lib.graphics import Animation
 from lib.game_states.state import State
 from lib.game_states.state import StatePass
-from lib.custom_data.settings_manager import SettingsManager
+from lib.custom_data.settings_manager import save_settings
 from lib.custom_data.settings_data import SettingsData
 
 
@@ -40,8 +40,6 @@ class SettingsState(State):
             Surface will slide, in pixels per second.
 
     Attributes:
-        file_manager: The SettingsManager object that loads and saves
-            data to the settings file.
         setting_list: The SettingList object that controls all of
             the available Settings.
         binding_list: The KeyBindingList object that controls all
@@ -81,7 +79,6 @@ class SettingsState(State):
         p2_bindings = self.state_pass.settings.player2_keys
         self.setting_list = SettingList(p1_bindings, p2_bindings)
         self.binding_list = self.setting_list.binding_list
-        self.file_manager = SettingsManager()
         self.bg_image = Graphic(self.BG_PATH, (0.0, 0.0))
         self.slide_sound = Sound(self.SLIDE_SFX_PATH)
         self.scroll_sound = Sound(self.SCROLL_SFX_PATH)
@@ -333,7 +330,7 @@ class SettingsState(State):
         saved_data.player1_keys = new_data.player1_keys
         saved_data.player2_keys = new_data.player2_keys
 
-        self.file_manager.save_settings(saved_data)
+        save_settings(saved_data)
 
     # Drawing
     def draw_state(self):
@@ -412,7 +409,7 @@ class SettingList(object):
         scale = Setting(self.X, self.Y, "Window Scale", "1x", "2x", "FULL")
         box_display = Setting(self.X,
             self.Y + scale.get_height() + self.SETTING_DISTANCE,
-            "Collision Box Display", "ON", "OFF")
+            "Collision Box Display", "OFF", "ON")
         binding_player = Setting(self.X,
             self.Y + (box_display.get_height() * 2) +
             (self.SETTING_DISTANCE * 2),
@@ -507,7 +504,7 @@ class SettingList(object):
         not, as chosen through the Show Collision Boxes Setting.
         """
         show_boxes_setting = self.settings[SettingIndex.SHOW_BOXES]
-        return bool(show_boxes_setting.selected_option)
+        return show_boxes_setting.selected_option
 
     def get_binding_player(self):
         """Return the number of the player whose Key Bindings are

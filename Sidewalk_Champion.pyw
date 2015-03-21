@@ -9,7 +9,7 @@
 import os
 import pygame
 from pygame.locals import *
-from lib.custom_data.settings_manager import SettingsManager
+from lib.custom_data.settings_manager import load_settings
 from lib.game_states.game_state_manager import *
 from lib.globals import SCREEN_SIZE
 from lib.globals import FULL_SCALE
@@ -30,11 +30,7 @@ def check_pygame_modules():
 
 # Do some necessary checks and load external data while the game starts up.
 if check_pygame_modules() == True:
-    settings_loader = SettingsManager()
-    settings = settings_loader.load_settings()
-
-    # We don't need the SettingsManager once it's finished loading data.
-    del(settings_loader)
+    settings = load_settings()
 
     display_flags = 0
     if settings.screen_scale == FULL_SCALE:
