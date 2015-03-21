@@ -28,9 +28,9 @@ def pygame_modules_have_loaded():
 
     return success
 
+pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 pygame.font.init()
-pygame.mixer.init(44100)
 
 if pygame_modules_have_loaded():
     game_screen = pygame.display.set_mode(SCREEN_SIZE)
