@@ -28,16 +28,14 @@ def pygame_modules_have_loaded():
 
     return success
 
+pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 pygame.font.init()
-pygame.mixer.init(44100)
 
 if pygame_modules_have_loaded():
     game_screen = pygame.display.set_mode(SCREEN_SIZE)
     pygame.display.set_caption('Test')
     clock = pygame.time.Clock()
-    timer_rate = int((1.0 / FRAME_RATE) * 1000)
-    pygame.time.set_timer(USEREVENT, timer_rate)
 
     def declare_globals():
         # The class(es) that will be tested should be declared and initialized
@@ -65,6 +63,7 @@ if pygame_modules_have_loaded():
     # Add additional methods here.
 
     def main():
+        declare_globals()
         prepare_test()
 
         while True:
@@ -77,9 +76,14 @@ if pygame_modules_have_loaded():
                     key_name = pygame.key.name(event.key)
                     handle_input(key_name)
 
-                if event.type == USEREVENT:
-                    milliseconds = clock.tick(FRAME_RATE)
-                    seconds = milliseconds / 1000.0
-                    update(game_screen, seconds)
+            milliseconds = clock.tick(FRAME_RATE)
+            seconds = milliseconds / 1000.0
+            update(game_screen, seconds)
+
+            sleep_time = (1000.0 / FRAME_RATE) - milliseconds
+            if sleep_time > 0.0:
+                pygame.time.wait(int(sleep_time))
+            else:
+                pygame.time.wait(1)
 
     main()
