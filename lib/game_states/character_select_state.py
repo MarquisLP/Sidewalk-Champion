@@ -1315,6 +1315,9 @@ class RosterCursor(Animation):
     Attributes:
         p1_image: A Surface containing player 1's spritesheet image.
         p2_image: A Surface containing player 2's spritesheet image.
+        current_player: An integer representing the player currently
+            choosing their character. This value can be either 1 or 2,
+            for Player 1 and 2 respectively.
     """
     P1_SPRITESHEET = 'images/p1_character_cursor.png'
     P2_SPRITESHEET = 'images/p2_character_cursor.png'
@@ -1331,6 +1334,7 @@ class RosterCursor(Animation):
         super(RosterCursor, self).__init__(self.P1_SPRITESHEET, position,
                                            self.FRAME_AMOUNT,
                                            self.FRAME_DURATION)
+        self.current_player = 1
         self.p1_image = pygame.image.load(self.P1_SPRITESHEET)
         self.p1_image = convert_to_colorkey_alpha(self.p1_image)
         self.p2_image = pygame.image.load(self.P2_SPRITESHEET)
@@ -1338,11 +1342,11 @@ class RosterCursor(Animation):
 
     def toggle_player(self):
         """Switch to the other player's cursor animation."""
-        if self.filepath == self.P1_SPRITESHEET:
-            self.filepath = self.P2_SPRITESHEET
+        if self.current_player == 1:
+            self.current_player = 2
             self.image = self.p2_image
         else:
-            self.filepath = self.P1_SPRITESHEET
+            self.current_player = 1
             self.image = self.p1_image
 
 

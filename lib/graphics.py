@@ -90,12 +90,10 @@ def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
 
 class Graphic(object):
     """An in-game image that can be drawn to the screen.
-    
+
     Attributes:
             image       The PyGame Surface object that contains this
                         Graphic's visual content.
-            filepath    The filepath to where the image content was
-                        loaded from.
             exact_pos   A tuple containing the Graphic's exact
                         on-screen coordinates as floats. rect will
                         round them down to integers to make the
@@ -116,7 +114,6 @@ class Graphic(object):
         """
         self.image = image.load(filepath)
         self.image = convert_to_colorkey_alpha(self.image)
-        self.filepath = filepath
 
         width = self.image.get_width()
         height = self.image.get_height()
@@ -188,8 +185,6 @@ class Animation(Graphic):
     Attributes:
         image               The PyGame Surface object that contains
                             this Animation's spritesheet.
-        filepath            The filepath to where the spritesheet
-                            image is located.
         exact_pos           A tuple containing the Animation's exact
                             on-screen coordinates as floats. rect will
                             round them down to integers to make the
@@ -335,7 +330,7 @@ class Animation(Graphic):
 
     def draw(self, parent_surf):
         """Draw the current frame onto the specified Surface.
-        
+
         Keyword arguments:
             parent_surf     The Surface upon which the Animation will
                             be drawn.
