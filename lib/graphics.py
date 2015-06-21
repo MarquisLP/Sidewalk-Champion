@@ -156,7 +156,7 @@ class Graphic(object):
         self.image = transform.flip(self.image, is_horizontal,
                                     is_vertical)
 
-    def draw(self, surf, x=None, y=None):
+    def draw(self, surf, x=None, y=None, region=None):
         """Draw the Graphic onto a specified Surface.
 
         Args:
@@ -168,11 +168,14 @@ class Graphic(object):
             y: Optional. The y-position of the Graphic relative to the
                 parent Surface. If this is not given, the position
                 passed to init() will be used instead.
+            region: Optional. A Rect specifying the area of this
+                Graphic that will be drawn onto the parent Surface. If
+                this is None, all of the Graphic will be drawn.
         """
         if x is None or y is None:
-            surf.blit(self.image, self.rect)
+            surf.blit(self.image, self.rect, region)
         else:
-            surf.blit(self.image, (x, y))
+            surf.blit(self.image, (x, y), region)
 
     def move(self, dx, dy):
         """Move the Graphic some distance across the screen.
