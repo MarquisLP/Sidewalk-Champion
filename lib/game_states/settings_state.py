@@ -79,7 +79,7 @@ class SettingsState(State):
         p2_bindings = self.state_pass.settings.player2_keys
         self.setting_list = SettingList(p1_bindings, p2_bindings)
         self.binding_list = self.setting_list.binding_list
-        self.bg_image = Graphic(self.BG_PATH, (0.0, 0.0))
+        self.bg_image = Graphic.from_file(self.BG_PATH, (0.0, 0.0))
         self.slide_sound = Sound(self.SLIDE_SFX_PATH)
         self.scroll_sound = Sound(self.SCROLL_SFX_PATH)
         self.exit_sound = Sound(self.EXIT_SFX_PATH)
@@ -752,10 +752,10 @@ class KeyBindingList(object):
         self.bindings = self.load_bindings(p1_bindings, p2_bindings)
         self.current_binding = 0
         self.top_binding = 0
-        self.up_arrow = Animation(self.UP_ARROW_PATH,
+        self.up_arrow = Animation.from_file(self.UP_ARROW_PATH,
             (self.X + self.ARROW_X, self.Y + self.UP_ARROW_Y),
             self.ARROW_FRAMES, self.ARROW_DURATION)
-        self.down_arrow = Animation(self.DOWN_ARROW_PATH,
+        self.down_arrow = Animation.from_file(self.DOWN_ARROW_PATH,
             (self.X + self.ARROW_X, self.Y + self.DOWN_ARROW_Y),
             self.ARROW_FRAMES, self.ARROW_DURATION)
 

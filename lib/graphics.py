@@ -102,24 +102,37 @@ class Graphic(object):
                         Graphic's on-screen coordinates as well as its
                         dimensions.
     """
-    def __init__(self, filepath, position):
+    def __init__(self, surf, position):
         """Declare and initialize instance variables.
 
         Keyword arguments:
-            filepath    The filepath to the image that will be loaded
-                        and displayed in-game.
+            surf        The PyGame Surface containing this Graphic's
+                        image.
             position    Tuple containing the coordinates of the
                         top-left corner of the image relative to the
                         screen.
         """
-        self.image = image.load(filepath)
-        self.image = convert_to_colorkey_alpha(self.image)
-
+        self.image = surf
+        self.exact_pos = position
         width = self.image.get_width()
         height = self.image.get_height()
-        self.exact_pos = position
         self.rect = Rect(int(self.exact_pos[0]), int(self.exact_pos[1]),
                          width, height)
+
+    @classmethod
+    def from_file(self, filepath, position):
+        """Create a Graphic from an external image file.
+
+        Keyword arguments:
+            filepath    The file path to the image that will be loaded
+                        into this Graphic.
+            position    Tuple containing the coordinates of the
+                        top-left corner of the image relative to the
+                        screen.
+        """
+        external_image = image.load(filepath)
+        external_image = convert_to_colorkey_alpha(external_image)
+        return Graphic(external_image, position)
 
     def get_right_edge(self):
         """Return the x-coordinate of the Graphic's right edge."""
@@ -227,9 +240,43 @@ class Animation(Graphic):
                             By default, this is set to False.
     """
 
-    def __init__(self, filepath, position, frame_amount, frame_duration,
+    def __init__(self, surf, position, frame_amount, frame_duration,
                  is_animated=True, is_looped=True, is_reversed=False):
         """Declare and initialize instance variables.
+
+        Keyword arguments:
+            surf                The PyGame Surface containing this
+                                Animation's spritesheet image.
+            position            A tuple containing the coordinates of
+                                the top-left point of the Animation
+                                relative to the screen.
+            frame_amount        The number of frames in this Animation.
+            frame_duration      How long each frame should be displayed
+                                for. Measured in units of one frame per
+                                FPS (check globals.py for this value).
+            is_animated         Set to False if the Animation shouldn't
+                                start playing immediately.
+            is_looped           Set to False if the Animation should
+                                only play once.
+            is_reversed         Set to True if the Animation should
+                                play backwards.
+        """
+        super(Animation, self).__init__(surf, position)
+        self.frame_amount = frame_amount
+        self.frame_width = self.calculate_frame_width()
+        self.frame_duration = frame_duration
+        self.duration_counter = 0
+        self.current_frame = 0
+        self.last_frame = frame_amount - 1
+        self.draw_rect = self.get_draw_rect()
+        self.is_animated = is_animated
+        self.is_looped = is_looped
+        self.is_reversed = is_reversed
+
+    @classmethod
+    def from_file(self, filepath, position, frame_amount, frame_duration,
+                  is_animated=True, is_looped=True, is_reversed=False):
+        """Create an Animation from an external image file.
 
         Keyword arguments:
             filepath            The filepath to this Animation's
@@ -248,17 +295,11 @@ class Animation(Graphic):
             is_reversed         Set to True if the Animation should
                                 play backwards.
         """
-        super(Animation, self).__init__(filepath, position)
-        self.frame_amount = frame_amount
-        self.frame_width = self.calculate_frame_width()
-        self.frame_duration = frame_duration
-        self.duration_counter = 0
-        self.current_frame = 0
-        self.last_frame = frame_amount - 1
-        self.draw_rect = self.get_draw_rect()
-        self.is_animated = is_animated
-        self.is_looped = is_looped
-        self.is_reversed = is_reversed
+        external_sheet = image.load(filepath)
+        external_sheet = convert_to_colorkey_alpha(external_sheet)
+        return Animation(external_sheet, position, frame_amount,
+                         frame_duration, is_animated, is_looped,
+                         is_reversed)
 
     def calculate_frame_width(self):
         """Calculate the frame width by dividing the width of the

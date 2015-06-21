@@ -1331,14 +1331,14 @@ class RosterCursor(Animation):
             position: A tuple of two integers which represent the x
                 and y-positions of the cursor relative to ths screen.
         """
-        super(RosterCursor, self).__init__(self.P1_SPRITESHEET, position,
-                                           self.FRAME_AMOUNT,
-                                           self.FRAME_DURATION)
-        self.current_player = 1
         self.p1_image = pygame.image.load(self.P1_SPRITESHEET)
         self.p1_image = convert_to_colorkey_alpha(self.p1_image)
         self.p2_image = pygame.image.load(self.P2_SPRITESHEET)
         self.p2_image = convert_to_colorkey_alpha(self.p2_image)
+        super(RosterCursor, self).__init__(self.p1_image, position,
+                                           self.FRAME_AMOUNT,
+                                           self.FRAME_DURATION)
+        self.current_player = 1
 
     def toggle_player(self):
         """Switch to the other player's cursor animation."""
@@ -1385,7 +1385,9 @@ class RosterArrow(Animation):
             roster_height: An integer for the height of the roster, in
                 pixels.
         """
-        super(RosterArrow, self).__init__(self.SPRITESHEET, (0, 0),
+        spritesheet = image.load(self.SPRITESHEET)
+        spritesheet = convert_to_colorkey_alpha(spritesheet)
+        super(RosterArrow, self).__init__(spritesheet, (0, 0),
                                           self.FRAME_AMOUNT,
                                           self.FRAME_DURATION)
         self.correct_position(arrow_type, roster_x, roster_y,
