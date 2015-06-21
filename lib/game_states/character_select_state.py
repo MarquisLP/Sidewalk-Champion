@@ -98,7 +98,8 @@ class CharacterSelectState(State):
         self.bg_lines = BackgroundLines()
         self.select_prompt = PlayerSelectPrompt(general_font)
         self.vs_text = render_outlined_text(vs_font, 'VS', self.VS_COLOR,
-                                            self.VS_OUTLINE_COLOR)
+                                            self.VS_OUTLINE_COLOR,
+                                            self.VS_POSITION)
         self.no_chars_text = vs_font.render('No characters loaded',
                                             True, self.VS_COLOR)
         self.p1_char_index = None
@@ -342,9 +343,9 @@ class CharacterSelectState(State):
                 center_text_pos = self.VS_POSITION
 
             if self.intro.is_running:
-                self.intro.draw(self.state_surface, center_text_pos)
+                self.intro.draw(self.state_surface)
             else:
-                self.outro.draw(self.state_surface, center_text_pos)
+                self.outro.draw(self.state_surface)
         else:
             self.bg_lines.draw(self.state_surface)
             self.roster.draw(self.state_surface)
@@ -354,7 +355,7 @@ class CharacterSelectState(State):
                 self.state_surface.blit(self.no_chars_text,
                                         self.NO_CHARS_POSITION)
             else:
-                self.state_surface.blit(self.vs_text, self.VS_POSITION)
+                self.vs_text.draw(self.state_surface)
                 self.p1_preview.draw(self.state_surface)
                 self.p2_preview.draw(self.state_surface)
 
@@ -435,7 +436,7 @@ class IntroTransition(object):
         self.p1_preview = p1_preview
         self.p2_preview = p2_preview
         self.vs_text = vs_text
-        self.vs_wipe_y = vs_text.get_height()
+        self.vs_wipe_y = vs_text.rect.height
         self.is_running = False
         self.voice = pygame.mixer.Sound(self.VOICE_PATH)
         self.voice_channel = voice_channel
@@ -550,15 +551,13 @@ class IntroTransition(object):
         if self.vs_wipe_y <= 0:
             self.vs_wipe_y = 0
 
-    def draw(self, parent_surf, vs_position):
+    def draw(self, parent_surf):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
 
         Args:
             parent_surf: The PyGame Surface upon which the various
                 graphics will be drawn.
-            vs_position: A tuple of two integers for the x and
-                y-positions of the VS text relative to the screen.
         """
         pygame.draw.rect(parent_surf, (0, 0, 0),
                          Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
@@ -567,9 +566,9 @@ class IntroTransition(object):
         if self.has_characters():
             self.p1_preview.draw(parent_surf)
             self.p2_preview.draw(parent_surf)
-        self.draw_vs_text(parent_surf, vs_position)
+        self.draw_vs_text(parent_surf)
 
-    def draw_vs_text(self, parent_surf, position):
+    def draw_vs_text(self, parent_surf):
         """Draw a portion of the VS text onto a Surface.
 
         The portion of the text drawn is controlled by the wipe-in
@@ -578,14 +577,10 @@ class IntroTransition(object):
         Args:
             parent_surf: The PyGame Surface upon which the VS text will
                 be drawn.
-            position: A tuple of two integers for the x and y-positions
-                of the VS text relative to the screen.
         """
-        x = position[0]
-        y = position[1] + self.vs_wipe_y
-        draw_region = Rect(0, self.vs_wipe_y, self.vs_text.get_width(),
-                           self.vs_text.get_height() - self.vs_wipe_y)
-        parent_surf.blit(self.vs_text, (x, y), draw_region)
+        draw_region = Rect(0, 0, self.vs_text.rect.width,
+                           self.vs_text.rect.height - self.vs_wipe_y)
+        self.vs_text.draw(parent_surf, region=draw_region)
 
 
 class OutroTransition(object):
@@ -639,7 +634,7 @@ class OutroTransition(object):
         self.p1_preview = p1_preview
         self.p2_preview = p2_preview
         self.vs_text = vs_text
-        self.vs_wipe_y = vs_text.get_height()
+        self.vs_wipe_y = vs_text.rect.height
         self.next_state = StateIDs.SELECT_CHARACTER
         self.is_running = False
         self.change_state = change_state
@@ -738,24 +733,22 @@ class OutroTransition(object):
         if self.vs_wipe_y < 0:
             self.vs_wipe_y = 0
 
-    def draw(self, parent_surf, vs_position):
+    def draw(self, parent_surf):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
 
         Args:
             parent_surf: The PyGame Surface upon which the various
                 graphics will be drawn.
-            vs_position: A tuple of two integers for the x and
-                y-positions of the VS text relative to the screen.
         """
         self.bg_lines.draw(parent_surf)
         self.roster.draw(parent_surf)
         if self.has_characters():
             self.p1_preview.draw(parent_surf)
             self.p2_preview.draw(parent_surf)
-        self.draw_vs_text(parent_surf, vs_position)
+        self.draw_vs_text(parent_surf)
 
-    def draw_vs_text(self, parent_surf, position):
+    def draw_vs_text(self, parent_surf):
         """Draw a portion of the VS text onto a Surface.
 
         The portion drawn is controlled by the wipe-out effect.
@@ -763,11 +756,9 @@ class OutroTransition(object):
         Args:
             parent_surf: The Surface ipon which the VS text will be
                 drawn.
-            position: A tuple of two integers for the x and y-positions
-                of the VS text relative to the screen.
         """
-        draw_region = Rect(0, 0, self.vs_text.get_width(), self.vs_wipe_y)
-        parent_surf.blit(self.vs_text, position, draw_region)
+        draw_region = Rect(0, 0, self.vs_text.rect.width, self.vs_wipe_y)
+        self.vs_text.draw(parent_surf, region=draw_region)
 
 
 class PlayerSelectPrompt(object):
@@ -1500,15 +1491,13 @@ class CharacterPreview(object):
         self.is_facing_left = is_facing_left
         self.animation = CharacterAnimation(is_facing_left,
                                             spritesheet, frame_durations)
-        self.name_font = name_font
-        self.name = render_outlined_text(name_font, name, self.NAME_COLOR,
-                                         self.NAME_OUTLINE_COLOR)
-        self.shadow = self.render_shadow()
         self.x = 0
         self.y = self.calculate_y_position()
-
         if is_facing_left:
             self.correct_position()
+        self.name_font = name_font
+        self.name = self.render_name(name_font, name)
+        self.shadow = self.render_shadow()
 
     def change_character(self, spritesheet, name, frame_durations):
         """Display a different character animation.
@@ -1524,14 +1513,12 @@ class CharacterPreview(object):
                 the second frame for 8 update cycles, and so on.
         """
         self.animation.change_animation(spritesheet, frame_durations)
-        self.name = render_outlined_text(self.name_font, name,
-                                         self.NAME_COLOR,
-                                         self.NAME_OUTLINE_COLOR)
-        self.shadow = self.render_shadow()
         self.x = 0
         self.y = self.calculate_y_position()
         if self.is_facing_left:
             self.correct_position()
+        self.name = self.render_name(self.name_font, name)
+        self.shadow = self.render_shadow()
 
     def calculate_y_position(self):
         """Determine the vertical positioning of the character so that
@@ -1585,7 +1572,7 @@ class CharacterPreview(object):
         """
         self.draw_shadow(parent_surf)
         self.animation.draw(parent_surf, self.x, self.y)
-        self.draw_name(parent_surf)
+        self.name.draw(parent_surf)
 
     def draw_shadow(self, parent_surf):
         """Draw the shadow at the character's feet (or, where their
@@ -1599,20 +1586,27 @@ class CharacterPreview(object):
         y = char_bottom - self.shadow.get_height() + self.OFFSET_FROM_SHADOW
         parent_surf.blit(self.shadow, (self.x, y))
 
-    def draw_name(self, parent_surf):
-        """Draw the character's name at the bottom of their sprite.
+    def render_name(self, name_font, name):
+        """Return a Graphic containing the specified name.
 
         Args:
-            parent_surf: The Surface upon which the name will be drawn.
+            name_font: The PyGame font used for rendering the
+                character's name.
+            name: A String containing the character's name.
         """
-        if self.name.get_width() < self.animation.get_width():
-            x = self.get_centered_x(self.name.get_width())
+        name_graphic = render_outlined_text(name_font, name, self.NAME_COLOR,
+                                            self.NAME_OUTLINE_COLOR, (0, 0))
+
+        if name_graphic.rect.width < self.animation.get_width():
+            x = self.get_centered_x(name_graphic.rect.width)
         elif self.is_facing_left:
-            x = self.x + self.animation.get_width() - self.name.get_width()
+            x = self.x + self.animation.get_width() - name_graphic.rect.width
         else:
             x = self.x
         y = self.y + self.animation.get_height() - self.NAME_OFFSET
-        parent_surf.blit(self.name, (x, y))
+        name_graphic.move(x, y)
+
+        return name_graphic
 
     def get_centered_x(self, width):
         """Calculate an x-value that would allow a Surface of a given
@@ -1640,6 +1634,7 @@ class CharacterPreview(object):
         """
         self.x += dx
         self.y += dy
+        self.name.move(dx, dy)
 
     def place_offscreen(self):
         """Set the position of the animation so that it is just off the
@@ -1647,9 +1642,9 @@ class CharacterPreview(object):
         off the right edge of the screen if the character faces left.
         """
         if self.is_facing_left:
-            self.x = SCREEN_SIZE[0]
+            self.move(self.animation.get_width())
         else:
-            self.x = 0 - self.animation.get_width()
+            self.move(0 - self.animation.get_width())
 
     def is_onscreen(self):
         """Return a Boolean indicating whether all of the animation is

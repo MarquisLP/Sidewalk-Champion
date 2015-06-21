@@ -32,19 +32,22 @@ def load_tuple_of_images(filepaths):
     return tuple(all_images)
 
 
-def render_outlined_text(font, text, text_color, outline_color):
-        """Render a text Surface with an outline 1-pixel thick.
+def render_outlined_text(font, text, text_color, outline_color,
+                         position):
+        """Render a text Graphic with an outline 1-pixel thick.
 
         Args:
             font: A PyGame Font object used for rendering the text.
             text: A String for the text that will be rendered.
             text_color: A tuple of integers which specify the RGB color
                 of the text.
-            text_color: A tuple of integers which specify the RGB color
-                of the outline.
+            outline_color: A tuple of integers which specify the RGB
+                color  of the outline.
+            position: A tuple containing integer coordinates for the
+                text's position relative to its parent Surface.
 
         Returns:
-            A Surface with the desired text outlined.
+            A Graphic with the desired text outlined.
         """
         text_surf = font.render(text, True, text_color)
         outline = font.render(text, True, outline_color)
@@ -59,7 +62,8 @@ def render_outlined_text(font, text, text_color, outline_color):
         outlined_text.blit(outline, (2, 2))
         outlined_text.blit(text_surf, (1, 1))
 
-        return outlined_text
+        text_graphic = Graphic(outlined_text, position)
+        return text_graphic
 
 
 def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
