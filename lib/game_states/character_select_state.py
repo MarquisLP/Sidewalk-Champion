@@ -9,8 +9,7 @@ from pygame.rect import Rect
 from lib.graphics import load_tuple_of_images
 from lib.graphics import render_outlined_text
 from lib.graphics import convert_to_colorkey_alpha
-from lib.graphics import Animation
-from lib.graphics import CharacterAnimation
+from lib.graphics import Graphic, Animation, CharacterAnimation
 from lib.globals import SCREEN_SIZE
 from lib.custom_data.character_data import load_frame_durations
 from lib.custom_data.character_loader import load_all_characters
@@ -1550,7 +1549,7 @@ class CharacterPreview(object):
         """Render a shadow to fit the character.
 
         Returns:
-            A Surface with a shadow wide enough to fit the character
+            A Graphic with a shadow wide enough to fit the character
             drawn onto it.
         """
         frame_width = self.animation.get_width()
@@ -1559,7 +1558,10 @@ class CharacterPreview(object):
         draw_region = Rect(0, 0, frame_width, self.SHADOW_HEIGHT)
 
         pygame.draw.ellipse(shadow_surf, self.SHADOW_COLOR, draw_region)
-        return shadow_surf
+
+        char_bottom = self.y + self.animation.get_height()
+        y = char_bottom - self.SHADOW_HEIGHT + self.OFFSET_FROM_SHADOW
+        return Graphic(shadow_surf, (self.x, y))
 
     def update(self):
         """Update the character animation."""
@@ -1570,21 +1572,9 @@ class CharacterPreview(object):
 
         parent_surf: The Surface upon which the preview will be drawn.
         """
-        self.draw_shadow(parent_surf)
+        self.shadow.draw(parent_surf)
         self.animation.draw(parent_surf, self.x, self.y)
         self.name.draw(parent_surf)
-
-    def draw_shadow(self, parent_surf):
-        """Draw the shadow at the character's feet (or, where their
-        feet would be in case they're feetless).
-
-        Args:
-            parent_surf: The Surface upon which the shadow will be
-                drawn.
-        """
-        char_bottom = self.y + self.animation.get_height()
-        y = char_bottom - self.shadow.get_height() + self.OFFSET_FROM_SHADOW
-        parent_surf.blit(self.shadow, (self.x, y))
 
     def render_name(self, name_font, name):
         """Return a Graphic containing the specified name.
@@ -1635,6 +1625,7 @@ class CharacterPreview(object):
         self.x += dx
         self.y += dy
         self.name.move(dx, dy)
+        self.shadow.move(dx, dy)
 
     def place_offscreen(self):
         """Set the position of the animation so that it is just off the
