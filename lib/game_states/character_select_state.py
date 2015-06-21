@@ -73,6 +73,7 @@ class CharacterSelectState(State):
     VS_COLOR = (255, 255, 255)
     VS_OUTLINE_COLOR = (80, 80, 80)
     VS_POSITION = (167, 80)
+    NO_CHARS_COLOR = (255, 255, 255)
     NO_CHARS_POSITION = (40, 78)
 
     def __init__(self, state_manager, state_pass):
@@ -99,8 +100,11 @@ class CharacterSelectState(State):
         self.vs_text = render_outlined_text(vs_font, 'VS', self.VS_COLOR,
                                             self.VS_OUTLINE_COLOR,
                                             self.VS_POSITION)
-        self.no_chars_text = vs_font.render('No characters loaded',
-                                            True, self.VS_COLOR)
+        self.no_chars_text = render_outlined_text(vs_font,
+                                                  'No Characters Loaded',
+                                                  self.NO_CHARS_COLOR,
+                                                  self.VS_OUTLINE_COLOR,
+                                                  self.NO_CHARS_POSITION)
         self.p1_char_index = None
         self.p2_char_index = None
         self.sfx = SelectStateSFX(self.state_pass.ui_channel)
@@ -351,8 +355,7 @@ class CharacterSelectState(State):
             self.select_prompt.draw(self.state_surface)
 
             if self.has_no_characters():
-                self.state_surface.blit(self.no_chars_text,
-                                        self.NO_CHARS_POSITION)
+                self.no_chars_text.draw(self.state_surface)
             else:
                 self.vs_text.draw(self.state_surface)
                 self.p1_preview.draw(self.state_surface)
