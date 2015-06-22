@@ -54,9 +54,9 @@ class CharacterSelectState(State):
             selected character.
         select_prompt: A PlayerSelectPrompt displayed at the top of the
             screen.
-        vs_text: A Surface containing text that says "VS". It will be
+        vs_text: A Graphic containing text that says "VS". It will be
             drawn between the two CharacterPreviews.
-        no_chars_text: A Surface containing a message that will be shown
+        no_chars_text: A Graphic containing a message that will be shown
             indicating that no characters could be loaded into the game.
         p1_char_index: An integer for the index of the character
             selected and confirmed by player 1.
@@ -1458,10 +1458,8 @@ class CharacterPreview(object):
             facing to the left instead of to the right.
         animation: A CharacterAnimation object that updates and displays
             the character's animation.
-        name: A PyGame Surface with the character's name rendered onto
-            it.
-        shadow: A PyGame Surface with the character's shadow drawn onto
-            it.
+        name: A Graphic with the character's name rendered onto it.
+        shadow: A Graphic with the character's shadow drawn onto it.
     """
     GROUND_Y = 157
     NAME_COLOR = (255, 255, 255)
