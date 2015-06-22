@@ -9,8 +9,7 @@ from pygame.rect import Rect
 from lib.graphics import load_tuple_of_images
 from lib.graphics import render_outlined_text
 from lib.graphics import convert_to_colorkey_alpha
-from lib.graphics import Animation
-from lib.graphics import CharacterAnimation
+from lib.graphics import Graphic, Animation, CharacterAnimation
 from lib.globals import SCREEN_SIZE
 from lib.custom_data.character_data import load_frame_durations
 from lib.custom_data.character_loader import load_all_characters
@@ -55,9 +54,9 @@ class CharacterSelectState(State):
             selected character.
         select_prompt: A PlayerSelectPrompt displayed at the top of the
             screen.
-        vs_text: A Surface containing text that says "VS". It will be
+        vs_text: A Graphic containing text that says "VS". It will be
             drawn between the two CharacterPreviews.
-        no_chars_text: A Surface containing a message that will be shown
+        no_chars_text: A Graphic containing a message that will be shown
             indicating that no characters could be loaded into the game.
         p1_char_index: An integer for the index of the character
             selected and confirmed by player 1.
@@ -74,6 +73,7 @@ class CharacterSelectState(State):
     VS_COLOR = (255, 255, 255)
     VS_OUTLINE_COLOR = (80, 80, 80)
     VS_POSITION = (167, 80)
+    NO_CHARS_COLOR = (255, 255, 255)
     NO_CHARS_POSITION = (40, 78)
 
     def __init__(self, state_manager, state_pass):
@@ -98,9 +98,13 @@ class CharacterSelectState(State):
         self.bg_lines = BackgroundLines()
         self.select_prompt = PlayerSelectPrompt(general_font)
         self.vs_text = render_outlined_text(vs_font, 'VS', self.VS_COLOR,
-                                            self.VS_OUTLINE_COLOR)
-        self.no_chars_text = vs_font.render('No characters loaded',
-                                            True, self.VS_COLOR)
+                                            self.VS_OUTLINE_COLOR,
+                                            self.VS_POSITION)
+        self.no_chars_text = render_outlined_text(vs_font,
+                                                  'No Characters Loaded',
+                                                  self.NO_CHARS_COLOR,
+                                                  self.VS_OUTLINE_COLOR,
+                                                  self.NO_CHARS_POSITION)
         self.p1_char_index = None
         self.p2_char_index = None
         self.sfx = SelectStateSFX(self.state_pass.ui_channel)
@@ -342,19 +346,18 @@ class CharacterSelectState(State):
                 center_text_pos = self.VS_POSITION
 
             if self.intro.is_running:
-                self.intro.draw(self.state_surface, center_text_pos)
+                self.intro.draw(self.state_surface)
             else:
-                self.outro.draw(self.state_surface, center_text_pos)
+                self.outro.draw(self.state_surface)
         else:
             self.bg_lines.draw(self.state_surface)
             self.roster.draw(self.state_surface)
             self.select_prompt.draw(self.state_surface)
 
             if self.has_no_characters():
-                self.state_surface.blit(self.no_chars_text,
-                                        self.NO_CHARS_POSITION)
+                self.no_chars_text.draw(self.state_surface)
             else:
-                self.state_surface.blit(self.vs_text, self.VS_POSITION)
+                self.vs_text.draw(self.state_surface)
                 self.p1_preview.draw(self.state_surface)
                 self.p2_preview.draw(self.state_surface)
 
@@ -426,7 +429,7 @@ class IntroTransition(object):
             roster: The RosterDisplay containing all characters.
             p1_preview: The CharacterPreview for player 1.
             p2_preview: The CharacterPreview for player 2.
-            vs_text: A Surface containing text that reads VS.
+            vs_text: A Graphic containing text that reads VS.
             voice_channel: A PyGame Channel used for playing announcer
                 voice clips.
         """
@@ -435,7 +438,7 @@ class IntroTransition(object):
         self.p1_preview = p1_preview
         self.p2_preview = p2_preview
         self.vs_text = vs_text
-        self.vs_wipe_y = vs_text.get_height()
+        self.vs_wipe_y = vs_text.rect.height
         self.is_running = False
         self.voice = pygame.mixer.Sound(self.VOICE_PATH)
         self.voice_channel = voice_channel
@@ -550,15 +553,13 @@ class IntroTransition(object):
         if self.vs_wipe_y <= 0:
             self.vs_wipe_y = 0
 
-    def draw(self, parent_surf, vs_position):
+    def draw(self, parent_surf):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
 
         Args:
             parent_surf: The PyGame Surface upon which the various
                 graphics will be drawn.
-            vs_position: A tuple of two integers for the x and
-                y-positions of the VS text relative to the screen.
         """
         pygame.draw.rect(parent_surf, (0, 0, 0),
                          Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
@@ -567,9 +568,9 @@ class IntroTransition(object):
         if self.has_characters():
             self.p1_preview.draw(parent_surf)
             self.p2_preview.draw(parent_surf)
-        self.draw_vs_text(parent_surf, vs_position)
+        self.draw_vs_text(parent_surf)
 
-    def draw_vs_text(self, parent_surf, position):
+    def draw_vs_text(self, parent_surf):
         """Draw a portion of the VS text onto a Surface.
 
         The portion of the text drawn is controlled by the wipe-in
@@ -578,14 +579,10 @@ class IntroTransition(object):
         Args:
             parent_surf: The PyGame Surface upon which the VS text will
                 be drawn.
-            position: A tuple of two integers for the x and y-positions
-                of the VS text relative to the screen.
         """
-        x = position[0]
-        y = position[1] + self.vs_wipe_y
-        draw_region = Rect(0, self.vs_wipe_y, self.vs_text.get_width(),
-                           self.vs_text.get_height() - self.vs_wipe_y)
-        parent_surf.blit(self.vs_text, (x, y), draw_region)
+        draw_region = Rect(0, 0, self.vs_text.rect.width,
+                           self.vs_text.rect.height - self.vs_wipe_y)
+        self.vs_text.draw(parent_surf, region=draw_region)
 
 
 class OutroTransition(object):
@@ -639,7 +636,7 @@ class OutroTransition(object):
         self.p1_preview = p1_preview
         self.p2_preview = p2_preview
         self.vs_text = vs_text
-        self.vs_wipe_y = vs_text.get_height()
+        self.vs_wipe_y = vs_text.rect.height
         self.next_state = StateIDs.SELECT_CHARACTER
         self.is_running = False
         self.change_state = change_state
@@ -738,24 +735,22 @@ class OutroTransition(object):
         if self.vs_wipe_y < 0:
             self.vs_wipe_y = 0
 
-    def draw(self, parent_surf, vs_position):
+    def draw(self, parent_surf):
         """Draw all of the Character Select Screen graphics onto a
         Surface.
 
         Args:
             parent_surf: The PyGame Surface upon which the various
                 graphics will be drawn.
-            vs_position: A tuple of two integers for the x and
-                y-positions of the VS text relative to the screen.
         """
         self.bg_lines.draw(parent_surf)
         self.roster.draw(parent_surf)
         if self.has_characters():
             self.p1_preview.draw(parent_surf)
             self.p2_preview.draw(parent_surf)
-        self.draw_vs_text(parent_surf, vs_position)
+        self.draw_vs_text(parent_surf)
 
-    def draw_vs_text(self, parent_surf, position):
+    def draw_vs_text(self, parent_surf):
         """Draw a portion of the VS text onto a Surface.
 
         The portion drawn is controlled by the wipe-out effect.
@@ -763,11 +758,9 @@ class OutroTransition(object):
         Args:
             parent_surf: The Surface ipon which the VS text will be
                 drawn.
-            position: A tuple of two integers for the x and y-positions
-                of the VS text relative to the screen.
         """
-        draw_region = Rect(0, 0, self.vs_text.get_width(), self.vs_wipe_y)
-        parent_surf.blit(self.vs_text, position, draw_region)
+        draw_region = Rect(0, 0, self.vs_text.rect.width, self.vs_wipe_y)
+        self.vs_text.draw(parent_surf, region=draw_region)
 
 
 class PlayerSelectPrompt(object):
@@ -1315,6 +1308,9 @@ class RosterCursor(Animation):
     Attributes:
         p1_image: A Surface containing player 1's spritesheet image.
         p2_image: A Surface containing player 2's spritesheet image.
+        current_player: An integer representing the player currently
+            choosing their character. This value can be either 1 or 2,
+            for Player 1 and 2 respectively.
     """
     P1_SPRITESHEET = 'images/p1_character_cursor.png'
     P2_SPRITESHEET = 'images/p2_character_cursor.png'
@@ -1328,21 +1324,22 @@ class RosterCursor(Animation):
             position: A tuple of two integers which represent the x
                 and y-positions of the cursor relative to ths screen.
         """
-        super(RosterCursor, self).__init__(self.P1_SPRITESHEET, position,
-                                           self.FRAME_AMOUNT,
-                                           self.FRAME_DURATION)
         self.p1_image = pygame.image.load(self.P1_SPRITESHEET)
         self.p1_image = convert_to_colorkey_alpha(self.p1_image)
         self.p2_image = pygame.image.load(self.P2_SPRITESHEET)
         self.p2_image = convert_to_colorkey_alpha(self.p2_image)
+        super(RosterCursor, self).__init__(self.p1_image, position,
+                                           self.FRAME_AMOUNT,
+                                           self.FRAME_DURATION)
+        self.current_player = 1
 
     def toggle_player(self):
         """Switch to the other player's cursor animation."""
-        if self.filepath == self.P1_SPRITESHEET:
-            self.filepath = self.P2_SPRITESHEET
+        if self.current_player == 1:
+            self.current_player = 2
             self.image = self.p2_image
         else:
-            self.filepath = self.P1_SPRITESHEET
+            self.current_player = 1
             self.image = self.p1_image
 
 
@@ -1381,7 +1378,9 @@ class RosterArrow(Animation):
             roster_height: An integer for the height of the roster, in
                 pixels.
         """
-        super(RosterArrow, self).__init__(self.SPRITESHEET, (0, 0),
+        spritesheet = image.load(self.SPRITESHEET)
+        spritesheet = convert_to_colorkey_alpha(spritesheet)
+        super(RosterArrow, self).__init__(spritesheet, (0, 0),
                                           self.FRAME_AMOUNT,
                                           self.FRAME_DURATION)
         self.correct_position(arrow_type, roster_x, roster_y,
@@ -1459,10 +1458,8 @@ class CharacterPreview(object):
             facing to the left instead of to the right.
         animation: A CharacterAnimation object that updates and displays
             the character's animation.
-        name: A PyGame Surface with the character's name rendered onto
-            it.
-        shadow: A PyGame Surface with the character's shadow drawn onto
-            it.
+        name: A Graphic with the character's name rendered onto it.
+        shadow: A Graphic with the character's shadow drawn onto it.
     """
     GROUND_Y = 157
     NAME_COLOR = (255, 255, 255)
@@ -1494,15 +1491,13 @@ class CharacterPreview(object):
         self.is_facing_left = is_facing_left
         self.animation = CharacterAnimation(is_facing_left,
                                             spritesheet, frame_durations)
-        self.name_font = name_font
-        self.name = render_outlined_text(name_font, name, self.NAME_COLOR,
-                                         self.NAME_OUTLINE_COLOR)
-        self.shadow = self.render_shadow()
         self.x = 0
         self.y = self.calculate_y_position()
-
         if is_facing_left:
             self.correct_position()
+        self.name_font = name_font
+        self.name = self.render_name(name_font, name)
+        self.shadow = self.render_shadow()
 
     def change_character(self, spritesheet, name, frame_durations):
         """Display a different character animation.
@@ -1518,14 +1513,12 @@ class CharacterPreview(object):
                 the second frame for 8 update cycles, and so on.
         """
         self.animation.change_animation(spritesheet, frame_durations)
-        self.name = render_outlined_text(self.name_font, name,
-                                         self.NAME_COLOR,
-                                         self.NAME_OUTLINE_COLOR)
-        self.shadow = self.render_shadow()
         self.x = 0
         self.y = self.calculate_y_position()
         if self.is_facing_left:
             self.correct_position()
+        self.name = self.render_name(self.name_font, name)
+        self.shadow = self.render_shadow()
 
     def calculate_y_position(self):
         """Determine the vertical positioning of the character so that
@@ -1557,7 +1550,7 @@ class CharacterPreview(object):
         """Render a shadow to fit the character.
 
         Returns:
-            A Surface with a shadow wide enough to fit the character
+            A Graphic with a shadow wide enough to fit the character
             drawn onto it.
         """
         frame_width = self.animation.get_width()
@@ -1566,7 +1559,10 @@ class CharacterPreview(object):
         draw_region = Rect(0, 0, frame_width, self.SHADOW_HEIGHT)
 
         pygame.draw.ellipse(shadow_surf, self.SHADOW_COLOR, draw_region)
-        return shadow_surf
+
+        char_bottom = self.y + self.animation.get_height()
+        y = char_bottom - self.SHADOW_HEIGHT + self.OFFSET_FROM_SHADOW
+        return Graphic(shadow_surf, (self.x, y))
 
     def update(self):
         """Update the character animation."""
@@ -1577,36 +1573,31 @@ class CharacterPreview(object):
 
         parent_surf: The Surface upon which the preview will be drawn.
         """
-        self.draw_shadow(parent_surf)
+        self.shadow.draw(parent_surf)
         self.animation.draw(parent_surf, self.x, self.y)
-        self.draw_name(parent_surf)
+        self.name.draw(parent_surf)
 
-    def draw_shadow(self, parent_surf):
-        """Draw the shadow at the character's feet (or, where their
-        feet would be in case they're feetless).
-
-        Args:
-            parent_surf: The Surface upon which the shadow will be
-                drawn.
-        """
-        char_bottom = self.y + self.animation.get_height()
-        y = char_bottom - self.shadow.get_height() + self.OFFSET_FROM_SHADOW
-        parent_surf.blit(self.shadow, (self.x, y))
-
-    def draw_name(self, parent_surf):
-        """Draw the character's name at the bottom of their sprite.
+    def render_name(self, name_font, name):
+        """Return a Graphic containing the specified name.
 
         Args:
-            parent_surf: The Surface upon which the name will be drawn.
+            name_font: The PyGame font used for rendering the
+                character's name.
+            name: A String containing the character's name.
         """
-        if self.name.get_width() < self.animation.get_width():
-            x = self.get_centered_x(self.name.get_width())
+        name_graphic = render_outlined_text(name_font, name, self.NAME_COLOR,
+                                            self.NAME_OUTLINE_COLOR, (0, 0))
+
+        if name_graphic.rect.width < self.animation.get_width():
+            x = self.get_centered_x(name_graphic.rect.width)
         elif self.is_facing_left:
-            x = self.x + self.animation.get_width() - self.name.get_width()
+            x = self.x + self.animation.get_width() - name_graphic.rect.width
         else:
             x = self.x
         y = self.y + self.animation.get_height() - self.NAME_OFFSET
-        parent_surf.blit(self.name, (x, y))
+        name_graphic.move(x, y)
+
+        return name_graphic
 
     def get_centered_x(self, width):
         """Calculate an x-value that would allow a Surface of a given
@@ -1634,6 +1625,8 @@ class CharacterPreview(object):
         """
         self.x += dx
         self.y += dy
+        self.name.move(dx, dy)
+        self.shadow.move(dx, dy)
 
     def place_offscreen(self):
         """Set the position of the animation so that it is just off the
@@ -1641,9 +1634,9 @@ class CharacterPreview(object):
         off the right edge of the screen if the character faces left.
         """
         if self.is_facing_left:
-            self.x = SCREEN_SIZE[0]
+            self.move(self.animation.get_width())
         else:
-            self.x = 0 - self.animation.get_width()
+            self.move(0 - self.animation.get_width())
 
     def is_onscreen(self):
         """Return a Boolean indicating whether all of the animation is

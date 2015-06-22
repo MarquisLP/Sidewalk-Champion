@@ -90,9 +90,10 @@ class TitleState(State):
                 onto other States.
         """
         super(TitleState, self).__init__(state_manager, state_pass)
-        self.background = Animation(self.BG_PATH, (0, 0), self.BG_FRAMES,
-                                    self.BG_DURATION)
-        self.logo = Animation(self.LOGO_PATH, (self.LOGO_X, self.LOGO_Y),
+        self.background = Animation.from_file(self.BG_PATH, (0, 0),
+            self.BG_FRAMES, self.BG_DURATION)
+        self.logo = Animation.from_file(self.LOGO_PATH,
+                              (self.LOGO_X, self.LOGO_Y),
                               self.LOGO_FRAMES, self.LOGO_DURATION)
         self.intro_animator = IntroAnimator()
         self.intro_animator.reset(self.background, self.logo)
@@ -472,7 +473,7 @@ class OptionList(object):
         the selected Option will be performed.
         In other cases, an animation will be shown based on the value
         of the animation variable.
-        
+
         Args:
             time: A float for the amount of time elapsed, in seconds,
                 since the last update cycle.
@@ -520,19 +521,19 @@ class OptionList(object):
 
         for i in xrange(0, len(self.options), 2):
             self.options[i].x = 0 - (offset_from_center * 2) - biggest_width
-            
+
         if len(self.options) > 1:
             for i in xrange(1, len(self.options), 2):
                 self.options[i].x = SCREEN_SIZE[0] + biggest_width
 
     def show_all(self, time):
         """Animate the OptionList revealing itself on-screen.
-        
+
         The animation consists of sliding the Options in from either
         edge of the screen. The direction of the slide alternates
         between Options. (e.g. The first Option slides in from the left
         while the second Option comes from the right.)
-        
+
         Args:
             time: A float for the time elapsed, in seconds, since the
                 last update cycle.
@@ -541,7 +542,7 @@ class OptionList(object):
             self.prepare_to_show_all()
         else:
             distance = int(self.TEXT_SLIDE_SPEED * time)
-            
+
             for i in xrange(0, len(self.options), 2):
                 self.options[i].x += distance
                 # Prevent the Option from sliding past its final position.
@@ -552,7 +553,7 @@ class OptionList(object):
                     self.options[i].x -= distance
                     if self.options[i].x < self.x:
                         self.options[i].x = self.x
-                    
+
             if self.options[0].x >= self.x:
                 self.animation = ListAnimation.NONE
 
@@ -662,7 +663,7 @@ class OptionList(object):
         if self.confirm_timer % self.TEXT_FLASH_SPEED == 0:
             self.options[self.option_index].is_visible = (
                 not self.options[self.option_index].is_visible)
-    
+
     def respond_to_confirm(self):
         """Perform an operation based on the Option that was just
         confirmed.
@@ -1130,10 +1131,10 @@ class BattleSetting(Option):
         self.value_surf = self.render_text(str(self.values[0]),
                                            self.NORMAL_COLOR)
         value_x = self.x + self.VALUE_DISTANCE
-        self.scroll_left_arrow = Graphic(self.LEFT_ARROW_PATH,
+        self.scroll_left_arrow = Graphic.from_file(self.LEFT_ARROW_PATH,
             (value_x - self.ARROW_DISTANCE, self.y + self.ARROW_Y_OFFSET))
         self.scroll_left_arrow.move(-1 * self.scroll_left_arrow.rect[2], 0)
-        self.scroll_right_arrow = Graphic(self.LEFT_ARROW_PATH,
+        self.scroll_right_arrow = Graphic.from_file(self.LEFT_ARROW_PATH,
             (value_x + self.value_surf.get_width() + self.ARROW_DISTANCE,
             self.y + self.ARROW_Y_OFFSET))
         self.scroll_right_arrow.flip(is_horizontal=True)
