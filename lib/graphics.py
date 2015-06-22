@@ -32,19 +32,22 @@ def load_tuple_of_images(filepaths):
     return tuple(all_images)
 
 
-def render_outlined_text(font, text, text_color, outline_color):
-        """Render a text Surface with an outline 1-pixel thick.
+def render_outlined_text(font, text, text_color, outline_color,
+                         position):
+        """Render a text Graphic with an outline 1-pixel thick.
 
         Args:
             font: A PyGame Font object used for rendering the text.
             text: A String for the text that will be rendered.
             text_color: A tuple of integers which specify the RGB color
                 of the text.
-            text_color: A tuple of integers which specify the RGB color
-                of the outline.
+            outline_color: A tuple of integers which specify the RGB
+                color  of the outline.
+            position: A tuple containing integer coordinates for the
+                text's position relative to its parent Surface.
 
         Returns:
-            A Surface with the desired text outlined.
+            A Graphic with the desired text outlined.
         """
         text_surf = font.render(text, True, text_color)
         outline = font.render(text, True, outline_color)
@@ -59,7 +62,8 @@ def render_outlined_text(font, text, text_color, outline_color):
         outlined_text.blit(outline, (2, 2))
         outlined_text.blit(text_surf, (1, 1))
 
-        return outlined_text
+        text_graphic = Graphic(outlined_text, position)
+        return text_graphic
 
 
 def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
@@ -90,12 +94,10 @@ def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
 
 class Graphic(object):
     """An in-game image that can be drawn to the screen.
-    
+
     Attributes:
             image       The PyGame Surface object that contains this
                         Graphic's visual content.
-            filepath    The filepath to where the image content was
-                        loaded from.
             exact_pos   A tuple containing the Graphic's exact
                         on-screen coordinates as floats. rect will
                         round them down to integers to make the
@@ -104,25 +106,37 @@ class Graphic(object):
                         Graphic's on-screen coordinates as well as its
                         dimensions.
     """
-    def __init__(self, filepath, position):
+    def __init__(self, surf, position):
         """Declare and initialize instance variables.
 
         Keyword arguments:
-            filepath    The filepath to the image that will be loaded
-                        and displayed in-game.
+            surf        The PyGame Surface containing this Graphic's
+                        image.
             position    Tuple containing the coordinates of the
                         top-left corner of the image relative to the
                         screen.
         """
-        self.image = image.load(filepath)
-        self.image = convert_to_colorkey_alpha(self.image)
-        self.filepath = filepath
-
+        self.image = surf
+        self.exact_pos = position
         width = self.image.get_width()
         height = self.image.get_height()
-        self.exact_pos = position
         self.rect = Rect(int(self.exact_pos[0]), int(self.exact_pos[1]),
                          width, height)
+
+    @classmethod
+    def from_file(self, filepath, position):
+        """Create a Graphic from an external image file.
+
+        Keyword arguments:
+            filepath    The file path to the image that will be loaded
+                        into this Graphic.
+            position    Tuple containing the coordinates of the
+                        top-left corner of the image relative to the
+                        screen.
+        """
+        external_image = image.load(filepath)
+        external_image = convert_to_colorkey_alpha(external_image)
+        return Graphic(external_image, position)
 
     def get_right_edge(self):
         """Return the x-coordinate of the Graphic's right edge."""
@@ -146,7 +160,7 @@ class Graphic(object):
         self.image = transform.flip(self.image, is_horizontal,
                                     is_vertical)
 
-    def draw(self, surf, x=None, y=None):
+    def draw(self, surf, x=None, y=None, region=None):
         """Draw the Graphic onto a specified Surface.
 
         Args:
@@ -158,11 +172,14 @@ class Graphic(object):
             y: Optional. The y-position of the Graphic relative to the
                 parent Surface. If this is not given, the position
                 passed to init() will be used instead.
+            region: Optional. A Rect specifying the area of this
+                Graphic that will be drawn onto the parent Surface. If
+                this is None, all of the Graphic will be drawn.
         """
         if x is None or y is None:
-            surf.blit(self.image, self.rect)
+            surf.blit(self.image, self.rect, region)
         else:
-            surf.blit(self.image, (x, y))
+            surf.blit(self.image, (x, y), region)
 
     def move(self, dx, dy):
         """Move the Graphic some distance across the screen.
@@ -188,8 +205,6 @@ class Animation(Graphic):
     Attributes:
         image               The PyGame Surface object that contains
                             this Animation's spritesheet.
-        filepath            The filepath to where the spritesheet
-                            image is located.
         exact_pos           A tuple containing the Animation's exact
                             on-screen coordinates as floats. rect will
                             round them down to integers to make the
@@ -232,9 +247,43 @@ class Animation(Graphic):
                             By default, this is set to False.
     """
 
-    def __init__(self, filepath, position, frame_amount, frame_duration,
+    def __init__(self, surf, position, frame_amount, frame_duration,
                  is_animated=True, is_looped=True, is_reversed=False):
         """Declare and initialize instance variables.
+
+        Keyword arguments:
+            surf                The PyGame Surface containing this
+                                Animation's spritesheet image.
+            position            A tuple containing the coordinates of
+                                the top-left point of the Animation
+                                relative to the screen.
+            frame_amount        The number of frames in this Animation.
+            frame_duration      How long each frame should be displayed
+                                for. Measured in units of one frame per
+                                FPS (check globals.py for this value).
+            is_animated         Set to False if the Animation shouldn't
+                                start playing immediately.
+            is_looped           Set to False if the Animation should
+                                only play once.
+            is_reversed         Set to True if the Animation should
+                                play backwards.
+        """
+        super(Animation, self).__init__(surf, position)
+        self.frame_amount = frame_amount
+        self.frame_width = self.calculate_frame_width()
+        self.frame_duration = frame_duration
+        self.duration_counter = 0
+        self.current_frame = 0
+        self.last_frame = frame_amount - 1
+        self.draw_rect = self.get_draw_rect()
+        self.is_animated = is_animated
+        self.is_looped = is_looped
+        self.is_reversed = is_reversed
+
+    @classmethod
+    def from_file(self, filepath, position, frame_amount, frame_duration,
+                  is_animated=True, is_looped=True, is_reversed=False):
+        """Create an Animation from an external image file.
 
         Keyword arguments:
             filepath            The filepath to this Animation's
@@ -253,17 +302,11 @@ class Animation(Graphic):
             is_reversed         Set to True if the Animation should
                                 play backwards.
         """
-        super(Animation, self).__init__(filepath, position)
-        self.frame_amount = frame_amount
-        self.frame_width = self.calculate_frame_width()
-        self.frame_duration = frame_duration
-        self.duration_counter = 0
-        self.current_frame = 0
-        self.last_frame = frame_amount - 1
-        self.draw_rect = self.get_draw_rect()
-        self.is_animated = is_animated
-        self.is_looped = is_looped
-        self.is_reversed = is_reversed
+        external_sheet = image.load(filepath)
+        external_sheet = convert_to_colorkey_alpha(external_sheet)
+        return Animation(external_sheet, position, frame_amount,
+                         frame_duration, is_animated, is_looped,
+                         is_reversed)
 
     def calculate_frame_width(self):
         """Calculate the frame width by dividing the width of the
@@ -335,7 +378,7 @@ class Animation(Graphic):
 
     def draw(self, parent_surf):
         """Draw the current frame onto the specified Surface.
-        
+
         Keyword arguments:
             parent_surf     The Surface upon which the Animation will
                             be drawn.
