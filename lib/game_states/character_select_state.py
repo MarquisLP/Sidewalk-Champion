@@ -429,7 +429,7 @@ class IntroTransition(object):
             roster: The RosterDisplay containing all characters.
             p1_preview: The CharacterPreview for player 1.
             p2_preview: The CharacterPreview for player 2.
-            vs_text: A Surface containing text that reads VS.
+            vs_text: A Graphic containing text that reads VS.
             voice_channel: A PyGame Channel used for playing announcer
                 voice clips.
         """
