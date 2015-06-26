@@ -43,8 +43,110 @@ class StageData(object):
         self.subtitle = ''
         self.preview = ''
         self.thumbnail = ''
-        self.background = ''
-        self.parallax = ''
+        self.background = None
+        self.parallax = None
+        self.front_props = []
+        self.back_props = []
         self.x_offset = 0
         self.ground_level = 0
         self.music = ''
+
+
+class Background(object):
+    """A data class storing information about a Stage's backdrop.
+
+    Attributes:
+        spritesheet_path (String): The file path to the backdrop
+            animation sprite sheet.
+        num_of_frames (int): The number of frames in the backdrop
+            animation.
+        frame_duration (int): The duration, in update cycles, that
+            each animation frame will be displayed for.
+    """
+    def __init__(self):
+        """Declare and initialize instance variables."""
+        self.spritesheet_path = ''
+        self.num_of_frames = 0
+        self.frame_duration = 0
+
+
+class Parallax(object):
+        """A data class storing information about a Stage's parallax
+        image, which is drawn beneath the backdrop and does not move
+        when the screen scrolls.
+
+        Attributes:
+            spritesheet_path (String): The file path to the parallax
+                animation sprite sheet.
+            x_offset (int): The horizontal displacement, in pixels, of
+                the parallax image from the top-left corner of the
+                backdrop.
+            y_offset (int): The vertical displacement, in pixels, of
+                the parallax image from the top-left corner of the
+                backdrop.
+            num_of_frames (int): The number of frames in the parallax
+                animation.
+            frame_duration (int): The duration, in update cycles, that
+                each animation frame will be displayed for.
+        """
+        def __init__(self):
+            """Declare and initialize instance variables."""
+            self.spritesheet_path = ''
+            self.x_offset = 0
+            self.y_offset = 0
+            self.num_of_frames = 0
+            self.frame_duration = 0
+
+
+class FrontProp(object):
+        """A data class storing information about one of the Stage's
+        front props, which are drawn in the foreground above the
+        fighters.
+
+        Attributes:
+            spritesheet_path (String): The file path to the front prop's
+                animation sprite sheet.
+            x_offset (int): The horizontal displacement, in pixels, of
+                the front prop from the top-left corner of the backdrop.
+            y_offset (int): The vertical displacement, in pixels, of
+                the front prop from the top-left corner of the backdrop.
+            num_of_frames (int): The number of frames in the front prop
+                animation.
+            frame_duration (int): The duration, in update cycles, that
+                each animation frame will be displayed for.
+        """
+        def __init__(self):
+            """Declare and initialize instance variables."""
+            self.spritesheet_path = ''
+            self.x_offset = 0
+            self.y_offset = 0
+            self.num_of_frames = 0
+            self.frame_duration = 0
+
+
+class BackProp(object):
+        """A data class storing information about one of the Stage's
+        back props, which are drawn over the backdrop and behind the
+        fighters.
+
+        Attributes:
+            spritesheet_path (String): The file path to the back prop's
+                animation sprite sheet.
+            x_offset (int): The horizontal displacement, in pixels, of
+                the back prop from the top-left corner of the backdrop.
+            y_offset (int): The vertical displacement, in pixels, of
+                the back prop from the top-left corner of the backdrop.
+            num_of_frames (int): The number of frames in the back prop
+                animation. Note that a back prop should be animated
+                (i.e. possessing at least 2 frames), otherwise it may
+                as well be edited into the Background image file.
+            frame_duration (int): The duration, in update cycles, that
+                each animation frame will be displayed for.
+        """
+        def __init__(self):
+            """Declare and initialize instance variables."""
+            self.spritesheet_path = ''
+            self.x_offset = 0
+            self.y_offset = 0
+            self.num_of_frames = 0
+            self.frame_duration = 0
