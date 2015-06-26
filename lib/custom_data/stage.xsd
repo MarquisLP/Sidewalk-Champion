@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="positiveOrZero">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="0" />
+		</xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="positiveInt">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="1" />
+		</xs:restriction>
+  </xs:simpleType>
+  
+  <xs:element name="stage_data">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="background" minOccurs="1" maxOccurs="1">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="spritesheet_path" use="required"/>
+                <xs:attribute type="positiveInt" name="num_of_frames" use="required"/>
+                <xs:attribute type="positiveOrZero" name="frame_duration" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="parallax" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="spritesheet_path"/>
+                <xs:attribute type="xs:integer" name="x_offset"/>
+                <xs:attribute type="xs:integer" name="y_offset"/>
+                <xs:attribute type="positiveInt" name="num_of_frames"/>
+                <xs:attribute type="positiveOrZero" name="frame_duration"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="front_prop" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="spritesheet_path" use="required"/>
+                <xs:attribute type="xs:integer" name="x_offset" use="required"/>
+                <xs:attribute type="xs:integer" name="y_offset" use="required"/>
+                <xs:attribute type="positiveInt" name="num_of_frames" use="required"/>
+                <xs:attribute type="positiveOrZero" name="frame_duration" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="back_prop" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="spritesheet_path" use="required"/>
+                <xs:attribute type="xs:integer" name="x_offset" use="required"/>
+                <xs:attribute type="xs:integer" name="y_offset" use="required"/>
+                <xs:attribute type="positiveInt" name="num_of_frames" use="required"/>
+                <xs:attribute type="positiveOrZero" name="frame_duration" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="name" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1" />
+					<xs:maxLength value="18" />
+				</xs:restriction>
+			</xs:simpleType>
+	  </xs:attribute>
+      <xs:attribute name="subtitle">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1" />
+					<xs:maxLength value="29" />
+				</xs:restriction>
+			</xs:simpleType>
+	  </xs:attribute>
+      <xs:attribute type="xs:string" name="preview" use="required"/>
+      <xs:attribute type="xs:string" name="thumbnail" use="required"/>
+      <xs:attribute type="positiveOrZero" name="ground_level" use="required"/>
+      <xs:attribute type="xs:string" name="music"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
