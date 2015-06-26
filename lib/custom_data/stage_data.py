@@ -17,6 +17,11 @@ class StageData(object):
         name (String): The name of the Stage.
         subtitle (String): A tagline that appears below the Stage name
             in the Stage Select Screen.
+        preview (String): The file path to the image preview of the
+            Stage that will be displayed when it is selected on the
+            Stage Select screen.
+        thumbnail (String): The file path to the selection thumbnail for
+            the Stage on the Stage Select screen.
         background (String): The file path to the backdrop image for
             this Stage.
         parallax (String): An optional file path that specifies another
@@ -36,6 +41,8 @@ class StageData(object):
         """Declare and initialize instance variables."""
         self.name = ''
         self.subtitle = ''
+        self.preview = ''
+        self.thumbnail = ''
         self.background = ''
         self.parallax = ''
         self.x_offset = 0
