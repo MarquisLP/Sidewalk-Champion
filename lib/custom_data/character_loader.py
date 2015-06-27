@@ -12,6 +12,8 @@ Attributes:
 """
 import os
 from lib.custom_data.xml_ops import load_xml_doc_as_object
+from lib.custom_data.text_ops import get_prefixed_lines_from_txt
+from lib.custom_data.text_ops import num_of_lines_in_txt
 
 
 CHARACTER_LIST_PATH = 'characters/character_list.txt'
@@ -30,7 +32,7 @@ def load_all_characters():
     """
     characters = []
 
-    for filepath_index in range(0, number_of_character_filepaths()):
+    for filepath_index in range(0, num_of_lines_in_txt(CHARACTER_LIST_PATH)):
         character = load_character(filepath_index)
         if character is not None:
             characters.append(character)
@@ -56,7 +58,8 @@ def load_character(line_index):
         None will also be returned if line_index exceeds the number of
         lines in the text file.
     """
-    xml_paths = get_character_paths()
+    xml_paths = get_prefixed_lines_from_txt(CHARACTER_LIST_PATH,
+        FILEPATH_PREFIX)
     if line_index > len(xml_paths) - 1:
         return None
 
@@ -68,23 +71,6 @@ def load_character(line_index):
     else:
         prepend_prefix_to_filepaths(char_data)
         return char_data
-
-
-def get_character_paths():
-    """Return a list of all of the filepaths to the XML files for
-    playable characters.
-    """
-    with open(CHARACTER_LIST_PATH) as f:
-        character_path_list = [FILEPATH_PREFIX + line.rstrip('\n')
-                               for line in f]
-        return character_path_list
-
-
-def number_of_character_filepaths():
-    """Return the number of file paths specified in the character list
-    text file.
-    """
-    return len(get_character_paths())
 
 
 def prepend_prefix_to_filepaths(character):

@@ -12,6 +12,7 @@ Module Constants:
 """
 import os
 from lib.custom_data.xml_ops import load_xml_doc_as_object
+from lib.custom_data.text_ops import get_prefixed_lines_from_txt
 
 
 STAGE_LIST_PATH = 'stages/stage_list.txt'
@@ -36,7 +37,8 @@ def load_stage(line_index):
         None will also be returned if line_index exceeds the number of
         lines in the text file.
     """
-    stage_paths = get_stage_paths()
+    stage_paths = get_prefixed_lines_from_txt(STAGE_LIST_PATH,
+        FILEPATH_PREFIX)
     if line_index > len(stage_paths) - 1:
         return None
 
@@ -48,15 +50,6 @@ def load_stage(line_index):
     else:
         prepend_prefix_to_filepaths(stage_data)
         return stage_data
-
-
-def get_stage_paths():
-    """Return a list of all of the file paths to the XML files for
-    battle Stages.
-    """
-    with open(STAGE_LIST_PATH) as f:
-        stage_paths = [FILEPATH_PREFIX + line.rstrip('\n') for line in f]
-        return stage_paths
 
 
 def prepend_prefix_to_filepaths(stage_data):
