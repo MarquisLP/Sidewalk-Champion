@@ -3,20 +3,20 @@ external XML files into StageData objects that can be used by the game
 engine.
 
 Module Constants:
-    STAGE_VERIFY_CODE (String): A string of characters that should be
-        included within Stage files that are properly formatted.
     STAGE_LIST_PATH (String): The relative file path to the text file
         containing the file paths of all included Stages.
+    STAGE_SCHEMA_PATH: The file path to the XML Schema document that
+        will be used to validate stage files.
     FILEPATH_PREFIX (String): The relative file path prefix for the
         directory containing all Stage files.
 """
-import xml.etree.ElementTree as tree
-from lib.custom_data.xml_ops import *
-from lib.custom_data.stage_data import StageData
+import os
+from lib.custom_data.xml_ops import load_xml_doc_as_object
 
 
-STAGE_VERIFY_CODE = 'sg9389hANa82'
 STAGE_LIST_PATH = 'stages/stage_list.txt'
+STAGE_SCHEMA_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                 'stage.xsd')
 FILEPATH_PREFIX = 'stages/'
 
 
@@ -41,48 +41,40 @@ def load_stage(line_index):
         return None
 
     stage_path = stage_paths[line_index]
-    if is_valid_xml(FILEPATH_PREFIX + stage_path, STAGE_VERIFY_CODE,
-                    'stage'):
-        stage_element = load_xml(stage_path, 'stage')
-        return load_stage_data(stage_element)
+    stage_data = load_xml_doc_as_object(stage_path, STAGE_SCHEMA_PATH)
+
+    if stage_data is None:
+        return None
+    else:
+        prepend_prefix_to_filepaths(stage_data)
+        return stage_data
+
 
 def get_stage_paths():
     """Return a list of all of the file paths to the XML files for
     battle Stages.
     """
     with open(STAGE_LIST_PATH) as f:
-        stage_paths = [line.rstrip('\n') for line in f]
+        stage_paths = [FILEPATH_PREFIX + line.rstrip('\n') for line in f]
         return stage_paths
 
-def load_stage_data(stage_element):
-    """Retrieve Stage data from an XML element and return it as a
+
+def prepend_prefix_to_filepaths(stage_data):
+    """Preprend FILEPATH_PREFIX to all file path attributes of a
     StageData object.
 
     Args:
-        stage_element (Element): An XML element with sub-elements that
-            specify Stage data.
-
-    Returns:
-        A StageData object containing the loaded information.
-        None will be returned if at least one of the Stage parameters
-        couldn't be loaded.
+        stage_data (StageData): A StageData instance.
     """
-    new_stage = StageData()
-
-    new_stage.name = stage_element.find('name').text
-    new_stage.subtitle = stage_element.find('subtitle').text
-    new_stage.background = stage_element.find('background').text
-    new_stage.parallax = stage_element.find('parallax').text
-    new_stage.x_offset = stage_element.find('x_offset').text
-    new_stage.ground_level = stage_element.find('ground_level').text
-    new_stage.music = stage_element.find('music').text
-
-    if has_null_attributes(new_stage):
-        return None
-    else:
-        # These attributes can only be converted from String to int
-        # after verifying that they were loaded. Otherwise, an error will
-        # occur when trying to convert a None object.
-        new_stage.x_offset = int(new_stage.x_offset)
-        new_stage.ground_level = int(new_stage.ground_level)
-        return new_stage
+    stage_data.background.spritesheet_path = (FILEPATH_PREFIX +
+        stage_data.background.spritesheet_path)
+    stage_data.parallax.spritesheet_path = (FILEPATH_PREFIX +
+        stage_data.parallax.spritesheet_path)
+    for front_prop in stage_data.front_props:
+        front_prop.spritesheet_path = (FILEPATH_PREFIX +
+            front_prop.spritesheet_path)
+    for back_prop in stage_data.back_props:
+        back_prop.spritesheet_path = (FILEPATH_PREFIX +
+            back_prop.spritesheet_path)
+    if stage_data.music is not None:
+        stage_data.music = FILEPATH_PREFIX + stage_data.music

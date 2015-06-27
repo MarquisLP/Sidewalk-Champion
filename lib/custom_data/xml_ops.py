@@ -3,6 +3,7 @@ for potential errors that may result from reading XML data.
 """
 from lxml import etree
 from lib.custom_data.character_data import *
+from lib.custom_data.stage_data import *
 from lib.custom_data.settings_data import *
 
 # ============================================================================
