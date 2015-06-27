@@ -89,5 +89,5 @@ def prepend_prefix_to_filepaths(stage_data):
     for back_prop in stage_data.back_props:
         back_prop.spritesheet_path = (FILEPATH_PREFIX +
             back_prop.spritesheet_path)
-    if stage_data.music is not None:
+    if stage_data.music != '':
         stage_data.music = FILEPATH_PREFIX + stage_data.music
