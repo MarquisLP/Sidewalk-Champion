@@ -13,12 +13,32 @@ Module Constants:
 import os
 from lib.custom_data.xml_ops import load_xml_doc_as_object
 from lib.custom_data.text_ops import get_prefixed_lines_from_txt
+from lib.custom_data.text_ops import num_of_lines_in_txt
 
 
 STAGE_LIST_PATH = 'stages/stage_list.txt'
 STAGE_SCHEMA_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                  'stage.xsd')
 FILEPATH_PREFIX = 'stages/'
+
+
+def load_all_stages():
+    """Load the data from all of the XML files specified in the
+    stage_list file, and return it as a list of StageData objects.
+
+    If no stages could be loaded, None is returned instead.
+    """
+    stages = []
+
+    for filepath_index in range(0, num_of_lines_in_txt(STAGE_LIST_PATH)):
+        stage = load_stage(filepath_index)
+        if stage is not None:
+            stages.append(stage)
+
+    if len(stages) > 0:
+        return stages
+    else:
+        return None
 
 
 def load_stage(line_index):
