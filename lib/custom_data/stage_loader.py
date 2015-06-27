@@ -24,7 +24,7 @@ FILEPATH_PREFIX = 'stages/'
 
 def load_all_stages():
     """Load the data from all of the XML files specified in the
-    stage_list file, and return it as a list of StageData objects.
+    stage_list file, and return it as a tuple of StageData objects.
 
     If no stages could be loaded, None is returned instead.
     """
@@ -36,7 +36,7 @@ def load_all_stages():
             stages.append(stage)
 
     if len(stages) > 0:
-        return stages
+        return tuple(stages)
     else:
         return None
 

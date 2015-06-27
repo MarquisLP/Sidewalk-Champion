@@ -25,7 +25,7 @@ FILEPATH_PREFIX = 'characters/'
 
 def load_all_characters():
     """Load the data from all of the XML files specified in the
-    character_list file, and return it as a list of CharacterData
+    character_list file, and return it as a tuple of CharacterData
     objects.
 
     If no characters could be loaded, None is returned instead.
@@ -38,7 +38,7 @@ def load_all_characters():
             characters.append(character)
 
     if len(characters) > 0:
-        return characters
+        return tuple(characters)
     else:
         return None
 
