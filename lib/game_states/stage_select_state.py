@@ -83,3 +83,14 @@ class StageThumbnail(Graphic):
         pygame.draw.rect(new_surf, THUMB_BORDER_COLOR, border_rect, 
                          BORDER_WIDTH)
         self.image = new_surf
+
+    def change_border(self, color):
+        """Redraw the border with a specific color.
+
+        Args:
+            color (tuple of int, int, int): The RGB values for the new
+                border color.
+        """
+        border_rect = Rect(0, 0, self.image.get_width() - 1,
+                          self.image.get_height() - 1)
+        pygame.draw.rect(self.image, color, border_rect, BORDER_WIDTH)
