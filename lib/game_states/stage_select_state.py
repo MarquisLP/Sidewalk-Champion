@@ -84,6 +84,14 @@ class StageThumbnail(Graphic):
                          BORDER_WIDTH)
         self.image = new_surf
 
+    def change_stage(self, new_image):
+        """Change the icon image to represent a different Stage.
+
+        Args:
+            new_image (Surface): The new Stage icon to display.
+        """
+        self.image.blit(new_image, (BORDER_WIDTH, BORDER_WIDTH))
+
     def change_border(self, color):
         """Redraw the border with a specific color.
 
