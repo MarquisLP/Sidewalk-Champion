@@ -57,3 +57,29 @@ LINE_SPEED = 500
 LINE_LEFT_BOUND = 292
 LINE_RIGHT_BOUND = 363
 TRANSITION_SLIDE_SPEED = 500
+
+
+class StageThumbnail(Graphic):
+    """A small icon for a Stage that can be selected by the players.
+    """
+    def __init__(self, thumbnail_image, y):
+        """Declare and initialize instance variables.
+    
+        Args:
+            thumbnail_image (Surface): The Stage's icon image.
+            y (int): The thumbnail's y-position on-screen.
+        """
+        position = (THUMB_X, y)
+        super(StageThumbnail, self).__init__(thumbnail_image, position)
+        self.add_border()
+
+    def add_border(self):
+        """Draw a border around the thumbnail image Surface."""
+        new_surf = Surface((THUMB_SIZE + (BORDER_WIDTH * 2),
+                            THUMB_SIZE + (BORDER_WIDTH * 2)))
+        new_surf.blit(self.image, (BORDER_WIDTH, BORDER_WIDTH))
+        border_rect = Rect(0, 0, new_surf.get_width() - 1,
+                           new_surf.get_height() - 1)
+        pygame.draw.rect(new_surf, THUMB_BORDER_COLOR, border_rect, 
+                         BORDER_WIDTH)
+        self.image = new_surf
