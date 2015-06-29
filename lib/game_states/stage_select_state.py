@@ -33,13 +33,17 @@ Module Constants:
         Graphics move in and out of the screen at when transitioning in
         or out of this State.
 """
+import pygame.draw
+from lib.graphics import Graphic
+from pygame.surface import Surface
+from pygame.rect import Rect
 
 
 BORDER_WIDTH = 2
 TOP_THUMB_Y = 34
 THUMB_X = 302
 THUMB_SIZE = 50
-THUMB_BORDER_COLOR = (192, 192, 192)
+THUMB_BORDER_COLOR = (102, 102, 102)
 THUMB_HIGHLIGHT_COLOR = (192, 0, 256)
 PREVIEW_X = 14
 PREVIEW_Y = 11
