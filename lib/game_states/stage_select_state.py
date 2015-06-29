@@ -102,3 +102,11 @@ class StageThumbnail(Graphic):
         border_rect = Rect(0, 0, self.image.get_width() - 1,
                           self.image.get_height() - 1)
         pygame.draw.rect(self.image, color, border_rect, BORDER_WIDTH)
+
+    def highlight(self):
+        """Recolor the border to show that the thumbnail is selected."""
+        self.change_border(THUMB_HIGHLIGHT_COLOR)
+
+    def unhighlight(self):
+        """Recolor the border to show the thumbnail deselected."""
+        self.change_border(THUMB_BORDER_COLOR)
