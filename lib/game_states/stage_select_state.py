@@ -100,7 +100,7 @@ class StageThumbnail(Graphic):
                 border color.
         """
         border_rect = Rect(0, 0, self.image.get_width() - 1,
-                          self.image.get_height() - 1)
+                           self.image.get_height() - 1)
         pygame.draw.rect(self.image, color, border_rect, BORDER_WIDTH)
 
     def highlight(self):
