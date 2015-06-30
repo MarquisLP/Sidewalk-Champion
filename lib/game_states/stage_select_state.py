@@ -150,3 +150,11 @@ class StagePreview(Graphic):
                           BORDER_WIDTH)
 
         self.image = new_surf
+
+    def change_stage(self, new_image):
+        """Change the displayed snapshot to represent another Stage.
+
+        Args:
+            new_image (Surface): The new Stage snapshot to be displayed.
+        """
+        self.image.blit(new_image, (BORDER_WIDTH * 2, BORDER_WIDTH * 2))
