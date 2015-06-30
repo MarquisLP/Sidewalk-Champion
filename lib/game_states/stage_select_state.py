@@ -78,8 +78,10 @@ class StageThumbnail(Graphic):
         new_surf = Surface((THUMB_SIZE + (BORDER_WIDTH * 2),
                             THUMB_SIZE + (BORDER_WIDTH * 2)))
         new_surf.blit(self.image, (BORDER_WIDTH, BORDER_WIDTH))
-        border_rect = Rect(0, 0, new_surf.get_width() - 1,
-                           new_surf.get_height() - 1)
+        border_rect = Rect(0 + ((BORDER_WIDTH // 2) - 1),
+                           0 + ((BORDER_WIDTH // 2) - 1),
+                           THUMB_SIZE + BORDER_WIDTH + 1,
+                           THUMB_SIZE + BORDER_WIDTH + 1)
         pygame.draw.rect(new_surf, THUMB_BORDER_COLOR, border_rect, 
                          BORDER_WIDTH)
         self.image = new_surf
