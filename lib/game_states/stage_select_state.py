@@ -110,3 +110,43 @@ class StageThumbnail(Graphic):
     def unhighlight(self):
         """Recolor the border to show the thumbnail deselected."""
         self.change_border(THUMB_BORDER_COLOR)
+
+
+class StagePreview(Graphic):
+    """A snapshot of the currently-selected Stage."""
+    def __init__(self, image):
+        """Declare and initialize instance variables.
+
+        Args:
+            image (Surface): The snapshot image initially displayed.
+        """
+        super(StagePreview, self).__init__(image, (PREVIEW_X, PREVIEW_Y))
+        self.add_borders()
+
+    def add_borders(self):
+        """Draw an outer and inner border around the snapshot image."""
+        new_surf = Surface((PREVIEW_WIDTH + (BORDER_WIDTH * 4),
+                            PREVIEW_HEIGHT + (BORDER_WIDTH * 4)))
+        new_surf.blit(self.image, (BORDER_WIDTH * 2, BORDER_WIDTH * 2))
+
+        # pygame.draw.rect applies thickness such that the given x and y
+        # coordinates are 'centered' along the line thickness, but shifted
+        # 1 pixel left and up respectively.
+        # e.g. If x=10, y=10, and thickness=10, then the top-left corner of
+        #      the drawn rectangle is (6, 6).
+        # To find the x/y-coordinate of the top-left corner, use this formula:
+        #   (x or y) - ((thickness // 2) - 1)
+        inner_rect = Rect(BORDER_WIDTH + ((BORDER_WIDTH // 2) - 1),
+                          BORDER_WIDTH + ((BORDER_WIDTH // 2) - 1),
+                          PREVIEW_WIDTH + BORDER_WIDTH + 1,
+                          PREVIEW_HEIGHT + BORDER_WIDTH + 1)
+        outer_rect = Rect(0 + ((BORDER_WIDTH // 2) - 1),
+                          0 + ((BORDER_WIDTH // 2) - 1),
+                          PREVIEW_WIDTH + (BORDER_WIDTH * 3) + 1,
+                          PREVIEW_HEIGHT + (BORDER_WIDTH * 3) + 1)
+        pygame.draw.rect(new_surf, PREVIEW_INNER_BORDER_COLOR, inner_rect,
+                         BORDER_WIDTH)
+        pygame.draw.rect(new_surf, PREVIEW_OUTER_BORDER_COLOR, outer_rect,
+                          BORDER_WIDTH)
+
+        self.image = new_surf
