@@ -134,8 +134,8 @@ class StagePreview(Graphic):
         # 1 pixel left and up respectively.
         # e.g. If x=10, y=10, and thickness=10, then the top-left corner of
         #      the drawn rectangle is (6, 6).
-        # To find the x/y-coordinate of the top-left corner, use this formula:
-        #   (x or y) - ((thickness // 2) - 1)
+        # To directly position the top-left corner, use this formula:
+        #   (desired x or y) + ((thickness // 2) - 1)
         inner_rect = Rect(BORDER_WIDTH + ((BORDER_WIDTH // 2) - 1),
                           BORDER_WIDTH + ((BORDER_WIDTH // 2) - 1),
                           PREVIEW_WIDTH + BORDER_WIDTH + 1,
