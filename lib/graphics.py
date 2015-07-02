@@ -5,6 +5,7 @@ It also contains module level methods to assist in loading and managing
 in-game images in other modules.
 """
 from __builtin__ import True, False
+from math import ceil
 from pygame.locals import *
 from pygame.surface import Surface
 from pygame import image
@@ -90,6 +91,29 @@ def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
         colorkeyed_surf.convert()
 
         return colorkeyed_surf
+
+
+def get_line_center(thickness):
+    """Return an integer representing the center of a line, or a line
+    that is part of a rectangle, drawn by the pygame.draw module.
+
+    The x or y coordinate passed to a pygame.draw function is used as
+    the 'centre' of the drawing's thickness. To position it from the
+    left or top, add the value produced by this function to the x or y
+    argument(s) within the pygame.draw function call.
+
+    Args:
+        thickness (int): The thickness of the line, in pixels.
+    """
+    # Since even-number widths don't have a center, pygame.draw shifts the
+    # line center 1 pixel left/up, if the thickness is even.
+    # Thus, center is calculated by dividing thickness by 2 and subtracting 1.
+
+    # But wouldn't subtracting 1 mess up odd-number widths, which have a center?
+    # To cancel out the subtraction, ceil() is used to round decimal quotients
+    # up by 1.
+    center = ceil(float(thickness) / 2.0) - 1
+    return int(center)
 
 
 class Graphic(object):

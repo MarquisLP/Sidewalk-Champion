@@ -36,7 +36,7 @@ Module Constants:
         or out of this State.
 """
 import pygame.draw
-from lib.graphics import Graphic
+from lib.graphics import Graphic, get_line_center
 from pygame.surface import Surface
 from pygame.rect import Rect
 
@@ -80,8 +80,8 @@ class StageThumbnail(Graphic):
         new_surf = Surface((THUMB_SIZE + (BORDER_WIDTH * 2),
                             THUMB_SIZE + (BORDER_WIDTH * 2)))
         new_surf.blit(self.image, (BORDER_WIDTH, BORDER_WIDTH))
-        border_rect = Rect(0 + ((BORDER_WIDTH // 2) - 1),
-                           0 + ((BORDER_WIDTH // 2) - 1),
+        border_rect = Rect(get_line_center(BORDER_WIDTH),
+                           get_line_center(BORDER_WIDTH),
                            THUMB_SIZE + BORDER_WIDTH + 1,
                            THUMB_SIZE + BORDER_WIDTH + 1)
         pygame.draw.rect(new_surf, THUMB_BORDER_COLOR, border_rect, 
@@ -133,19 +133,12 @@ class StagePreview(Graphic):
                             PREVIEW_HEIGHT + (BORDER_WIDTH * 4)))
         new_surf.blit(self.image, (BORDER_WIDTH * 2, BORDER_WIDTH * 2))
 
-        # pygame.draw.rect applies thickness such that the given x and y
-        # coordinates are 'centered' along the line thickness, but shifted
-        # 1 pixel left and up respectively.
-        # e.g. If x=10, y=10, and thickness=10, then the top-left corner of
-        #      the drawn rectangle is (6, 6).
-        # To directly position the top-left corner, use this formula:
-        #   (desired x or y) + ((thickness // 2) - 1)
-        inner_rect = Rect(BORDER_WIDTH + ((BORDER_WIDTH // 2) - 1),
-                          BORDER_WIDTH + ((BORDER_WIDTH // 2) - 1),
+        inner_rect = Rect(BORDER_WIDTH + get_line_center(BORDER_WIDTH),
+                          BORDER_WIDTH + get_line_center(BORDER_WIDTH),
                           PREVIEW_WIDTH + BORDER_WIDTH + 1,
                           PREVIEW_HEIGHT + BORDER_WIDTH + 1)
-        outer_rect = Rect(0 + ((BORDER_WIDTH // 2) - 1),
-                          0 + ((BORDER_WIDTH // 2) - 1),
+        outer_rect = Rect(get_line_center(BORDER_WIDTH),
+                          get_line_center(BORDER_WIDTH),
                           PREVIEW_WIDTH + (BORDER_WIDTH * 3) + 1,
                           PREVIEW_HEIGHT + (BORDER_WIDTH * 3) + 1)
         pygame.draw.rect(new_surf, PREVIEW_INNER_BORDER_COLOR, inner_rect,
