@@ -37,6 +37,7 @@ Module Constants:
 """
 import pygame.draw
 from lib.graphics import Graphic, get_line_center
+from lib.globals import SCREEN_SIZE
 from pygame.surface import Surface
 from pygame.rect import Rect
 
@@ -155,3 +156,36 @@ class StagePreview(Graphic):
             new_image (Surface): The new Stage snapshot to be displayed.
         """
         self.image.blit(new_image, (BORDER_WIDTH * 2, BORDER_WIDTH * 2))
+
+
+class BackgroundLine(Graphic):
+    """A vertical line that moves back and forth horizontally across the
+    the screen.
+
+    Attributes:
+        is_moving_right (Boolean): This indicates whether the line is
+            currently moving to the right horizontally.
+    """
+    def __init__(self, x, thickness, is_moving_right):
+        """Declare and initialize instance variables.
+
+        Args:
+            x (int): The initial x-position of the line's left edge.
+            thickness (int): The thickness of the line, in pixels.
+            is_moving_right (Boolean): Indicates whether the line is
+                moving to the right initially.
+        """
+        image = self.render(thickness)
+        super(BackgroundLine, self).__init__(image, (x, 0))
+
+    def render(self, thickness):
+        """Return a Surface containing the drawn line.
+
+        Args:
+            thickness (int): The thickness of the line, in pixels.
+        """
+        surf = Surface((thickness, SCREEN_SIZE[1]))
+        x = get_line_center(thickness)
+        pygame.draw.line(surf, LINE_COLOR, (x, 0),
+                         (x, SCREEN_SIZE[1]), thickness)
+        return surf
