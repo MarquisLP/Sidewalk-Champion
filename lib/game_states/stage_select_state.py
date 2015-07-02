@@ -23,6 +23,8 @@ Module Constants:
         the innermost preview border.
     LINE_WIDTHS (tuple of int): The respective widths, in pixels, of
         each BackgroundLine.
+    LINE_COLOR (tuple of int): The RGB value for the color of the
+        BackgroundLines.
     LINE_SPEED (int): The speed, in pixels per second, at which the
         BackgroundLines travel and bounce horizontally.
     LINE_LEFT_BOUND (int): The on-screen x-position of the furthest left
