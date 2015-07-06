@@ -190,3 +190,29 @@ class BackgroundLine(Graphic):
         pygame.draw.line(surf, LINE_COLOR, (x, 0),
                          (x, SCREEN_SIZE[1]), thickness)
         return surf
+
+    def update_movement(self, time_elapsed):
+        """Update the line's horizontal movement.
+
+        Args:
+            time_elapsed (float): The time elapsed, in seconds, since
+                the last update cycle.
+        """
+        distance = LINE_SPEED * time_elapsed
+
+        if self.is_moving_right:
+            if self.get_right_edge() + distance > LINE_RIGHT_BOUND:
+                # Line bounces off right edge.
+                distance = LINE_RIGHT_BOUND - self.get_right_edge()
+                self.move(distance * -1, 0)
+                self.is_moving_right = False
+            else:
+                self.move(distance, 0)
+        else:
+            if self.rect.x - distance < LINE_LEFT_BOUND:
+                # Line bounces off left edge.
+                distance = self.rect.x - LINE_LEFT_BOUND
+                self.move(distance, 0)
+                self.is_moving_right = True
+            else:
+                self.move(distance * -1, 0)
