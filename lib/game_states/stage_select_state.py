@@ -177,6 +177,7 @@ class BackgroundLine(Graphic):
         """
         image = self.render(thickness)
         super(BackgroundLine, self).__init__(image, (x, 0))
+        self.is_moving_right = is_moving_right
 
     def render(self, thickness):
         """Return a Surface containing the drawn line.
