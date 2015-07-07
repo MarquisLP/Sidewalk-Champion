@@ -36,6 +36,7 @@ Module Constants:
         or out of this State.
 """
 import pygame.draw
+from collections import namedtuple
 from lib.graphics import Graphic, get_line_center
 from lib.globals import SCREEN_SIZE
 from pygame.surface import Surface
@@ -60,6 +61,9 @@ LINE_SPEED = 200
 LINE_LEFT_BOUND = 292
 LINE_RIGHT_BOUND = 363
 TRANSITION_SLIDE_SPEED = 500
+
+
+StageMetadata = namedtuple('StageMetadata', 'name subtitle preview thumbnail')
 
 
 class StageThumbnail(Graphic):
