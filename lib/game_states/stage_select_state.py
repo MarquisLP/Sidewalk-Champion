@@ -37,6 +37,7 @@ Module Constants:
 """
 import pygame.draw
 from collections import namedtuple
+from enum import IntEnum
 from lib.graphics import Graphic, get_line_center
 from lib.globals import SCREEN_SIZE
 from pygame.surface import Surface
@@ -220,3 +221,23 @@ class BackgroundLine(Graphic):
                 self.is_moving_right = True
             else:
                 self.move(distance * -1, 0)
+
+
+class CursorDirection(IntEnum):
+    """An enum containing values that represent the possible 'motion'
+    of the cursor, as directed by the players.
+
+    Values;
+        PREVIOUS: Select the Stage above the current one.
+        NEXT: Select the Stage below the current one.
+        PREVIOUS_ROW: Move the cursor so that a number of Stages that
+            fit the screen above the current Stage are displayed, with
+            the top-most one selected.
+        NEXT_ROW: Move the cursor so that a number of Stages that fit
+            the screen below the current Stage are displayed, with the
+            top-most one selected.
+    """
+    PREVIOUS = 0
+    NEXT = 1
+    PREVIOUS_ROW = 2
+    NEXT_ROW = 3
