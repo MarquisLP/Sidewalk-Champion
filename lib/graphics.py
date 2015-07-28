@@ -108,9 +108,9 @@ def calculate_center_position(obj_size, area_size):
              area upon which the object will be centered.
     """
     if obj_size < area_size:
-        return (area_size - obj_size) \ 2
+        return (area_size - obj_size) // 2
     else:
-        return (obj_size - area_size) \ 2
+        return (obj_size - area_size) // 2
 
 
 def get_line_center(thickness):
