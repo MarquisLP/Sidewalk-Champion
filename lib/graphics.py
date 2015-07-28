@@ -93,6 +93,26 @@ def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
         return colorkeyed_surf
 
 
+def calculate_center_position(obj_size, area_size):
+    """Return an integer for the position of a graphical object such
+    that the object is positioned at the horizontal or vertical center
+    of an area.
+
+    To center an object horizontally, pass the widths of the object and
+    area. To center an object vertically, pass their heights.
+
+    Args:
+        obj_size (int): Either the width or height of the object in
+            pixels.
+        area_size (int): Either the width or height, in pixels, of the
+             area upon which the object will be centered.
+    """
+    if obj_size < area_size:
+        return (area_size - obj_size) \ 2
+    else:
+        return (obj_size - area_size) \ 2
+
+
 def get_line_center(thickness):
     """Return an integer representing the center of a line, or a line
     that is part of a rectangle, drawn by the pygame.draw module.
