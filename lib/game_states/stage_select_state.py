@@ -4,8 +4,8 @@ components.
 Module Constants:
     BORDER_WIDTH (int): The thickness, in pixels, of the borders of
         the stage preview as well as each stage thumbnail.
-    TOP_THUMB_Y (int): The y-position of the top-most thumbnail
-        on-screen.
+    NUM_OF_THUMBS (int): The number of Stage Thumbnails shown on the
+        screen at once.
     THUMB_X (int): The shared x-position of all thumbnails on-screen.
     THUMB_SIZE (int): The width and height, in pixels, of each thumbnail
         image.
