@@ -11,7 +11,11 @@ def get_prefixed_lines_from_txt(txt_path, prefix=''):
         prefix (String): Optional. A String segment that will be
             prepended to the start of each line.
     """
+<<<<<<< HEAD
     with open(txt_path) as f:
+=======
+    with open(txt_path, 'U') as f:
+>>>>>>> master
         lines = [prefix + line.rstrip('\n') for line in f]
         return tuple(lines)
 
