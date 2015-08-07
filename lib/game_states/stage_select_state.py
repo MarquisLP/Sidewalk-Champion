@@ -9,7 +9,7 @@ Module Constants:
     THUMB_X (int): The shared x-position of all thumbnails on-screen.
     THUMB_SIZE (int): The width and height, in pixels, of each thumbnail
         image.
-    THUMB_BORDER_COLOR (tuple of int): The RGB values for the color of 
+    THUMB_BORDER_COLOR (tuple of int): The RGB values for the color of
         the thumbnail border.
     THUMB_HIGHLIGHT_COLOR (tuple of int): The RGB values for the color
         of the thumbnail border when a particular thumbnail is selected.
@@ -29,8 +29,18 @@ Module Constants:
         BackgroundLines travel and bounce horizontally.
     LINE_LEFT_BOUND (int): The on-screen x-position of the furthest left
         that the BackgroundLines can travel.
-    LINE_RIGHT_BOUND (int): The on-screen x-position of the furthest 
+    LINE_RIGHT_BOUND (int): The on-screen x-position of the furthest
         right that the BackgroundLines can travel.
+    FONT_PATH (String): The file path to the font used for rendering
+        the Stage name and subtitle text.
+    NAME_SIZE (int): The font size used for rendering the Stage name
+        text.
+    SUBTITLE_SIZE (int): The font size used for rendering the Stage
+        subtitle text.
+    PREVIEW_TO_NAME_DISTANCE (int): The distance, in pixels, between
+        the preview image and the Stage name text.
+    UP_ARROW_PATH (String): The file path to the scroll up arrow sprite
+        sheet image.
     TRANSITION_SLIDE_SPEED (int): The speed, in pixels per second, that
         Graphics move in and out of the screen at when transitioning in
         or out of this State.
@@ -45,7 +55,7 @@ from pygame.rect import Rect
 
 
 BORDER_WIDTH = 2
-TOP_THUMB_Y = 34
+NUM_OF_THUMBS = 3
 THUMB_X = 302
 THUMB_SIZE = 50
 THUMB_BORDER_COLOR = (102, 102, 102)
@@ -61,6 +71,11 @@ LINE_COLOR = (0, 19, 127)
 LINE_SPEED = 200
 LINE_LEFT_BOUND = 292
 LINE_RIGHT_BOUND = 363
+FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
+NAME_SIZE = 20
+SUBTITLE_SIZE = 12
+PREVIEW_TO_NAME_DISTANCE = 14
+UP_ARROW_PATH = 'images/roster_up_arrow.png'
 TRANSITION_SLIDE_SPEED = 500
 
 
@@ -72,7 +87,7 @@ class StageThumbnail(Graphic):
     """
     def __init__(self, thumbnail_image, y):
         """Declare and initialize instance variables.
-    
+
         Args:
             thumbnail_image (Surface): The Stage's icon image.
             y (int): The thumbnail's y-position on-screen.
@@ -90,7 +105,7 @@ class StageThumbnail(Graphic):
                            get_line_center(BORDER_WIDTH),
                            THUMB_SIZE + BORDER_WIDTH + 1,
                            THUMB_SIZE + BORDER_WIDTH + 1)
-        pygame.draw.rect(new_surf, THUMB_BORDER_COLOR, border_rect, 
+        pygame.draw.rect(new_surf, THUMB_BORDER_COLOR, border_rect,
                          BORDER_WIDTH)
         self.image = new_surf
 
@@ -241,3 +256,4 @@ class CursorDirection(IntEnum):
     NEXT = 1
     PREVIOUS_ROW = 2
     NEXT_ROW = 3
+
