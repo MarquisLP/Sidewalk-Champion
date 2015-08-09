@@ -49,15 +49,22 @@ Module Constants:
         animation frame for the scroll arrows.
     ARROW_DISTANCE_FROM_THUMBS (int): The vertical distance, in pixels,
         between the scroll arrows and the Thumbnails.
+    THUMB_TO_ARROW_DISTANCE (int): The vertical distance, in pixels,
+        between the Stage Thumbnails and the scroll arrows.
     TRANSITION_SLIDE_SPEED (int): The speed, in pixels per second, that
         Graphics move in and out of the screen at when transitioning in
         or out of this State.
 """
 import pygame.draw
+import pygame.image
 from collections import namedtuple
 from enum import IntEnum
-from lib.graphics import Graphic, get_line_center
+from random import randint
+from lib.graphics import (Graphic, Animation, render_outlined_text,
+                          get_line_center, calculate_center_position)
 from lib.globals import SCREEN_SIZE
+from lib.custom_data.stage_loader import load_all_stages
+from lib.game_states.state import State
 from pygame.surface import Surface
 from pygame.rect import Rect
 
@@ -87,10 +94,244 @@ NAME_TO_SUBTITLE_DISTANCE = 7
 UP_ARROW_PATH = 'images/roster_up_arrow.png'
 NUM_OF_ARROW_FRAMES = 2
 ARROW_FRAME_DURATION = 10
+THUMB_TO_ARROW_DISTANCE = 4
 TRANSITION_SLIDE_SPEED = 500
 
 
 StageMetadata = namedtuple('StageMetadata', 'name subtitle preview thumbnail')
+
+
+class StageSelectState(State):
+    """The screen where players can select the Stage that will serve as
+    their battleground.
+
+    Attributes:
+        metadata (tuple of StageMetadata): This contains the names,
+            subtitles, preview images, and thumbnail images of all
+            Stages available in the game.
+        thumbnails (tuple of Thumbnail): This contains Thumbnails
+            representing every Stage within the game.
+        preview (StagePreview): A snapshot of the Stage currently
+            highlighted by the cursor.
+        stage_name (Graphic): A line of text displaying the name of the
+            currently-selected Stage.
+        stage_subtitle (Graphic): A line of text displaying the subtitle
+            of the currently-selected Stage.
+        no_stages_text (Graphic): A line of text notifying the players
+            that no Stages could be loaded into the game.
+        bg_lines (tuple of BackgroundLine): A set of animated lines that
+            will bounce around an area of the screen.
+        scroll_up_arrow (Graphic): An arrow that will appear and nudge
+            up to indicate that more Stages are available above the ones
+            already on-screen.
+        scroll_down_arrow (Graphic): An arrow that will appear and nudge
+            down to indicate that more Stages are available below the
+            ones already on-screen.
+        transition (TransitionAnimation): An object that handles the
+            intro and outro animations for this State.
+        selected_stage (int): The index number within metadata for the
+            Stage currently being selected.
+        is_selection_confirmed (Boolean): Indicates whether the players
+            have confirmed a Stage for battle. Set to False by default.
+    """
+    def __init__(self, state_manager, state_pass):
+        """Declare and initialize instance variables.
+
+        Args:
+            state_manager (GameStateManager): The state manager object
+                that possesses and executes this State.
+            state_pass (StatePass): Contains all of the data passed
+                between Game States.
+        """
+        super(StageSelectState, self).__init__(state_manager, state_pass)
+        name_font = pygame.font.Font(FONT_PATH, NAME_SIZE)
+        subtitle_font = pygame.font.Font(FONT_PATH, SUBTITLE_SIZE)
+
+        self.state_manager = state_manager
+        self.state_pass = state_pass
+        self.bg_lines = self.create_bg_lines()
+        self.scroll_up_arrow = Animation.from_file(UP_ARROW_PATH, (0, 0),
+            NUM_OF_ARROW_FRAMES, ARROW_FRAME_DURATION)
+        self.scroll_down_arrow = Animation.from_file(UP_ARROW_PATH, (0, 0),
+            NUM_OF_ARROW_FRAMES, ARROW_FRAME_DURATION)
+        self.scroll_down_arrow.flip(is_vertical=True)
+
+        self.metadata = self.load_all_stage_metadata()
+        if not self.stage_was_loaded():
+            self.no_stages_text = render_outlined_text(name_font,
+                'No Stages Loaded', (255, 255, 255), (0, 0, 0), (0, 0))
+        else:
+            self.preview = StagePreview(self.metadata[0].preview)
+            self.thumbnails = self.create_thumbnails()
+            self.thumbnails[0].highlight()
+            self.stage_name = render_outlined_text(name_font,
+                self.metadata[0].name, (255, 255, 255), (0, 0, 0), (0, 0))
+            self.stage_subtitle = render_outlined_text(subtitle_font,
+                self.metadata[0].subtitle, (255, 255, 255), (0, 0, 0), (0, 0))
+
+        self.align_all_graphics()
+
+        self.selected_stage = 0
+        self.is_selection_confirmed = False
+
+    def load_all_stage_metadata(self):
+        """Return a tuple containing StageMetadata namedtuples for all
+        Stages loaded into the game.
+        """
+        all_stage_data = load_all_stages()
+
+        metadata = []
+        for stage_data in all_stage_data:
+            name = stage_data.name
+            subtitle = stage_data.subtitle
+            preview = pygame.image.load(stage_data.preview)
+            thumbnail = pygame.image.load(stage_data.thumbnail)
+            metadata.append(StageMetadata(name, subtitle, preview, thumbnail))
+
+        return tuple(metadata)
+
+    def stage_was_loaded(self):
+        """Return a Boolean indicating whether at least one Stage could
+        be loaded into the game.
+        """
+        return len(self.metadata) > 0
+
+    def create_thumbnails(self):
+        """Return a tuple containing a number of Thumbnails depicting
+        the first few Stages loaded into the game.
+
+        The number of Thumbnails instantiated is determined by the
+        NUM_OF_THUMBS constant.
+        """
+        thumbnails = []
+        total_thumb_height = ((THUMB_SIZE * NUM_OF_THUMBS) +
+                              (BORDER_WIDTH * (NUM_OF_THUMBS + 1)))
+        y = calculate_center_position(0, SCREEN_SIZE[1], total_thumb_height)
+
+        for stage_index in range(0, NUM_OF_THUMBS):
+            if stage_index <= len(self.metadata) - 1:
+                image = self.metadata[stage_index].thumbnail
+            else:
+                # If less Stages were loaded than the amount specified by
+                # NUM_OF_THUMBS, fill the remaining Thumbnails with white.
+                image = Surface((THUMB_SIZE, THUMB_SIZE))
+                pygame.draw.rect(image, (255, 255, 255),
+                                 Rect(0, 0, THUMB_SIZE, THUMB_SIZE))
+
+            new_thumbnail = StageThumbnail(image, y)
+            thumbnails.append(new_thumbnail)
+
+            y += THUMB_SIZE + BORDER_WIDTH
+
+        return tuple(thumbnails)
+
+    def create_bg_lines(self):
+        """Return a tuple containing a number of BackgroundLines.
+
+        The number of BackgroundLines created, as well as their
+        inidividual widths, are specified by LINE_WIDTHS. Their
+        individual positions are randomly generated between
+        LINE_LEFT_BOUND and LINE_RIGHT_BOUND.
+        """
+        bg_lines = []
+        is_moving_right = True
+
+        for width in LINE_WIDTHS:
+            x = randint(LINE_LEFT_BOUND, LINE_RIGHT_BOUND)
+            new_line = BackgroundLine(x, width, is_moving_right)
+            bg_lines.append(new_line)
+            is_moving_right = not is_moving_right
+
+        return bg_lines
+
+    def align_all_graphics(self):
+        """Position the StagePreview, scroll arrows, and text Graphics
+         as they will appear on-screen.
+        """
+        preview_and_text_height = (PREVIEW_HEIGHT + (BORDER_WIDTH * 2) +
+            PREVIEW_TO_NAME_DISTANCE + self.stage_name.rect.height +
+            NAME_TO_SUBTITLE_DISTANCE + self.stage_subtitle.rect.height)
+        preview_y = calculate_center_position(0, SCREEN_SIZE[1],
+                                              preview_and_text_height)
+
+        self.stage_name.rect.y = (preview_y + PREVIEW_HEIGHT +
+                                  (BORDER_WIDTH * 2) +
+                                  PREVIEW_TO_NAME_DISTANCE)
+        self.stage_subtitle.rect.y = (self.stage_name.rect.y +
+                                      self.stage_name.rect.height +
+                                      NAME_TO_SUBTITLE_DISTANCE)
+        self.center_info_text()
+
+        if self.stage_was_loaded():
+            self.preview.rect.y = preview_y
+
+        arrow_x = calculate_center_position(0,
+            LINE_RIGHT_BOUND - LINE_LEFT_BOUND,
+            self.scroll_up_arrow.rect.height)
+        self.scroll_up_arrow.rect.x = arrow_x
+        self.scroll_down_arrow.rect.x = arrow_x
+        self.scroll_up_arrow.rect.y = (self.thumbnails[0].rect.y -
+                                       THUMB_TO_ARROW_DISTANCE)
+        self.scroll_down_arrow.rect.y = (self.thumbnails[2].rect.y +
+                                         THUMB_TO_ARROW_DISTANCE)
+
+    def center_info_text(self):
+        """Center the Stage name and subtitle texts horizontally within
+        their allotted area.
+        """
+        area_width = SCREEN_SIZE[0] - (SCREEN_SIZE[0] - LINE_LEFT_BOUND)
+
+        if self.stage_was_loaded():
+            self.stage_name.rect.x = calculate_center_position(0, area_width,
+                self.stage_name.rect.width)
+            self.stage_subtitle.rect.x = calculate_center_position(0,
+                area_width, self.stage_subtitle.rect.width)
+        else:
+            self.no_stages_text.rect.x = calculate_center_position(0,
+                area_width, self.no_stages_text.rect.width)
+
+    def get_player_input(self, event):
+        """Read input from the players and respond to it.
+
+        Args:
+            event (Event): The PyGame KEYDOWN event. It stores the
+                ASCII code for any keys that were pressed.
+        """
+        pass
+
+    def update_state(self, time):
+        """Update all processes within the State.
+
+        Args:
+            time (float): The time, in seconds, elapsed since the last
+                game update.
+        """
+        for line in self.bg_lines:
+            line.update_movement(time)
+
+        self.draw_state()
+
+    def draw_state(self):
+        """Draw all graphics within this State onto the screen."""
+        pygame.draw.rect(self.state_surface, (0, 0, 0),
+                         Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
+
+        for line in self.bg_lines:
+            line.draw(self.state_surface)
+
+        # Draw the currently-selected Thumbnail last and on top,
+        # so that its highlighted border is not covered by the others.
+        for index in range(0, NUM_OF_THUMBS):
+            if not index == self.selected_stage:
+                self.thumbnails[index].draw(self.state_surface)
+        self.thumbnails[self.selected_stage].draw(self.state_surface)
+
+        if self.stage_was_loaded():
+            self.preview.draw(self.state_surface)
+            self.stage_name.draw(self.state_surface)
+            self.stage_subtitle.draw(self.state_surface)
+        else:
+            self.no_stages_text.draw(self.state_surface)
 
 
 class StageThumbnail(Graphic):
