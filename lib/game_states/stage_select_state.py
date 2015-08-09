@@ -39,8 +39,16 @@ Module Constants:
         subtitle text.
     PREVIEW_TO_NAME_DISTANCE (int): The distance, in pixels, between
         the preview image and the Stage name text.
+    SUBTITLE_TO_NAME_DISTANCE (int): The distance, in pixels, between
+        the Stage name text and the Stage subtitle text.
     UP_ARROW_PATH (String): The file path to the scroll up arrow sprite
         sheet image.
+    NUM_OF_ARROW_FRAMES (int): The number of frames in the scroll arrows'
+        sprite sheet (as specified by UP_ARROW_PATH).
+    ARROW_FRAME_DURATION (int): The duration, in update frames, of each
+        animation frame for the scroll arrows.
+    ARROW_DISTANCE_FROM_THUMBS (int): The vertical distance, in pixels,
+        between the scroll arrows and the Thumbnails.
     TRANSITION_SLIDE_SPEED (int): The speed, in pixels per second, that
         Graphics move in and out of the screen at when transitioning in
         or out of this State.
@@ -75,7 +83,10 @@ FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
 NAME_SIZE = 20
 SUBTITLE_SIZE = 12
 PREVIEW_TO_NAME_DISTANCE = 14
+NAME_TO_SUBTITLE_DISTANCE = 7
 UP_ARROW_PATH = 'images/roster_up_arrow.png'
+NUM_OF_ARROW_FRAMES = 2
+ARROW_FRAME_DURATION = 10
 TRANSITION_SLIDE_SPEED = 500
 
 
