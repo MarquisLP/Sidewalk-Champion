@@ -79,6 +79,8 @@ def prepend_prefix_to_filepaths(stage_data):
     Args:
         stage_data (StageData): A StageData instance.
     """
+    stage_data.preview = FILEPATH_PREFIX + stage_data.preview
+    stage_data.thumbnail = FILEPATH_PREFIX + stage_data.thumbnail
     stage_data.background.spritesheet_path = (FILEPATH_PREFIX +
         stage_data.background.spritesheet_path)
     stage_data.parallax.spritesheet_path = (FILEPATH_PREFIX +
