@@ -253,7 +253,7 @@ class StageSelectState(State):
 
     def align_scroll_arrows(self):
         """Position the scroll arrows appropriately on the screen."""
-        x = calculate_center_position(0,
+        x = calculate_center_position(LINE_LEFT_BOUND,
             LINE_RIGHT_BOUND - LINE_LEFT_BOUND,
             self.scroll_up_arrow.rect.height)
         self.scroll_up_arrow.rect.x = x
@@ -262,6 +262,7 @@ class StageSelectState(State):
         self.scroll_up_arrow.rect.y = (self.thumbnails[0].rect.y -
                                        THUMB_TO_ARROW_DISTANCE)
         self.scroll_down_arrow.rect.y = (self.thumbnails[2].rect.y +
+                                         THUMB_SIZE + (BORDER_WIDTH * 2) +
                                          THUMB_TO_ARROW_DISTANCE)
 
     def calculate_preview_y(self):
@@ -327,11 +328,22 @@ class StageSelectState(State):
         self.thumbnails[self.selected_stage].draw(self.state_surface)
 
         if self.stage_was_loaded():
+            self.draw_scroll_arrows()
             self.preview.draw(self.state_surface)
             self.stage_name.draw(self.state_surface)
             self.stage_subtitle.draw(self.state_surface)
         else:
             self.no_stages_text.draw(self.state_surface)
+
+    def draw_scroll_arrows(self):
+        """If there are more Stages that can be selected beyond the
+        ones shown on screen, draw the scroll arrows to indicate this.
+        """
+        if len(self.metadata) > NUM_OF_THUMBS:
+            if self.selected_stage > NUM_OF_THUMBS - 1:
+                self.scroll_up_arrow.draw(self.state_surface)
+            if self.selected_stage < len(self.metadata) - NUM_OF_THUMBS:
+                self.scroll_down_arrow.draw(self.state_surface)
 
 
 class StageThumbnail(Graphic):
