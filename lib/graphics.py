@@ -93,24 +93,28 @@ def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
         return colorkeyed_surf
 
 
-def calculate_center_position(obj_size, area_size):
+def calculate_center_position(area_origin, area_size, obj_size):
     """Return an integer for the position of a graphical object such
     that the object is positioned at the horizontal or vertical center
     of an area.
 
     To center an object horizontally, pass the widths of the object and
-    area. To center an object vertically, pass their heights.
+    area, as well as the area's top-left x-coordinate.
+    To center an object vertically, pass their heights in addition to
+    the area's top-left y-coordinate.
 
     Args:
-        obj_size (int): Either the width or height of the object in
-            pixels.
+        area_origin (int): The x or y coordinate  of the top-left
+            corner of the area upon which the object will be centered.
         area_size (int): Either the width or height, in pixels, of the
              area upon which the object will be centered.
+        obj_size (int): Either the width or height of the object in
+            pixels.
     """
     if obj_size < area_size:
-        return (area_size - obj_size) // 2
+        return (area_origin + ((area_size - obj_size) // 2))
     else:
-        return (obj_size - area_size) // 2
+        return (area_origin + ((obj_size - area_size) // 2))
 
 
 def get_line_center(thickness):
