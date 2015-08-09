@@ -6,15 +6,12 @@ Module Constants:
         the stage preview as well as each stage thumbnail.
     NUM_OF_THUMBS (int): The number of Stage Thumbnails shown on the
         screen at once.
-    THUMB_X (int): The shared x-position of all thumbnails on-screen.
     THUMB_SIZE (int): The width and height, in pixels, of each thumbnail
         image.
     THUMB_BORDER_COLOR (tuple of int): The RGB values for the color of
         the thumbnail border.
     THUMB_HIGHLIGHT_COLOR (tuple of int): The RGB values for the color
         of the thumbnail border when a particular thumbnail is selected.
-    PREVIEW_X (int): The x-position of the stage preview on-screen.
-    PREVIEW_Y (int): The y-position of the stage preview on-screen.
     PREVIEW_WIDTH (int): The width, in pixels, of the stage preview.
     PREVIEW_HEIGHT (int): The height, in pixels, of the stage preview.
     PREVIEW_OUTER_BORDER_COLOR (tuple): The RGB values for the color of
@@ -71,12 +68,9 @@ from pygame.rect import Rect
 
 BORDER_WIDTH = 2
 NUM_OF_THUMBS = 3
-THUMB_X = 302
 THUMB_SIZE = 50
 THUMB_BORDER_COLOR = (102, 102, 102)
 THUMB_HIGHLIGHT_COLOR = (192, 0, 255)
-PREVIEW_X = 14
-PREVIEW_Y = 11
 PREVIEW_WIDTH = 245
 PREVIEW_HEIGHT = 130
 PREVIEW_OUTER_BORDER_COLOR = (0, 7, 51)
@@ -161,15 +155,16 @@ class StageSelectState(State):
             self.no_stages_text = render_outlined_text(name_font,
                 'No Stages Loaded', (255, 255, 255), (0, 0, 0), (0, 0))
         else:
-            self.preview = StagePreview(self.metadata[0].preview)
-            self.thumbnails = self.create_thumbnails()
-            self.thumbnails[0].highlight()
             self.stage_name = render_outlined_text(name_font,
                 self.metadata[0].name, (255, 255, 255), (0, 0, 0), (0, 0))
             self.stage_subtitle = render_outlined_text(subtitle_font,
                 self.metadata[0].subtitle, (255, 255, 255), (0, 0, 0), (0, 0))
+            self.preview = StagePreview(self.metadata[0].preview,
+                                        self.calculate_preview_y())
+            self.thumbnails = self.create_thumbnails()
+            self.thumbnails[0].highlight()
 
-        self.align_all_graphics()
+        self.align_text_and_arrows()
 
         self.selected_stage = 0
         self.is_selection_confirmed = False
@@ -244,16 +239,11 @@ class StageSelectState(State):
 
         return bg_lines
 
-    def align_all_graphics(self):
-        """Position the StagePreview, scroll arrows, and text Graphics
-         as they will appear on-screen.
+    def align_text_and_arrows(self):
+        """Position the scroll arrows and text Graphics as they will
+        appear on-screen.
         """
-        preview_and_text_height = (PREVIEW_HEIGHT + (BORDER_WIDTH * 2) +
-            PREVIEW_TO_NAME_DISTANCE + self.stage_name.rect.height +
-            NAME_TO_SUBTITLE_DISTANCE + self.stage_subtitle.rect.height)
-        preview_y = calculate_center_position(0, SCREEN_SIZE[1],
-                                              preview_and_text_height)
-
+        preview_y = self.calculate_preview_y()
         self.stage_name.rect.y = (preview_y + PREVIEW_HEIGHT +
                                   (BORDER_WIDTH * 2) +
                                   PREVIEW_TO_NAME_DISTANCE)
@@ -261,9 +251,6 @@ class StageSelectState(State):
                                       self.stage_name.rect.height +
                                       NAME_TO_SUBTITLE_DISTANCE)
         self.center_info_text()
-
-        if self.stage_was_loaded():
-            self.preview.rect.y = preview_y
 
         arrow_x = calculate_center_position(0,
             LINE_RIGHT_BOUND - LINE_LEFT_BOUND,
@@ -274,6 +261,17 @@ class StageSelectState(State):
                                        THUMB_TO_ARROW_DISTANCE)
         self.scroll_down_arrow.rect.y = (self.thumbnails[2].rect.y +
                                          THUMB_TO_ARROW_DISTANCE)
+
+    def calculate_preview_y(self):
+        """Return an integer for the y-position of the StagePreview,
+        such that it and the info text will be centered vertically
+        along the screen.
+        """
+        preview_and_text_height = (PREVIEW_HEIGHT + (BORDER_WIDTH * 2) +
+            PREVIEW_TO_NAME_DISTANCE + self.stage_name.rect.height +
+            NAME_TO_SUBTITLE_DISTANCE + self.stage_subtitle.rect.height)
+        return calculate_center_position(0, SCREEN_SIZE[1],
+                                         preview_and_text_height)
 
     def center_info_text(self):
         """Center the Stage name and subtitle texts horizontally within
@@ -344,8 +342,11 @@ class StageThumbnail(Graphic):
             thumbnail_image (Surface): The Stage's icon image.
             y (int): The thumbnail's y-position on-screen.
         """
-        position = (THUMB_X, y)
-        super(StageThumbnail, self).__init__(thumbnail_image, position)
+        x = calculate_center_position(LINE_LEFT_BOUND,
+                                      LINE_RIGHT_BOUND - LINE_LEFT_BOUND,
+                                      THUMB_SIZE + (BORDER_WIDTH * 2))
+
+        super(StageThumbnail, self).__init__(thumbnail_image, (x, y))
         self.add_border()
 
     def add_border(self):
@@ -391,13 +392,19 @@ class StageThumbnail(Graphic):
 
 class StagePreview(Graphic):
     """A snapshot of the currently-selected Stage."""
-    def __init__(self, image):
+    def __init__(self, image, y):
         """Declare and initialize instance variables.
 
         Args:
             image (Surface): The snapshot image initially displayed.
+            y (int): The y-coordinate for the top-left corner of the
+                preview on the screen.
         """
-        super(StagePreview, self).__init__(image, (PREVIEW_X, PREVIEW_Y))
+        x = calculate_center_position(0,
+            SCREEN_SIZE[0] - (SCREEN_SIZE[0] - LINE_LEFT_BOUND),
+            PREVIEW_WIDTH + (BORDER_WIDTH * 4))
+
+        super(StagePreview, self).__init__(image, (x, y))
         self.add_borders()
 
     def add_borders(self):
