@@ -164,7 +164,8 @@ class StageSelectState(State):
             self.thumbnails = self.create_thumbnails()
             self.thumbnails[0].highlight()
 
-        self.align_text_and_arrows()
+        self.align_text()
+        self.align_scroll_arrows()
 
         self.selected_stage = 0
         self.is_selection_confirmed = False
@@ -239,10 +240,8 @@ class StageSelectState(State):
 
         return bg_lines
 
-    def align_text_and_arrows(self):
-        """Position the scroll arrows and text Graphics as they will
-        appear on-screen.
-        """
+    def align_text(self):
+        """Position the text Graphics appropriately on the screen."""
         preview_y = self.calculate_preview_y()
         self.stage_name.rect.y = (preview_y + PREVIEW_HEIGHT +
                                   (BORDER_WIDTH * 2) +
@@ -252,11 +251,14 @@ class StageSelectState(State):
                                       NAME_TO_SUBTITLE_DISTANCE)
         self.center_info_text()
 
-        arrow_x = calculate_center_position(0,
+    def align_scroll_arrows(self):
+        """Position the scroll arrows appropriately on the screen."""
+        x = calculate_center_position(0,
             LINE_RIGHT_BOUND - LINE_LEFT_BOUND,
             self.scroll_up_arrow.rect.height)
-        self.scroll_up_arrow.rect.x = arrow_x
-        self.scroll_down_arrow.rect.x = arrow_x
+        self.scroll_up_arrow.rect.x = x
+        self.scroll_down_arrow.rect.x = x
+
         self.scroll_up_arrow.rect.y = (self.thumbnails[0].rect.y -
                                        THUMB_TO_ARROW_DISTANCE)
         self.scroll_down_arrow.rect.y = (self.thumbnails[2].rect.y +
