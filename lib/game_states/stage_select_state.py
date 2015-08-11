@@ -56,6 +56,7 @@ import pygame.draw
 import pygame.image
 from collections import namedtuple
 from enum import IntEnum
+from math import ceil
 from random import randint
 from lib.graphics import (Graphic, Animation, render_outlined_text,
                           get_line_center, calculate_center_position)
@@ -298,7 +299,137 @@ class StageSelectState(State):
             event (Event): The PyGame KEYDOWN event. It stores the
                 ASCII code for any keys that were pressed.
         """
-        pass
+        input_name = self.get_input_name(pygame.key.name(event.key))
+
+        if self.num_of_stages() > 1:
+            if input_name == 'up':
+                self.change_selected_stage(CursorDirection.PREVIOUS)
+            elif input_name == 'down':
+                self.change_selected_stage(CursorDirection.NEXT)
+            elif input_name == 'back':
+                self.change_selected_stage(CursorDirection.PREVIOUS_ROW)
+            elif input_name == 'forward':
+                self.change_selected_stage(CursorDirection.NEXT_ROW)
+
+    def get_input_name(self, key_name):
+        """Get the name of the in-game input command based on the key
+        that was presssed.
+
+        Args:
+            key_name (String): The name of the key that was pressed.
+
+        Returns:
+            The String name of the in-game input command.
+            (e.g. 'forward', 'start', 'light punch')
+            None will be returned if key_name does not match either of
+            the players' key bindings.
+        """
+        for input_name in self.state_pass.settings.player1_keys:
+            if key_name == self.state_pass.settings.player1_keys[input_name]:
+                return input_name
+        for input_name in self.state_pass.settings.player2_keys:
+            if key_name == self.state_pass.settings.player2_keys[input_name]:
+                return input_name
+
+    def change_selected_stage(self, direction):
+        """Select a different Stage and display its preview image,
+        name, and subtitle.
+
+        Args:
+            direction (CursorDirection): An enum value that represents
+                which Stage relative to the current one should be
+                selected.
+        """
+        if direction == CursorDirection.PREVIOUS :
+            if self.selected_stage > 0:
+                self.selected_stage -= 1
+            else:
+                self.selected_stage = self.num_of_stages() - 1
+
+        elif direction == CursorDirection.NEXT:
+            if self.selected_stage < self.num_of_stages() - 1:
+                self.selected_stage += 1
+            else:
+                self.selected_stage = 0
+
+        elif direction == CursorDirection.PREVIOUS_ROW:
+            if self.selected_stage <= 0:
+                self.selected_stage = self.num_of_stages() - 1
+            elif self.selected_stage % NUM_OF_THUMBS == 0:
+                # If the top-most Thumbnail in the current row is selected,
+                # move selection to the previous row.
+                if self.selected_stage - NUM_OF_THUMBS >= 0:
+                    self.selected_stage -= NUM_OF_THUMBS
+                else:
+                    self.selected_stage = 0
+            else:
+                # If selection is below the top of the current row, move
+                # selection up to the top-most thumbnail of the current row.
+                current_row = self.selected_stage // NUM_OF_THUMBS
+                self.selected_stage = current_row * NUM_OF_THUMBS
+
+        elif direction == CursorDirection.NEXT_ROW:
+            if self.selected_stage >= self.num_of_stages() - 1:
+                self.selected_stage = 0
+            elif (self.selected_stage + 1) % NUM_OF_THUMBS == 0:
+                # If the bottom-most Thumbnail in the current row is selected,
+                # move selection to the next row.
+                if self.selected_stage + NUM_OF_THUMBS < self.num_of_stages():
+                    self.selected_stage += NUM_OF_THUMBS
+                else:
+                    self.selected_stage = self.num_of_stages() - 1
+            else:
+                # If selection is above the bottom of the current row, move
+                # selection to the bottom-most thumbnail of the current row.
+                if self.selected_stage + NUM_OF_THUMBS < self.num_of_stages():
+                    next_row = (self.selected_stage // NUM_OF_THUMBS) + 1
+                    self.selected_stage = (next_row * NUM_OF_THUMBS) - 1
+                else:
+                    # Or move selection to the very last Stage if selection
+                    # was on the final row.
+                    self.selected_stage = self.num_of_stages() - 1
+
+        self.highlight_selected_thumbnail()
+        self.update_thumbnail_images()
+        self.preview.change_stage(self.metadata[self.selected_stage].preview)
+
+    def highlight_selected_thumbnail(self):
+        """Highlight the currently-selected StageThumbnail, and
+        unhighlight the rest.
+        """
+        for thumbnail in self.thumbnails:
+            thumbnail.unhighlight()
+        self.thumbnails[self.selected_thumbnail()].highlight()
+
+    def selected_thumbnail(self):
+        """Return the integer index of the currently-selected
+        StageThumbnail within self.thumbnails.
+        """
+        return (self.selected_stage - ((self.selected_stage // NUM_OF_THUMBS) *
+                                       NUM_OF_THUMBS))
+
+    def update_thumbnail_images(self):
+        """Display the icon images for all Stages within range of the
+        selected one on the StageThumbnails.
+        """
+        top_of_row = (self.selected_stage -
+                      (self.selected_stage % NUM_OF_THUMBS))
+        for thumb_index in range(0, NUM_OF_THUMBS):
+            if top_of_row + thumb_index <= self.num_of_stages() - 1:
+                stage_index = top_of_row + thumb_index
+                image = self.metadata[stage_index].thumbnail
+            else:
+                # If the last row is currently selected and it has less
+                # Stages than NUM_OF_THUMBS, fill the remaining Thumbnails
+                # with white.
+                image = Surface((THUMB_SIZE, THUMB_SIZE))
+                pygame.draw.rect(image, (255, 255, 255),
+                                 Rect(0, 0, THUMB_SIZE, THUMB_SIZE))
+            # The new image is blitted onto the Thumbnail Surface,
+            # rather than having the image replaced, in order to
+            # keep the border.
+            self.thumbnails[thumb_index].image.blit(image, (BORDER_WIDTH,
+                                                            BORDER_WIDTH))
 
     def update_state(self, time):
         """Update all processes within the State.
@@ -322,13 +453,10 @@ class StageSelectState(State):
 
         # Draw the currently-selected Thumbnail last and on top,
         # so that its highlighted border is not covered by the others.
-        highlighted_thumb = (self.selected_stage - ((self.selected_stage //
-                                                     NUM_OF_THUMBS) *
-                                                    NUM_OF_THUMBS))
         for index in range(0, NUM_OF_THUMBS):
-            if not index == highlighted_thumb:
+            if not index == self.selected_thumbnail():
                 self.thumbnails[index].draw(self.state_surface)
-        self.thumbnails[highlighted_thumb].draw(self.state_surface)
+        self.thumbnails[self.selected_thumbnail()].draw(self.state_surface)
 
         if self.num_of_stages() > 0:
             self.draw_scroll_arrows()
