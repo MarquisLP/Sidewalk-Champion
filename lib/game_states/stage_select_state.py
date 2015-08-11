@@ -471,9 +471,12 @@ class StageSelectState(State):
         ones shown on screen, draw the scroll arrows to indicate this.
         """
         if self.num_of_stages() > NUM_OF_THUMBS:
-            if self.selected_stage > NUM_OF_THUMBS - 1:
+            current_row = self.selected_stage // NUM_OF_THUMBS
+            max_row = self.num_of_stages() // NUM_OF_THUMBS
+
+            if current_row > 0:
                 self.scroll_up_arrow.draw(self.state_surface)
-            if self.selected_stage < self.num_of_stages() - NUM_OF_THUMBS:
+            if current_row < max_row:
                 self.scroll_down_arrow.draw(self.state_surface)
 
 
