@@ -322,10 +322,13 @@ class StageSelectState(State):
 
         # Draw the currently-selected Thumbnail last and on top,
         # so that its highlighted border is not covered by the others.
+        highlighted_thumb = (self.selected_stage - ((self.selected_stage //
+                                                     NUM_OF_THUMBS) *
+                                                    NUM_OF_THUMBS))
         for index in range(0, NUM_OF_THUMBS):
-            if not index == self.selected_stage:
+            if not index == highlighted_thumb:
                 self.thumbnails[index].draw(self.state_surface)
-        self.thumbnails[self.selected_stage].draw(self.state_surface)
+        self.thumbnails[highlighted_thumb].draw(self.state_surface)
 
         if self.stage_was_loaded():
             self.draw_scroll_arrows()
