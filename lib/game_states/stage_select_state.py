@@ -253,15 +253,17 @@ class StageSelectState(State):
         """Position the scroll arrows appropriately on the screen."""
         x = calculate_center_position(LINE_LEFT_BOUND,
             LINE_RIGHT_BOUND - LINE_LEFT_BOUND,
-            self.scroll_up_arrow.rect.height)
+            self.scroll_up_arrow.rect.width // NUM_OF_ARROW_FRAMES)
         self.scroll_up_arrow.rect.x = x
         self.scroll_down_arrow.rect.x = x
 
         self.scroll_up_arrow.rect.y = (self.thumbnails[0].rect.y -
-                                       THUMB_TO_ARROW_DISTANCE)
-        self.scroll_down_arrow.rect.y = (self.thumbnails[2].rect.y +
-                                         THUMB_SIZE + (BORDER_WIDTH * 2) +
-                                         THUMB_TO_ARROW_DISTANCE)
+                                       THUMB_TO_ARROW_DISTANCE -
+                                       self.scroll_up_arrow.rect.height)
+        self.scroll_down_arrow.rect.y = (
+            self.thumbnails[NUM_OF_THUMBS - 1].rect.y +
+            THUMB_SIZE + (BORDER_WIDTH * 2) +
+            THUMB_TO_ARROW_DISTANCE)
 
     def calculate_preview_y(self):
         """Return an integer for the y-position of the StagePreview,
