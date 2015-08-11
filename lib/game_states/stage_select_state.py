@@ -151,7 +151,7 @@ class StageSelectState(State):
         self.scroll_down_arrow.flip(is_vertical=True)
 
         self.metadata = self.load_all_stage_metadata()
-        if not self.stage_was_loaded():
+        if self.num_of_stages() <= 0:
             self.no_stages_text = render_outlined_text(name_font,
                 'No Stages Loaded', (255, 255, 255), (0, 0, 0), (0, 0))
         else:
@@ -186,11 +186,9 @@ class StageSelectState(State):
 
         return tuple(metadata)
 
-    def stage_was_loaded(self):
-        """Return a Boolean indicating whether at least one Stage could
-        be loaded into the game.
-        """
-        return len(self.metadata) > 0
+    def num_of_stages(self):
+        """Return the integer amount of Stages loaded into the game."""
+        return len(self.metadata)
 
     def create_thumbnails(self):
         """Return a tuple containing a number of Thumbnails depicting
@@ -205,7 +203,7 @@ class StageSelectState(State):
         y = calculate_center_position(0, SCREEN_SIZE[1], total_thumb_height)
 
         for stage_index in range(0, NUM_OF_THUMBS):
-            if stage_index <= len(self.metadata) - 1:
+            if stage_index <= self.num_of_stages() - 1:
                 image = self.metadata[stage_index].thumbnail
             else:
                 # If less Stages were loaded than the amount specified by
@@ -282,7 +280,7 @@ class StageSelectState(State):
         """
         area_width = SCREEN_SIZE[0] - (SCREEN_SIZE[0] - LINE_LEFT_BOUND)
 
-        if self.stage_was_loaded():
+        if self.num_of_stages() > 0:
             self.stage_name.rect.x = calculate_center_position(0, area_width,
                 self.stage_name.rect.width)
             self.stage_subtitle.rect.x = calculate_center_position(0,
@@ -330,7 +328,7 @@ class StageSelectState(State):
                 self.thumbnails[index].draw(self.state_surface)
         self.thumbnails[highlighted_thumb].draw(self.state_surface)
 
-        if self.stage_was_loaded():
+        if self.num_of_stages() > 0:
             self.draw_scroll_arrows()
             self.preview.draw(self.state_surface)
             self.stage_name.draw(self.state_surface)
@@ -342,10 +340,10 @@ class StageSelectState(State):
         """If there are more Stages that can be selected beyond the
         ones shown on screen, draw the scroll arrows to indicate this.
         """
-        if len(self.metadata) > NUM_OF_THUMBS:
+        if self.num_of_stages() > NUM_OF_THUMBS:
             if self.selected_stage > NUM_OF_THUMBS - 1:
                 self.scroll_up_arrow.draw(self.state_surface)
-            if self.selected_stage < len(self.metadata) - NUM_OF_THUMBS:
+            if self.selected_stage < self.num_of_stages() - NUM_OF_THUMBS:
                 self.scroll_down_arrow.draw(self.state_surface)
 
 
