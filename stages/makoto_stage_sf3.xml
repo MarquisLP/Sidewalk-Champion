@@ -1,6 +1,0 @@
-<stage_data name="Makoto Stage" subtitle="Street Fighter 3" preview="makoto_stage_sf3_preview.png" thumbnail="makoto_stage_sf3_thumb.png" ground_level="210" music="makoto_stage_sf3.wav">
-	<background spritesheet_path="makoto_stage_sf3.png" num_of_frames="1" frame_duration="0" />
-	<parallax spritesheet_path="makoto_stage_sf3_parallax.png" x_offset="0" y_offset="0" num_of_frames="1" frame_duration="0" />
-	<front_prop spritesheet_path="boxes.png" x_offset="164" y_offset="440" num_of_frames="1" frame_duration="0" />
-	<back_prop spritesheet_path="crowd.png" x_offset="186" y_offset="352" num_of_frames="2" frame_duration="10" />
-</stage_data>

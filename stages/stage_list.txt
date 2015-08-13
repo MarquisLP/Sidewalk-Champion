@@ -1,1 +1,8 @@
-makoto_stage_sf3.xml
+makoto_sf3/stage.xml
+makoto_sf3/stage.xml
+makoto_sf3/stage.xml
+makoto_sf3/stage.xml
+makoto_sf3/stage.xml
+makoto_sf3/stage.xml
+makoto_sf3/stage.xml
+makoto_sf3/stage.xml
