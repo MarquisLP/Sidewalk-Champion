@@ -79,7 +79,13 @@ def convert_element_to_object(element):
         if is_list_of_text_data(element, attr_name):
             loaded_data = load_xml_text_data(element, attr_name)
         elif attr_value is None:    # A complex element that appears once.
-            loaded_data = convert_element_to_object(element.find(attr_name))
+            if element.find(attr_name) is None:
+                # If this complex element is optional and,
+                # in this case, omitted.
+                loaded_data = None
+            else:
+                loaded_data = convert_element_to_object(
+                    element.find(attr_name))
         elif type(attr_value) is dict:
             loaded_data = load_attribute_dict(element, attr_name)
         elif type(attr_value) is list:

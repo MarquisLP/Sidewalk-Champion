@@ -83,8 +83,9 @@ def prepend_prefix_to_filepaths(stage_data):
     stage_data.thumbnail = FILEPATH_PREFIX + stage_data.thumbnail
     stage_data.background.spritesheet_path = (FILEPATH_PREFIX +
         stage_data.background.spritesheet_path)
-    stage_data.parallax.spritesheet_path = (FILEPATH_PREFIX +
-        stage_data.parallax.spritesheet_path)
+    if stage_data.parallax is not None:
+        stage_data.parallax.spritesheet_path = (FILEPATH_PREFIX +
+            stage_data.parallax.spritesheet_path)
     for front_prop in stage_data.front_props:
         front_prop.spritesheet_path = (FILEPATH_PREFIX +
             front_prop.spritesheet_path)
