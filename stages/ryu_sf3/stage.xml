@@ -1,0 +1,5 @@
+<stage_data name="Ryu Stage" subtitle="Warrior's Summit" preview="ryu_sf3/preview.png" thumbnail="ryu_sf3/thumb.png" ground_level="290" music="music.wav">
+    <background spritesheet_path="ryu_sf3/background.png" num_of_frames="1" frame_duration="0" />
+    <parallax spritesheet_path="ryu_sf3/parallax.png" x_offset="0" y_offset="0" num_of_frames="1" frame_duration="0" />
+</stage_data>
+

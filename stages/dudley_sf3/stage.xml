@@ -1,0 +1,4 @@
+<stage_data name="Dudley Stage" subtitle="Downtown London" preview="dudley_sf3/preview.png" thumbnail="dudley_sf3/thumb.png" ground_level="485" music="dudley_sf3/music.wav">
+    <background spritesheet_path="dudley_sf3/background.png" num_of_frames="1" frame_duration="0" />
+</stage_data>
+

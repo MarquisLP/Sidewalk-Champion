@@ -1,4 +1,4 @@
-<stage_data name="Makoto Stage" subtitle="Street Fighter 3" preview="makoto_sf3/preview.png" thumbnail="makoto_sf3/thumb.png" ground_level="210" music="makoto_sf3/music.wav">
+<stage_data name="Makoto Stage" subtitle="Mizu Village" preview="makoto_sf3/preview.png" thumbnail="makoto_sf3/thumb.png" ground_level="210" music="makoto_sf3/music.wav">
     <background spritesheet_path="makoto_sf3/background.png" num_of_frames="1" frame_duration="0" />
 	<parallax spritesheet_path="makoto_sf3/parallax.png" x_offset="0" y_offset="0" num_of_frames="1" frame_duration="0" />
 	<front_prop spritesheet_path="makoto_sf3/boxes.png" x_offset="164" y_offset="440" num_of_frames="1" frame_duration="0" />

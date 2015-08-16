@@ -1,8 +1,3 @@
 makoto_sf3/stage.xml
-makoto_sf3/stage.xml
-makoto_sf3/stage.xml
-makoto_sf3/stage.xml
-makoto_sf3/stage.xml
-makoto_sf3/stage.xml
-makoto_sf3/stage.xml
-makoto_sf3/stage.xml
+ryu_sf3/stage.xml
+dudley_sf3/stage.xml
