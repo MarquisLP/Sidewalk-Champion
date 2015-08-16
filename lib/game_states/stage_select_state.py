@@ -101,6 +101,10 @@ class StageSelectState(State):
     their battleground.
 
     Attributes:
+        name_font (Font): The PyGame Font used for rendering the
+            Stage name and No Stages Loaded text.
+        subtitle_font (Font): The PyGame Font used for rendering the
+            Stage subtitle text.
         metadata (tuple of StageMetadata): This contains the names,
             subtitles, preview images, and thumbnail images of all
             Stages available in the game.
@@ -139,9 +143,9 @@ class StageSelectState(State):
                 between Game States.
         """
         super(StageSelectState, self).__init__(state_manager, state_pass)
-        name_font = pygame.font.Font(FONT_PATH, NAME_SIZE)
-        subtitle_font = pygame.font.Font(FONT_PATH, SUBTITLE_SIZE)
 
+        self.name_font = pygame.font.Font(FONT_PATH, NAME_SIZE)
+        self.subtitle_font = pygame.font.Font(FONT_PATH, SUBTITLE_SIZE)
         self.state_manager = state_manager
         self.state_pass = state_pass
         self.bg_lines = self.create_bg_lines()
@@ -160,9 +164,9 @@ class StageSelectState(State):
             pygame.draw.rect(preview_image, (0, 0, 0),
                              (0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT))
         else:
-            self.stage_name = render_outlined_text(name_font,
+            self.stage_name = render_outlined_text(self.name_font,
                 self.metadata[0].name, (255, 255, 255), (0, 0, 0), (0, 0))
-            self.stage_subtitle = render_outlined_text(subtitle_font,
+            self.stage_subtitle = render_outlined_text(self.subtitle_font,
                 self.metadata[0].subtitle, (255, 255, 255), (0, 0, 0), (0, 0))
             preview_image = self.metadata[0].preview
 
@@ -405,6 +409,7 @@ class StageSelectState(State):
         self.highlight_selected_thumbnail()
         self.update_thumbnail_images()
         self.preview.change_stage(self.metadata[self.selected_stage].preview)
+        self.render_info_text(self.metadata[self.selected_stage])
 
     def highlight_selected_thumbnail(self):
         """Highlight the currently-selected StageThumbnail, and
@@ -443,6 +448,21 @@ class StageSelectState(State):
             # keep the border.
             self.thumbnails[thumb_index].image.blit(image, (BORDER_WIDTH,
                                                             BORDER_WIDTH))
+
+    def render_info_text(self, metadata):
+        """Re-render the displayed Stage name and subtitle to reflect
+        the Stage represented by the specified StageMetadata.
+
+        Args:
+            metadata (StageMetadata): An instance of the StageMetadata
+                namedtiple containing information for the Stage
+                currently being selected.
+        """
+        self.stage_name = render_outlined_text(self.name_font,
+            metadata.name, (255, 255, 255), (0, 0, 0), (0, 0))
+        self.stage_subtitle = render_outlined_text(self.subtitle_font,
+            metadata.subtitle, (255, 255, 255), (0, 0, 0), (0, 0))
+        self.align_text()
 
     def update_state(self, time):
         """Update all processes within the State.
