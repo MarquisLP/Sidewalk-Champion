@@ -155,15 +155,20 @@ class StageSelectState(State):
         if self.num_of_stages() <= 0:
             self.no_stages_text = render_outlined_text(name_font,
                 'No Stages Loaded', (255, 255, 255), (0, 0, 0), (0, 0))
+            # The StagePreview will display solid black.
+            preview_image = Surface((PREVIEW_WIDTH, PREVIEW_HEIGHT))
+            pygame.draw.rect(preview_image, (0, 0, 0),
+                             (0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT))
         else:
             self.stage_name = render_outlined_text(name_font,
                 self.metadata[0].name, (255, 255, 255), (0, 0, 0), (0, 0))
             self.stage_subtitle = render_outlined_text(subtitle_font,
                 self.metadata[0].subtitle, (255, 255, 255), (0, 0, 0), (0, 0))
-            self.preview = StagePreview(self.metadata[0].preview,
-                                        self.calculate_preview_y())
-            self.thumbnails = self.create_thumbnails()
-            self.thumbnails[0].highlight()
+            preview_image = self.metadata[0].preview
+
+        self.preview = StagePreview(preview_image, self.calculate_preview_y())
+        self.thumbnails = self.create_thumbnails()
+        self.thumbnails[0].highlight()
 
         self.align_text()
         self.align_scroll_arrows()
@@ -175,15 +180,17 @@ class StageSelectState(State):
         """Return a tuple containing StageMetadata namedtuples for all
         Stages loaded into the game.
         """
+        metadata = []
         all_stage_data = load_all_stages()
 
-        metadata = []
-        for stage_data in all_stage_data:
-            name = stage_data.name
-            subtitle = stage_data.subtitle
-            preview = pygame.image.load(stage_data.preview)
-            thumbnail = pygame.image.load(stage_data.thumbnail)
-            metadata.append(StageMetadata(name, subtitle, preview, thumbnail))
+        if all_stage_data is not None:
+            for stage_data in all_stage_data:
+                name = stage_data.name
+                subtitle = stage_data.subtitle
+                preview = pygame.image.load(stage_data.preview)
+                thumbnail = pygame.image.load(stage_data.thumbnail)
+                metadata.append(StageMetadata(name, subtitle,
+                                              preview, thumbnail))
 
         return tuple(metadata)
 
@@ -287,9 +294,14 @@ class StageSelectState(State):
         such that it and the info text will be centered vertically
         along the screen.
         """
-        preview_and_text_height = (PREVIEW_HEIGHT + (BORDER_WIDTH * 2) +
-            PREVIEW_TO_NAME_DISTANCE + self.stage_name.rect.height +
-            NAME_TO_SUBTITLE_DISTANCE + self.stage_subtitle.rect.height)
+        if self.num_of_stages() > 0:
+            preview_and_text_height = (PREVIEW_HEIGHT + (BORDER_WIDTH * 2) +
+                PREVIEW_TO_NAME_DISTANCE + self.stage_name.rect.height +
+                NAME_TO_SUBTITLE_DISTANCE + self.stage_subtitle.rect.height)
+        else:
+            preview_and_text_height = (PREVIEW_HEIGHT + (BORDER_WIDTH * 2) +
+                PREVIEW_TO_NAME_DISTANCE + self.no_stages_text.rect.height)
+
         return calculate_center_position(0, SCREEN_SIZE[1],
                                          preview_and_text_height)
 
@@ -459,9 +471,10 @@ class StageSelectState(State):
                 self.thumbnails[index].draw(self.state_surface)
         self.thumbnails[self.selected_thumbnail()].draw(self.state_surface)
 
+        self.preview.draw(self.state_surface)
+
         if self.num_of_stages() > 0:
             self.draw_scroll_arrows()
-            self.preview.draw(self.state_surface)
             self.stage_name.draw(self.state_surface)
             self.stage_subtitle.draw(self.state_surface)
         else:
