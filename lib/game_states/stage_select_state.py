@@ -240,15 +240,31 @@ class StageSelectState(State):
         return bg_lines
 
     def align_text(self):
-        """Position the text Graphics appropriately on the screen."""
+        """Position the text Graphics appropriately on the screen, so
+        that they are centered horizontally in the area left of the
+        BackgroundLines, as well as centered vertically across the
+        screen height alongside the StagePreview.
+        """
         preview_y = self.calculate_preview_y()
-        self.stage_name.rect.y = (preview_y + PREVIEW_HEIGHT +
-                                  (BORDER_WIDTH * 2) +
-                                  PREVIEW_TO_NAME_DISTANCE)
-        self.stage_subtitle.rect.y = (self.stage_name.rect.y +
-                                      self.stage_name.rect.height +
-                                      NAME_TO_SUBTITLE_DISTANCE)
-        self.center_info_text()
+        area_width = SCREEN_SIZE[0] - (SCREEN_SIZE[0] - LINE_LEFT_BOUND)
+
+        if self.num_of_stages() > 0:
+            self.stage_name.rect.x = calculate_center_position(0, area_width,
+                self.stage_name.rect.width)
+            self.stage_subtitle.rect.x = calculate_center_position(0,
+                area_width, self.stage_subtitle.rect.width)
+            self.stage_name.rect.y = (preview_y + PREVIEW_HEIGHT +
+                                      (BORDER_WIDTH * 2) +
+                                      PREVIEW_TO_NAME_DISTANCE)
+            self.stage_subtitle.rect.y = (self.stage_name.rect.y +
+                                          self.stage_name.rect.height +
+                                          NAME_TO_SUBTITLE_DISTANCE)
+        else:
+            self.no_stages_text.rect.x = calculate_center_position(0,
+                area_width, self.no_stages_text.rect.width)
+            self.no_stages_text.rect.y = (preview_y + PREVIEW_HEIGHT +
+                                          (BORDER_WIDTH * 2) +
+                                          PREVIEW_TO_NAME_DISTANCE)
 
     def align_scroll_arrows(self):
         """Position the scroll arrows appropriately on the screen."""
@@ -276,21 +292,6 @@ class StageSelectState(State):
             NAME_TO_SUBTITLE_DISTANCE + self.stage_subtitle.rect.height)
         return calculate_center_position(0, SCREEN_SIZE[1],
                                          preview_and_text_height)
-
-    def center_info_text(self):
-        """Center the Stage name and subtitle texts horizontally within
-        their allotted area.
-        """
-        area_width = SCREEN_SIZE[0] - (SCREEN_SIZE[0] - LINE_LEFT_BOUND)
-
-        if self.num_of_stages() > 0:
-            self.stage_name.rect.x = calculate_center_position(0, area_width,
-                self.stage_name.rect.width)
-            self.stage_subtitle.rect.x = calculate_center_position(0,
-                area_width, self.stage_subtitle.rect.width)
-        else:
-            self.no_stages_text.rect.x = calculate_center_position(0,
-                area_width, self.no_stages_text.rect.width)
 
     def get_player_input(self, event):
         """Read input from the players and respond to it.
