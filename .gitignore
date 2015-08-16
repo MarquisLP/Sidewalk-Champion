@@ -1,3 +1,7 @@
 *.pyc
 /.idea
 test - Copy.pyw
+*~
+*.swp
+*.swo
+.*.sw*
