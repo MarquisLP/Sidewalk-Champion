@@ -260,16 +260,18 @@ class StageSelectState(State):
         area_width = SCREEN_SIZE[0] - (SCREEN_SIZE[0] - LINE_LEFT_BOUND)
 
         if self.num_of_stages() > 0:
-            self.stage_name.rect.x = calculate_center_position(0, area_width,
+            name_x = calculate_center_position(0, area_width,
                 self.stage_name.rect.width)
-            self.stage_subtitle.rect.x = calculate_center_position(0,
-                area_width, self.stage_subtitle.rect.width)
-            self.stage_name.rect.y = (preview_y + PREVIEW_HEIGHT +
-                                      (BORDER_WIDTH * 2) +
-                                      PREVIEW_TO_NAME_DISTANCE)
-            self.stage_subtitle.rect.y = (self.stage_name.rect.y +
-                                          self.stage_name.rect.height +
-                                          NAME_TO_SUBTITLE_DISTANCE)
+            name_y = (preview_y + PREVIEW_HEIGHT + (BORDER_WIDTH * 2) +
+                      PREVIEW_TO_NAME_DISTANCE)
+            self.stage_name.reposition(name_x, name_y)
+
+            subtitle_x = calculate_center_position(0, area_width,
+                self.stage_subtitle.rect.width)
+            subtitle_y = (self.stage_name.rect.y +
+                          self.stage_name.rect.height +
+                          NAME_TO_SUBTITLE_DISTANCE)
+            self.stage_subtitle.reposition(subtitle_x, subtitle_y)
         else:
             self.no_stages_text.rect.x = calculate_center_position(0,
                 area_width, self.no_stages_text.rect.width)
@@ -282,16 +284,14 @@ class StageSelectState(State):
         x = calculate_center_position(LINE_LEFT_BOUND,
             LINE_RIGHT_BOUND - LINE_LEFT_BOUND,
             self.scroll_up_arrow.rect.width // NUM_OF_ARROW_FRAMES)
-        self.scroll_up_arrow.rect.x = x
-        self.scroll_down_arrow.rect.x = x
-
-        self.scroll_up_arrow.rect.y = (self.thumbnails[0].rect.y -
-                                       THUMB_TO_ARROW_DISTANCE -
-                                       self.scroll_up_arrow.rect.height)
-        self.scroll_down_arrow.rect.y = (
-            self.thumbnails[NUM_OF_THUMBS - 1].rect.y +
-            THUMB_SIZE + (BORDER_WIDTH * 2) +
-            THUMB_TO_ARROW_DISTANCE)
+        scroll_up_arrow_y = (self.thumbnails[0].rect.y -
+                             THUMB_TO_ARROW_DISTANCE -
+                             self.scroll_up_arrow.rect.height)
+        scroll_down_arrow_y = (self.thumbnails[NUM_OF_THUMBS - 1].rect.y +
+                               THUMB_SIZE + (BORDER_WIDTH * 2) +
+                               THUMB_TO_ARROW_DISTANCE)
+        self.scroll_up_arrow.reposition(x, scroll_up_arrow_y)
+        self.scroll_down_arrow.reposition(x, scroll_down_arrow_y)
 
     def calculate_preview_y(self):
         """Return an integer for the y-position of the StagePreview,
