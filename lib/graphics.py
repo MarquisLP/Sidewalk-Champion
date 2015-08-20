@@ -243,6 +243,25 @@ class Graphic(object):
         self.rect = Rect(int(self.exact_pos[0]), int(self.exact_pos[1]),
                          self.rect.width, self.rect.height)
 
+    def reposition(self, x=None, y=None):
+        """Directly set the x and/or y-position of this Graphic
+        on-screen.
+
+        Args:
+            x (int): Optional. The new x-position for this Graphic
+                on-screen. Set this parameter to the default None to
+                keep the current x-position.
+            y (int): Optional. The new y-position for this Graphic
+                on-screen. Set this parameter to the default None to
+                keep the current y-position.
+        """
+        if x is not None:
+            self.exact_pos = (float(x), self.exact_pos[1])
+            self.rect.x = x
+        if y is not None:
+            self.exact_pos = (self.exact_pos[0], float(y))
+            self.rect.y = y
+
 
 class Animation(Graphic):
     """An animated graphic that displays different frames after a time
