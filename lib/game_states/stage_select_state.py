@@ -309,6 +309,20 @@ class StageSelectState(State):
         return calculate_center_position(0, SCREEN_SIZE[1],
                                          preview_and_text_height)
 
+    def place_graphics_offscreen(self):
+        """Place all graphical components of this State off-screen in
+        order to prepare for the intro animation.
+        """
+        for line in self.bg_lines:
+            line.move(0, -1 * SCREEN_SIZE[1])
+        for thumbnail in self.thumbnails:
+            thumbnail.move(0, -1 * SCREEN_SIZE[1])
+        self.scroll_up_arrow.move(0, -1 * SCREEN_SIZE[1])
+        self.scroll_down_arrow.move(0, -1 * SCREEN_SIZE[1])
+        self.preview.move(0, SCREEN_SIZE[1])
+        self.stage_name.move(0, SCREEN_SIZE[1])
+        self.stage_subtitle.move(0, SCREEN_SIZE[1])
+
     def get_player_input(self, event):
         """Read input from the players and respond to it.
 
