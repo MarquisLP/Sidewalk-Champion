@@ -528,6 +528,38 @@ class StageSelectState(State):
                 self.scroll_down_arrow.draw(self.state_surface)
 
 
+class TransitionAnimation(object):
+    """Handles the animations played when entering and leaving the
+    Stage Select State.
+
+    Attributes:
+        is_running (Boolean): Indicates whether or not a transition
+            animation is currently being executed.
+        state (StageSelectState): The Stage Select State that this
+            object will animate.
+        lines_distance (float): The vertical distance travelled, in
+            pixels, by the BackgroundLines since the current animation
+            began.
+        thumbs_distance (float): The vertical distance travelled, in
+            pixels, by the StageThumbnails since the current animation
+            began.
+        preview_and_text_distance (float): The vertical distance
+            travelled, in pixels, by the StagePreview and metadata text
+            since the current Animation began.
+    """
+    def __init__(self, state):
+        """Declare and initialize instance variables.
+
+        Args:
+            state (StageSelectState): The Stage Select State that this
+                object will animate.
+        """
+        self.state = state
+        self.is_running = True
+        self.lines_distance = 0.0
+        self.thumbs_distance = 0.0
+        self.preview_and_text_distance = 0.0
+
 class StageThumbnail(Graphic):
     """A small icon for a Stage that can be selected by the players.
     """
