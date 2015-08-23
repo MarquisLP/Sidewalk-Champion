@@ -628,6 +628,12 @@ class TransitionAnimation(object):
         else:
             return (self.state.preview, self.state.no_stages_text)
 
+    def reset(self):
+        """Prepare the animation and play it again."""
+        self.lines_distance = 0.0
+        self.thumbs_and_data_distance = 0.0
+        self.is_running = True
+
 
 class StageThumbnail(Graphic):
     """A small icon for a Stage that can be selected by the players.
