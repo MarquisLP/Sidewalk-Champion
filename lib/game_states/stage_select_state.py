@@ -557,8 +557,77 @@ class TransitionAnimation(object):
         self.state = state
         self.is_running = True
         self.lines_distance = 0.0
-        self.thumbs_distance = 0.0
-        self.preview_and_text_distance = 0.0
+        self.thumbs_and_data_distance = 0.0
+
+    def update(self, time):
+        """Update the transition animation.
+
+        Args:
+            time (float): The number of seconds elapsed since the last
+                update cycle.
+        """
+        distance = TRANSITION_SLIDE_SPEED * time
+
+        if not self.distance_is_complete(self.lines_distance):
+            self.slide_graphics(self.state.bg_lines, distance)
+            self.lines_distance += distance
+        elif not self.distance_is_complete(self.thumbs_and_data_distance):
+            selection_data = self.get_selection_data()
+
+            self.slide_graphics(self.state.thumbnails, distance)
+            self.slide_graphics(selection_data, -1 * distance)
+
+            self.thumbs_and_data_distance += distance
+        else:
+            self.is_running = False
+
+    def distance_is_complete(self, distance_counter):
+        """Return a Boolean indicating whether a certain group of
+        Graphics have travelled far enough along the screen to be in
+        their proper positions.
+
+        Args:
+            distance_counter (float): A counter keeping track of the
+                vertical distance travelled, in pixels, by a group
+                of Graphics moving at the same time.
+        """
+        return distance_counter >= float(SCREEN_SIZE[1])
+
+    def slide_graphics(self, graphics, distance):
+        """Move a group of Graphics some vertical distance across the
+        screen.
+
+        The Graphics will be kept from moving past the top or bottom of
+        the screen, depending on whether they're moving up or down.
+
+        Args:
+            graphics (tuple of Graphic): A group of Graphics that will
+                all be moved the same distance.
+            distance (float): The distance, in pixels, that the
+                Graphics will travel vertically. Positive values will
+                move the Graphics down; negative values will move them
+                up.
+        """
+        for graphic in graphics:
+            graphic.move(0, distance)
+
+            if distance < 0.0 and graphic.rect.y < 0:
+                graphic.reposition(y=0)
+            elif distance > 0.0 and graphic.get_bottom_edge() > SCREEN_SIZE[1]:
+                graphic.move(0, SCREEN_SIZE[1] - graphic.get_bottom_edge())
+
+    def get_selection_data(self):
+        """Return a tuple containing all of the Graphics describing the
+        currently-selected Stage, including the StagePreview along with
+        the Stage Name and Stage Subtitle, or with the No Stages Loaded
+        text if no Stages are present.
+        """
+        if self.state.num_of_stages > 0:
+            return (self.state.preview, self.state.stage_name,
+                    self.state.stage_subtitle)
+        else:
+            return (self.state.preview, self.state.no_stages_text)
+
 
 class StageThumbnail(Graphic):
     """A small icon for a Stage that can be selected by the players.
