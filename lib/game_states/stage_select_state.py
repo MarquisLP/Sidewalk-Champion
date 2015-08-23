@@ -90,7 +90,7 @@ UP_ARROW_PATH = 'images/roster_up_arrow.png'
 NUM_OF_ARROW_FRAMES = 2
 ARROW_FRAME_DURATION = 10
 THUMB_TO_ARROW_DISTANCE = 4
-TRANSITION_SLIDE_SPEED = 500
+TRANSITION_SLIDE_SPEED = 300
 
 
 StageMetadata = namedtuple('StageMetadata', 'name subtitle preview thumbnail')
@@ -179,6 +179,9 @@ class StageSelectState(State):
 
         self.selected_stage = 0
         self.is_selection_confirmed = False
+
+        self.place_graphics_offscreen()
+        self.transition = TransitionAnimation(self)
 
     def load_all_stage_metadata(self):
         """Return a tuple containing StageMetadata namedtuples for all
@@ -330,6 +333,11 @@ class StageSelectState(State):
             event (Event): The PyGame KEYDOWN event. It stores the
                 ASCII code for any keys that were pressed.
         """
+        # The game will not respond to input while the intro or
+        # outro animations are playing.
+        if self.transition.is_running:
+            return
+
         input_name = self.get_input_name(pygame.key.name(event.key))
 
         if self.num_of_stages() > 1:
@@ -485,6 +493,9 @@ class StageSelectState(State):
             time (float): The time, in seconds, elapsed since the last
                 game update.
         """
+        if self.transition.is_running:
+            self.transition.update(time)
+
         for line in self.bg_lines:
             line.update_movement(time)
 
