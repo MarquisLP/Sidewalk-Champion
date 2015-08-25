@@ -557,18 +557,28 @@ class TransitionAnimation(object):
         preview_and_text_distance (float): The vertical distance
             travelled, in pixels, by the StagePreview and metadata text
             since the current Animation began.
+        next_state (StateIDs): An enum value for the State to load once
+            the animation is finished. See the state_ids module for
+            possible values. Setting this attribute to None will keep
+            the StageSelectState open after running the animation.
     """
-    def __init__(self, state):
+    def __init__(self, state, next_state=None):
         """Declare and initialize instance variables.
 
         Args:
             state (StageSelectState): The Stage Select State that this
                 object will animate.
+            next_state (StateIDs): Optional. An enum value for the State
+                to load once the animation is finished. See the
+                state_ids module for possible values. Setting this to
+                the default value of None will keep the StageSelectState
+                open after running the animation.
         """
         self.state = state
         self.is_running = True
         self.lines_distance = 0.0
         self.thumbs_and_data_distance = 0.0
+        self.next_state = next_state
 
     def update(self, time):
         """Update the transition animation.
@@ -591,6 +601,8 @@ class TransitionAnimation(object):
             self.thumbs_and_data_distance += distance
         else:
             self.is_running = False
+            if self.next_state is not None:
+                self.state.change_state(self.next_state)
 
     def distance_is_complete(self, distance_counter):
         """Return a Boolean indicating whether a certain group of
@@ -639,11 +651,20 @@ class TransitionAnimation(object):
         else:
             return (self.state.preview, self.state.no_stages_text)
 
-    def reset(self):
-        """Prepare the animation and play it again."""
+    def reset(self, next_state=None):
+        """Prepare the animation and play it again.
+
+        Args:
+            next_state (StateIDs): Optional. An enum value for the State
+                to load once the animation is finished. See the
+                state_ids module for possible values. Setting this to
+                the default value of None will keep the StageSelectState
+                open after running the animation.
+        """
         self.lines_distance = 0.0
         self.thumbs_and_data_distance = 0.0
         self.is_running = True
+        self.next_state = next_state
 
 
 class StageThumbnail(Graphic):
