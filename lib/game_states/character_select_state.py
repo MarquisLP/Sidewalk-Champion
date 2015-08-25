@@ -113,13 +113,9 @@ class CharacterSelectState(State):
             wiped_in_text = self.no_chars_text
         else:
             wiped_in_text = self.vs_text
-        self.intro = IntroTransition(self.bg_lines, self.roster,
-                                     self.p1_preview, self.p2_preview,
-                                     wiped_in_text,
+        self.intro = IntroTransition(self,
                                      self.state_pass.announcer_channel)
-        self.outro = OutroTransition(self.bg_lines, self.roster,
-                                     self.p1_preview, self.p2_preview,
-                                     wiped_in_text, self.change_state)
+        self.outro = OutroTransition(self)
         self.intro.play()
 
     def load_data_from_file(self):
@@ -403,11 +399,7 @@ class IntroTransition(object):
             clip.
 
     Attributes:
-        bg_lines: The CharacterSelectState's BackgroundLines.
-        roster: The CharacterSelectState's RosterDisplay.
-        p1_preview: The CharacterPreview for Player 1.
-        p2_preview: The CharacterPreview for Player 2.
-        vs_text: A Surface containing text that reads VS.
+        state: The CharacterSelectState that will be animated.
         vs_wipe_y: An integer for the top end of the wipe in effect,
             relative to the VS text Surface.
         voice: A PyGame Sound that plays the announcer voice clip.
@@ -419,50 +411,32 @@ class IntroTransition(object):
     MUSIC_PATH = 'audio/select-theme.wav'
     VOICE_PATH = 'audio/announcer-character_select.wav'
 
-    def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text,
-                 voice_channel):
+    def __init__(self, state, voice_channel):
         """Declare and initialize instance variables.
 
         Args:
-            bg_lines: BackgroundLines that will be drawn onto
-                CharacterSelectState's Surface.
-            roster: The RosterDisplay containing all characters.
-            p1_preview: The CharacterPreview for player 1.
-            p2_preview: The CharacterPreview for player 2.
-            vs_text: A Graphic containing text that reads VS.
+            state (CharacterSelectState): The State that will be
+                animated.
             voice_channel: A PyGame Channel used for playing announcer
                 voice clips.
         """
-        self.bg_lines = bg_lines
-        self.roster = roster
-        self.p1_preview = p1_preview
-        self.p2_preview = p2_preview
-        self.vs_text = vs_text
-        self.vs_wipe_y = vs_text.rect.height
+        self.state = state
+        self.vs_wipe_y = self.state.vs_text.rect.height
         self.is_running = False
         self.voice = pygame.mixer.Sound(self.VOICE_PATH)
         self.voice_channel = voice_channel
         self.voice_has_played = False
-
-    def has_characters(self):
-        """Return a Boolean indicating whether at least one playable
-        character is included in the game.
-        """
-        if self.p1_preview is not None and self.p2_preview is not None:
-            return True
-        else:
-            return False
 
     def play(self):
         """Begin running the intro animation."""
         self.is_running = True
         pygame.mixer.music.load(self.MUSIC_PATH)
         pygame.mixer.music.play(-1)
-        self.bg_lines.move_right_end(-1 * SCREEN_SIZE[0])
-        self.roster.place_offscreen()
-        if self.has_characters():
-            self.p1_preview.place_offscreen()
-            self.p2_preview.place_offscreen()
+        self.state.bg_lines.move_right_end(-1 * SCREEN_SIZE[0])
+        self.state.roster.place_offscreen()
+        if not self.state.has_no_characters():
+            self.state.p1_preview.place_offscreen()
+            self.state.p2_preview.place_offscreen()
 
     def update(self, time):
         """Update the intro animation.
@@ -471,18 +445,21 @@ class IntroTransition(object):
             time: A float for time elapsed, in seconds, since the last
                 update cycle.
         """
-        if self.p1_preview is not None and self.p2_preview is not None:
-            self.p1_preview.update()
-            self.p2_preview.update()
+        if (self.state.p1_preview is not None and
+             self.state.p2_preview is not None):
+            self.state.p1_preview.update()
+            self.state.p2_preview.update()
 
-        if not self.bg_lines.are_fully_extended():
+        if not self.state.bg_lines.are_fully_extended():
             self.move_lines_in(time)
 
-        elif not self.has_characters() and not self.roster.is_onscreen():
+        elif (self.state.has_no_characters() and
+              not self.state.roster.is_onscreen()):
             self.slide_in_roster(time)
-        elif self.has_characters() and not (self.p1_preview.is_onscreen() and
-                                            self.p2_preview.is_onscreen() and
-                                            self.roster.is_onscreen()):
+        elif not self.state.has_no_characters() and not (
+                self.state.p1_preview.is_onscreen() and
+                self.state.p2_preview.is_onscreen() and
+                self.state.roster.is_onscreen()):
             self.slide_in_roster(time)
             self.slide_in_previews(time)
 
@@ -503,10 +480,10 @@ class IntroTransition(object):
                 update cycle.
         """
         distance = TransitionSpeeds.LINES * time
-        self.bg_lines.move_right_end(distance)
+        self.state.bg_lines.move_right_end(distance)
 
-        if self.bg_lines.are_fully_extended():
-            self.bg_lines.reset()
+        if self.state.bg_lines.are_fully_extended():
+            self.state.bg_lines.reset()
 
     def slide_in_roster(self, time):
         """Slide the roster into the screen from the bottom edge.
@@ -516,10 +493,10 @@ class IntroTransition(object):
                 update cycle.
         """
         distance = -1 * TransitionSpeeds.ROSTER * time
-        self.roster.move(dy=distance)
+        self.state.roster.move(dy=distance)
 
-        if self.roster.is_onscreen():
-            self.roster.correct_position()
+        if self.state.roster.is_onscreen():
+            self.state.roster.correct_position()
 
     def slide_in_previews(self, time):
         """Slide both CharacterPreviews into the screen from the left
@@ -531,15 +508,15 @@ class IntroTransition(object):
         """
         distance = TransitionSpeeds.PREVIEWS * time
 
-        if not self.p1_preview.is_onscreen():
-            self.p1_preview.move(distance)
-            if self.p1_preview.is_onscreen():
-                self.p1_preview.correct_position()
+        if not self.state.p1_preview.is_onscreen():
+            self.state.p1_preview.move(distance)
+            if self.state.p1_preview.is_onscreen():
+                self.state.p1_preview.correct_position()
 
-        if not self.p2_preview.is_onscreen():
-            self.p2_preview.move(-1 * distance)
-            if self.p2_preview.is_onscreen():
-                self.p2_preview.correct_position()
+        if not self.state.p2_preview.is_onscreen():
+            self.state.p2_preview.move(-1 * distance)
+            if self.state.p2_preview.is_onscreen():
+                self.state.p2_preview.correct_position()
 
     def wipe_in_vs(self, time):
         """Move the upper bound of the VS text's draw region in order
@@ -563,11 +540,11 @@ class IntroTransition(object):
         """
         pygame.draw.rect(parent_surf, (0, 0, 0),
                          Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
-        self.bg_lines.draw(parent_surf)
-        self.roster.draw(parent_surf)
-        if self.has_characters():
-            self.p1_preview.draw(parent_surf)
-            self.p2_preview.draw(parent_surf)
+        self.state.bg_lines.draw(parent_surf)
+        self.state.roster.draw(parent_surf)
+        if not self.state.has_no_characters():
+            self.state.p1_preview.draw(parent_surf)
+            self.state.p2_preview.draw(parent_surf)
         self.draw_vs_text(parent_surf)
 
     def draw_vs_text(self, parent_surf):
@@ -580,9 +557,14 @@ class IntroTransition(object):
             parent_surf: The PyGame Surface upon which the VS text will
                 be drawn.
         """
-        draw_region = Rect(0, 0, self.vs_text.rect.width,
-                           self.vs_text.rect.height - self.vs_wipe_y)
-        self.vs_text.draw(parent_surf, region=draw_region)
+        if self.state.has_no_characters():
+            draw_region = Rect(0, 0, self.state.no_chars_text.rect.width,
+                self.state.no_chars_text.rect.height - self.vs_wipe_y)
+            self.state.no_chars_text.draw(parent_surf, region=draw_region)
+        else:
+            draw_region = Rect(0, 0, self.state.vs_text.rect.width,
+                self.state.vs_text.rect.height - self.vs_wipe_y)
+            self.state.vs_text.draw(parent_surf, region=draw_region)
 
 
 class OutroTransition(object):
@@ -600,46 +582,28 @@ class OutroTransition(object):
             milliseconds, to fade out the Select Screen music.
 
     Attributes:
-        bg_lines: The CharacterSelectState's BackgroundLines.
-        roster: The CharacterSelectState's RosterDisplay.
-        p1_preview: The CharacterPreview for Player 1.
-        p2_preview: The CharacterPreview for Player 2.
-        vs_text: A Surface containing text that reads VS.
+        state: The CharacterSelectState that will be animated.
         vs_wipe_y: An integer for the top end of the wipe out effect,
             relative to the VS text Surface.
         is_running: A Boolean indicating whether the outro is currently
             running.
-        next_state: An integer for the index of the Game State to run
-            once the outro finishes. See the StateIDs enum for possible
-            values.
-        change_state: A method that changes game processing to another
-            Game State.
+        next_state: An enum value representing the next Game State to
+            run after this animation is completed. See the state_ids
+            module for possible values.
     """
     MUSIC_FADEOUT_TIME = 2000
 
-    def __init__(self, bg_lines, roster, p1_preview, p2_preview, vs_text,
-                 change_state):
+    def __init__(self, state):
         """Declare and initialize instance variables.
 
         Args:
-            bg_lines: BackgroundLines that will be drawn onto
-                CharacterSelectState's Surface.
-            roster: The RosterDisplay containing all characters.
-            p1_preview: The CharacterPreview for Player 1.
-            p2_preview: The CharacterPreview for Player 2.
-            vs_text: A Surface containing text that reads VS.
-            change_state: A method that changes game processing to
-                another Game State.
+            state (CharacterSelectState): The State that this object
+                will animate.
         """
-        self.bg_lines = bg_lines
-        self.roster = roster
-        self.p1_preview = p1_preview
-        self.p2_preview = p2_preview
-        self.vs_text = vs_text
-        self.vs_wipe_y = vs_text.rect.height
+        self.state = state
+        self.vs_wipe_y = self.state.vs_text.rect.height
         self.next_state = StateIDs.SELECT_CHARACTER
         self.is_running = False
-        self.change_state = change_state
 
     def play(self, next_state, music_will_fade=False):
         """Start playing the outro animation.
@@ -656,15 +620,6 @@ class OutroTransition(object):
         if music_will_fade:
             pygame.mixer.music.fadeout(self.MUSIC_FADEOUT_TIME)
 
-    def has_characters(self):
-        """Return a Boolean indicating whether at least one playable
-        character could be loaded into the game.
-        """
-        if self.p1_preview is not None and self.p2_preview is not None:
-            return True
-        else:
-            return False
-
     def update(self, time):
         """Update the outro animation.
 
@@ -672,26 +627,29 @@ class OutroTransition(object):
             time: A float for the amount of time elapsed, in seconds,
                 since the last update.
         """
-        if self.has_characters():
-            self.p1_preview.update()
-            self.p2_preview.update()
+        if not self.state.has_no_characters():
+            self.state.p1_preview.update()
+            self.state.p2_preview.update()
 
+        # Start of animation sequence.
         if self.vs_wipe_y > 0:
             self.wipe_out_vs(time)
 
-        elif not self.has_characters() and not self.roster.is_offscreen():
+        elif (self.state.has_no_characters() and
+              not self.state.roster.is_offscreen()):
             self.slide_out_roster(time)
-        elif self.has_characters() and not (self.p1_preview.is_offscreen() and
-                                            self.p2_preview.is_offscreen() and
-                                            self.roster.is_offscreen()):
+        elif (not self.state.has_no_characters() and
+              not (self.state.p1_preview.is_offscreen() and
+                   self.state.p2_preview.is_offscreen() and
+                   self.state.roster.is_offscreen())):
             self.slide_out_roster(time)
             self.slide_out_previews(time)
 
-        elif not self.bg_lines.are_not_visible():
+        elif not self.state.bg_lines.are_not_visible():
             self.move_lines_out(time)
 
         else:
-            self.change_state(self.next_state)
+            self.state.change_state(self.next_state)
 
     def move_lines_out(self, time):
         """Scroll the lines out of the screen, from left to right.
@@ -700,7 +658,7 @@ class OutroTransition(object):
             time: A float for the amount of time elapsed, in seconds,
                 since the last update.
         """
-        self.bg_lines.move_left_end(TransitionSpeeds.LINES * time)
+        self.state.bg_lines.move_left_end(TransitionSpeeds.LINES * time)
 
     def slide_out_roster(self, time):
         """Slide the roster in the direction of the bottom edge of the
@@ -710,7 +668,7 @@ class OutroTransition(object):
             time: A float for the amount of time elapsed, in seconds,
                 since the last update.
         """
-        self.roster.move(dy=(TransitionSpeeds.ROSTER * time))
+        self.state.roster.move(dy=(TransitionSpeeds.ROSTER * time))
 
     def slide_out_previews(self, time):
         """Slide the CharacterPreviews out toward either side of the
@@ -720,8 +678,8 @@ class OutroTransition(object):
             time: A float for the amount of time elapsed, in seconds,
                 since the last update.
         """
-        self.p1_preview.move(dx=(-1 * TransitionSpeeds.PREVIEWS * time))
-        self.p2_preview.move(dx=(TransitionSpeeds.PREVIEWS * time))
+        self.state.p1_preview.move(dx=(-1 * TransitionSpeeds.PREVIEWS * time))
+        self.state.p2_preview.move(dx=(TransitionSpeeds.PREVIEWS * time))
 
     def wipe_out_vs(self, time):
         """Move the lower bound of the VS text's draw region upward in
@@ -743,11 +701,11 @@ class OutroTransition(object):
             parent_surf: The PyGame Surface upon which the various
                 graphics will be drawn.
         """
-        self.bg_lines.draw(parent_surf)
-        self.roster.draw(parent_surf)
-        if self.has_characters():
-            self.p1_preview.draw(parent_surf)
-            self.p2_preview.draw(parent_surf)
+        self.state.bg_lines.draw(parent_surf)
+        self.state.roster.draw(parent_surf)
+        if not self.state.has_no_characters():
+            self.state.p1_preview.draw(parent_surf)
+            self.state.p2_preview.draw(parent_surf)
         self.draw_vs_text(parent_surf)
 
     def draw_vs_text(self, parent_surf):
@@ -759,8 +717,14 @@ class OutroTransition(object):
             parent_surf: The Surface ipon which the VS text will be
                 drawn.
         """
-        draw_region = Rect(0, 0, self.vs_text.rect.width, self.vs_wipe_y)
-        self.vs_text.draw(parent_surf, region=draw_region)
+        if self.state.has_no_characters():
+            draw_region = Rect(0, 0, self.state.no_chars_text.rect.width,
+                               self.vs_wipe_y)
+            self.state.no_chars_text.draw(parent_surf, region=draw_region)
+        else:
+            draw_region = Rect(0, 0, self.state.vs_text.rect.width,
+                               self.vs_wipe_y)
+            self.state.vs_text.draw(parent_surf, region=draw_region)
 
 
 class PlayerSelectPrompt(object):
