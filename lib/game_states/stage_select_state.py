@@ -548,15 +548,10 @@ class TransitionAnimation(object):
             animation is currently being executed.
         state (StageSelectState): The Stage Select State that this
             object will animate.
-        lines_distance (float): The vertical distance travelled, in
-            pixels, by the BackgroundLines since the current animation
-            began.
-        thumbs_distance (float): The vertical distance travelled, in
-            pixels, by the StageThumbnails since the current animation
-            began.
-        preview_and_text_distance (float): The vertical distance
-            travelled, in pixels, by the StagePreview and metadata text
-            since the current Animation began.
+        group1_distance (float): The vertical distance travelled, in
+            pixels, by the first wave of Graphics to move on-screen.
+        group2_distance (float): The vertical distance travelled, in
+            pixels, by the second wave of Graphics to move on-screen.
         next_state (StateIDs): An enum value for the State to load once
             the animation is finished. See the state_ids module for
             possible values. Setting this attribute to None will keep
@@ -576,8 +571,8 @@ class TransitionAnimation(object):
         """
         self.state = state
         self.is_running = True
-        self.lines_distance = 0.0
-        self.thumbs_and_data_distance = 0.0
+        self.group1_distance = 0.0
+        self.group2_distance = 0.0
         self.next_state = next_state
 
     def update(self, time):
@@ -589,16 +584,27 @@ class TransitionAnimation(object):
         """
         distance = TRANSITION_SLIDE_SPEED * time
 
-        if not self.distance_is_complete(self.lines_distance):
-            self.slide_graphics(self.state.bg_lines, distance)
-            self.lines_distance += distance
-        elif not self.distance_is_complete(self.thumbs_and_data_distance):
-            selection_data = self.get_selection_data()
+        if not self.distance_is_complete(self.group1_distance):
+            if self.state_will_change():
+                # Outro
+                selection_data = self.get_selection_data()
+                self.slide_graphics(self.state.thumbnails, distance)
+                self.slide_graphics(selection_data, -1 * distance)
+            else:
+                # Intro
+                self.slide_graphics(self.state.bg_lines, distance)
+            self.group1_distance += distance
+        elif not self.distance_is_complete(self.group2_distance):
+            if self.state_will_change():
+                # Outro
+                self.slide_graphics(self.state.bg_lines, distance)
+            else:
+                # Intro
+                selection_data = self.get_selection_data()
+                self.slide_graphics(self.state.thumbnails, distance)
+                self.slide_graphics(selection_data, -1 * distance)
 
-            self.slide_graphics(self.state.thumbnails, distance)
-            self.slide_graphics(selection_data, -1 * distance)
-
-            self.thumbs_and_data_distance += distance
+            self.group2_distance += distance
         else:
             self.is_running = False
             if self.next_state is not None:
@@ -616,6 +622,11 @@ class TransitionAnimation(object):
         """
         return distance_counter >= float(SCREEN_SIZE[1])
 
+    def state_will_change(self):
+        """Return a Boolean indiacting whether the game will change
+        States once the animation finishes.
+        """
+        return self.next_state is not None
     def slide_graphics(self, graphics, distance):
         """Move a group of Graphics some vertical distance across the
         screen.
@@ -633,11 +644,6 @@ class TransitionAnimation(object):
         """
         for graphic in graphics:
             graphic.move(0, distance)
-
-            if distance < 0.0 and graphic.rect.y < 0:
-                graphic.reposition(y=0)
-            elif distance > 0.0 and graphic.get_bottom_edge() > SCREEN_SIZE[1]:
-                graphic.move(0, SCREEN_SIZE[1] - graphic.get_bottom_edge())
 
     def get_selection_data(self):
         """Return a tuple containing all of the Graphics describing the
@@ -661,8 +667,8 @@ class TransitionAnimation(object):
                 the default value of None will keep the StageSelectState
                 open after running the animation.
         """
-        self.lines_distance = 0.0
-        self.thumbs_and_data_distance = 0.0
+        self.group1_distance = 0.0
+        self.group2_distance = 0.0
         self.is_running = True
         self.next_state = next_state
 
