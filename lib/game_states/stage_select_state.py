@@ -63,6 +63,7 @@ from lib.graphics import (Graphic, Animation, render_outlined_text,
 from lib.globals import SCREEN_SIZE
 from lib.custom_data.stage_loader import load_all_stages
 from lib.game_states.state import State
+from lib.game_states.state_ids import StateIDs
 from pygame.surface import Surface
 from pygame.rect import Rect
 
@@ -341,6 +342,8 @@ class StageSelectState(State):
         input_name = self.get_input_name(pygame.key.name(event.key))
 
         if self.num_of_stages() > 1:
+            if input_name == 'cancel':
+                self.transition.reset(StateIDs.SELECT_CHARACTER)
             if input_name == 'up':
                 self.change_selected_stage(CursorDirection.PREVIOUS)
             elif input_name == 'down':
