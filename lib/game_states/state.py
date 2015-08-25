@@ -89,7 +89,7 @@ class State(object):
 
     def update_state(self, time):
         """Update all processes within the State.
-        
+
         Keyword arguments:
             time    The time, in seconds, elapsed since the last
                     update. This can be used when moving objects,
@@ -140,7 +140,7 @@ class State(object):
 
     def get_player_input(self, event):
         """Read input from the players and respond to it.
-        
+
         Keyword arguments:
             event       The PyGame KEYDOWN event. It stores the ASCII
                         code for any keys that were pressed.
@@ -180,11 +180,15 @@ class StatePass(object):
             character can use when playing action sounds.
         p2_channel_two: One of the two PyGame Channels that Player 2's
             character can use when playing action sounds.
-        character_one: The CharacterData object for player one's
-            character.
-        character_two: The CharacterData object for player two's
-            character.
-        stage: The StageData object for the current battle's stage.
+        character_one: The integer line index for for player one's
+            character within the character list. Setting this to None
+            means no character has been chosen yet.
+        character_two: The integer line index for for player two's
+            character within the character list. Setting this to None
+            means no character has been chosen yet.
+        stage: The integer line index for the chosen battle Stage within
+            the stage list.  Setting this to None means no Stage has
+            been chosen yet.
         battle_rounds: The number of rounds for the current
             battle. The possible values are 1, 3, and 5.
             Note that setting this to 0 means that Training Mode has
@@ -210,9 +214,9 @@ class StatePass(object):
         self.p1_channel_two = Channel(3)
         self.p2_channel_one = Channel(4)
         self.p2_channel_two = Channel(5)
-        self.character_one = CharacterData()
-        self.character_two = CharacterData()
-        #self.stage = StageData()
+        self.character_one = None
+        self.character_two = None
+        self.stage = None
         self.battle_rounds = 3
         self.time_limit = 99
         self.settings = settings_data
