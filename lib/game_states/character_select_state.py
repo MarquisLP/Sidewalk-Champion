@@ -12,7 +12,8 @@ from lib.graphics import convert_to_colorkey_alpha
 from lib.graphics import Graphic, Animation, CharacterAnimation
 from lib.globals import SCREEN_SIZE
 from lib.custom_data.character_data import load_frame_durations
-from lib.custom_data.character_loader import load_all_characters
+from lib.custom_data.character_loader import (load_all_characters,
+                                              load_character)
 from lib.game_states.state import State
 from lib.game_states.state_ids import StateIDs
 from lib.game_states.select_state_sfx import SelectStateSFX
@@ -93,6 +94,8 @@ class CharacterSelectState(State):
         self.all_preview_data = None
         self.p1_preview = None
         self.p2_preview = None
+        self.p1_char_index = None
+        self.p2_char_index = None
         self.load_data_from_file()
 
         self.bg_lines = BackgroundLines()
@@ -105,14 +108,16 @@ class CharacterSelectState(State):
                                                   self.NO_CHARS_COLOR,
                                                   self.VS_OUTLINE_COLOR,
                                                   self.NO_CHARS_POSITION)
-        self.p1_char_index = None
-        self.p2_char_index = None
         self.sfx = SelectStateSFX(self.state_pass.ui_channel)
 
         if self.has_no_characters():
             wiped_in_text = self.no_chars_text
         else:
             wiped_in_text = self.vs_text
+
+        if self.returned_from_stage_select():
+            self.select_previous_characters()
+
         self.intro = IntroTransition(self,
                                      self.state_pass.announcer_channel)
         self.outro = OutroTransition(self)
@@ -132,6 +137,7 @@ class CharacterSelectState(State):
 
         self.roster = RosterDisplay(all_chars)
         self.all_preview_data = self.load_all_preview_data(all_chars)
+
         first_char = self.all_preview_data[0]
         self.p1_preview = CharacterPreview(False, first_char.spritesheet,
                                            first_char.name, general_font,
@@ -170,6 +176,29 @@ class CharacterSelectState(State):
             return True
         else:
             return False
+
+    def returned_from_stage_select(self):
+        """Return a Boolean indicating whether the players returned to
+        the CharacterSelectState after exiting the Stage Select Screen.
+        """
+        return (self.state_pass.character_one is not None and
+                self.state_pass.character_two is not None)
+
+    def select_previous_characters(self):
+        """Select and display the Characters that were chosen the last
+        time this State was run.
+        """
+        self.p1_char_index = self.state_pass.character_one
+        self.p2_char_index = self.state_pass.character_two
+        self.toggle_player_display()
+        self.roster.select_character(self.p2_char_index)
+
+        p1_char = self.all_preview_data[self.p1_char_index]
+        p2_char = self.all_preview_data[self.p2_char_index]
+        self.p1_preview.change_character(p1_char.spritesheet, p1_char.name,
+                                         p1_char.frame_durations)
+        self.p2_preview.change_character(p2_char.spritesheet, p2_char.name,
+                                         p2_char.frame_durations)
 
     def get_player_input(self, event):
         """Respond to input from the players.
@@ -247,6 +276,7 @@ class CharacterSelectState(State):
         player 1.
         """
         if self.get_current_player() == 1:
+            self.clear_selected_characters()
             self.outro.play(StateIDs.TITLE, music_will_fade=True)
         else:
             self.change_preview(0)
@@ -256,6 +286,12 @@ class CharacterSelectState(State):
             self.change_preview(p1_last_selection)
             self.toggle_player_display()
 
+    def clear_selected_characters(self):
+        """Clear the CharacterData stored as Player One's and Two's
+        fighters within the StatePass.
+        """
+        self.state_pass.character_one = None
+        self.state_pass.character_two = None
     def confirm_character(self):
         """Save the currently-selected character as a player's fighter
         in the next battle and move onto the appropriate operation.
@@ -267,10 +303,12 @@ class CharacterSelectState(State):
         """
         if self.get_current_player() == 1:
             self.p1_char_index = self.roster.get_character_index()
+            self.state_pass.character_one = self.p1_char_index
             self.roster.select_first()
             self.toggle_player_display()
         else:
             self.p2_char_index = self.roster.get_character_index()
+            self.state_pass.character_two = self.p2_char_index
             self.outro.play(StateIDs.SELECT_STAGE)
 
     def toggle_player_display(self):
@@ -430,8 +468,11 @@ class IntroTransition(object):
     def play(self):
         """Begin running the intro animation."""
         self.is_running = True
-        pygame.mixer.music.load(self.MUSIC_PATH)
-        pygame.mixer.music.play(-1)
+
+        if not self.state.returned_from_stage_select():
+            pygame.mixer.music.load(self.MUSIC_PATH)
+            pygame.mixer.music.play(-1)
+
         self.state.bg_lines.move_right_end(-1 * SCREEN_SIZE[0])
         self.state.roster.place_offscreen()
         if not self.state.has_no_characters():
