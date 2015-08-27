@@ -342,9 +342,11 @@ class StageSelectState(State):
         input_name = self.get_input_name(pygame.key.name(event.key))
 
         if self.num_of_stages() > 1:
-            if input_name == 'cancel':
-                self.transition.reset(StateIDs.SELECT_CHARACTER)
-            if input_name == 'up':
+            if input_name == 'start' and self.num_of_stages() > 0:
+                self.confirm_stage()
+            elif input_name == 'cancel':
+                self.exit_state()
+            elif input_name == 'up':
                 self.change_selected_stage(CursorDirection.PREVIOUS)
             elif input_name == 'down':
                 self.change_selected_stage(CursorDirection.NEXT)
@@ -488,6 +490,19 @@ class StageSelectState(State):
         self.stage_subtitle = render_outlined_text(self.subtitle_font,
             metadata.subtitle, (255, 255, 255), (0, 0, 0), (0, 0))
         self.align_text()
+
+    def confirm_stage(self):
+        """Proceed to the Battle State with the currently-selected
+        Stage as the chosen backdrop.
+        """
+        self.state_pass.stage = self.selected_stage
+        self.transition.reset(StateIDs.BATTLE)
+
+    def exit_state(self):
+        """Cancel Stage Selection and return to the Character Select
+        Screen.
+        """
+        self.transition.reset(StateIDs.SELECT_CHARACTER)
 
     def update_state(self, time):
         """Update all processes within the State.
