@@ -99,7 +99,22 @@ class GameStateManager(object):
             return CharacterSelectState(self, self.state_pass)
         elif state_id == StateIDs.SELECT_STAGE:
             return StageSelectState(self, self.state_pass)
+        else:
+            self.force_quit('The Game State of ID number ' + str(state_id) +
+                            ' does not currently exist.')
         # More will be added as new States are created.
+
+    def force_quit(self, message=None):
+        """Force the program to terminate and display an optional
+        message.
+
+        Keyword Arguments:
+            message: Optional. A String message that will be printed to
+                 the console, usually for detailing an error.
+        """
+        if message is not None:
+            print message
+        pygame.event.post(pygame.event.Event(QUIT, {}))
 
     def scale_screen(self, scale):
         """Resize the screen whenever the screen scale changes.
@@ -137,7 +152,7 @@ class GameStateManager(object):
         else:
             self.scaled_surf = self.zoom_three_surf
         pygame.transform.scale(surf, new_size, self.scaled_surf)
-        
+
         # Scaling causes the alpha value of the Surface to be lost,
         # so scaled_surf's alpha value will have to be explicitly set
         # to match the original transparency of the surf.
@@ -172,11 +187,11 @@ class GameStateManager(object):
         """
         visible_states = []
         screen_is_covered = False
-        
+
         for game_state in reversed(self.active_state_stack):
             if not screen_is_covered:
                 visible_states.append(game_state)
-                
+
                 if (game_state.exact_offset[0] == 0.0 and
                    game_state.exact_offset[1] == 0.0):
                     screen_is_covered = True
@@ -190,7 +205,7 @@ class GameStateManager(object):
         processing to the State underneath it.
         """
         self.active_state_stack.pop()
-    
+
     def change_state(self, next_state_id):
         """Pop the currently-active State from the stack and push a new State
         on top in its place.
@@ -203,7 +218,7 @@ class GameStateManager(object):
         """
         self.pop_top_state()
         self.push_state(next_state_id)
-    
+
     def push_state(self, next_state_id):
         """Prepare the next active Game State and push it to the top of the
         State stack once it is finished initializing.
@@ -273,7 +288,7 @@ class GameStateManager(object):
         while True:
             if self.next_state is not None:
                 self.run_next_state()
-            
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -288,7 +303,7 @@ class GameStateManager(object):
             # global frame rate.
             milliseconds = self.clock.tick(FRAME_RATE)
             seconds = milliseconds / 1000.0
-            
+
             visible_states = self.get_visible_states()
             for game_state in visible_states:
                 self.update_state(game_state, seconds)
