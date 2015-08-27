@@ -64,6 +64,7 @@ from lib.globals import SCREEN_SIZE
 from lib.custom_data.stage_loader import load_all_stages
 from lib.game_states.state import State
 from lib.game_states.state_ids import StateIDs
+from lib.game_states.select_state_sfx import SelectStateSFX
 from pygame.surface import Surface
 from pygame.rect import Rect
 
@@ -127,6 +128,8 @@ class StageSelectState(State):
         scroll_down_arrow (Graphic): An arrow that will appear and nudge
             down to indicate that more Stages are available below the
             ones already on-screen.
+        sfx (SelectStateSFX): Contains methods for playing appropriate
+            sound clips in response to player input.
         transition (TransitionAnimation): An object that handles the
             intro and outro animations for this State.
         selected_stage (int): The index number within metadata for the
@@ -155,6 +158,7 @@ class StageSelectState(State):
         self.scroll_down_arrow = Animation.from_file(UP_ARROW_PATH, (0, 0),
             NUM_OF_ARROW_FRAMES, ARROW_FRAME_DURATION)
         self.scroll_down_arrow.flip(is_vertical=True)
+        self.sfx = SelectStateSFX(self.state_pass.ui_channel)
 
         self.metadata = self.load_all_stage_metadata()
         if self.num_of_stages() <= 0:
@@ -346,11 +350,18 @@ class StageSelectState(State):
 
         if input_name == 'start':
             if self.num_of_stages() > 0:
+                self.sfx.play_confirm()
                 self.confirm_stage()
+            else:
+                self.sfx.play_no_confirm()
         elif input_name == 'cancel':
+            self.sfx.play_cancel()
             self.exit_state()
 
         if self.num_of_stages() > 1:
+            if input_name in ['up', 'down', 'back', 'forward']:
+                self.sfx.play_scroll()
+
             if input_name == 'up':
                 self.change_selected_stage(CursorDirection.PREVIOUS)
             elif input_name == 'down':
