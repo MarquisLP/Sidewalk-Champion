@@ -158,7 +158,7 @@ class StageSelectState(State):
 
         self.metadata = self.load_all_stage_metadata()
         if self.num_of_stages() <= 0:
-            self.no_stages_text = render_outlined_text(name_font,
+            self.no_stages_text = render_outlined_text(self.name_font,
                 'No Stages Loaded', (255, 255, 255), (0, 0, 0), (0, 0))
             # The StagePreview will display solid black.
             preview_image = Surface((PREVIEW_WIDTH, PREVIEW_HEIGHT))
@@ -277,11 +277,11 @@ class StageSelectState(State):
                           NAME_TO_SUBTITLE_DISTANCE)
             self.stage_subtitle.reposition(subtitle_x, subtitle_y)
         else:
-            self.no_stages_text.rect.x = calculate_center_position(0,
-                area_width, self.no_stages_text.rect.width)
-            self.no_stages_text.rect.y = (preview_y + PREVIEW_HEIGHT +
-                                          (BORDER_WIDTH * 2) +
-                                          PREVIEW_TO_NAME_DISTANCE)
+            x = calculate_center_position(0, area_width,
+                                          self.no_stages_text.rect.width)
+            y = (preview_y + PREVIEW_HEIGHT + (BORDER_WIDTH * 2) +
+                 PREVIEW_TO_NAME_DISTANCE)
+            self.no_stages_text.reposition(x, y)
 
     def align_scroll_arrows(self):
         """Position the scroll arrows appropriately on the screen."""
@@ -324,8 +324,11 @@ class StageSelectState(State):
         self.scroll_up_arrow.move(0, -1 * SCREEN_SIZE[1])
         self.scroll_down_arrow.move(0, -1 * SCREEN_SIZE[1])
         self.preview.move(0, SCREEN_SIZE[1])
-        self.stage_name.move(0, SCREEN_SIZE[1])
-        self.stage_subtitle.move(0, SCREEN_SIZE[1])
+        if self.num_of_stages() > 0:
+            self.stage_name.move(0, SCREEN_SIZE[1])
+            self.stage_subtitle.move(0, SCREEN_SIZE[1])
+        else:
+            self.no_stages_text.move(0, SCREEN_SIZE[1])
 
     def get_player_input(self, event):
         """Read input from the players and respond to it.
@@ -341,12 +344,14 @@ class StageSelectState(State):
 
         input_name = self.get_input_name(pygame.key.name(event.key))
 
-        if self.num_of_stages() > 1:
-            if input_name == 'start' and self.num_of_stages() > 0:
+        if input_name == 'start':
+            if self.num_of_stages() > 0:
                 self.confirm_stage()
-            elif input_name == 'cancel':
-                self.exit_state()
-            elif input_name == 'up':
+        elif input_name == 'cancel':
+            self.exit_state()
+
+        if self.num_of_stages() > 1:
+            if input_name == 'up':
                 self.change_selected_stage(CursorDirection.PREVIOUS)
             elif input_name == 'down':
                 self.change_selected_stage(CursorDirection.NEXT)
@@ -669,7 +674,7 @@ class TransitionAnimation(object):
         the Stage Name and Stage Subtitle, or with the No Stages Loaded
         text if no Stages are present.
         """
-        if self.state.num_of_stages > 0:
+        if self.state.num_of_stages() > 0:
             return (self.state.preview, self.state.stage_name,
                     self.state.stage_subtitle)
         else:
