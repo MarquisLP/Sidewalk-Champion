@@ -518,7 +518,7 @@ class StageSelectState(State):
         """Cancel Stage Selection and return to the Character Select
         Screen.
         """
-        self.transition.reset(StateIDs.SELECT_CHARACTER)
+        self.change_state(StateIDs.SELECT_CHARACTER)
 
     def update_state(self, time):
         """Update all processes within the State.

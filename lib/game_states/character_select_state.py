@@ -115,13 +115,14 @@ class CharacterSelectState(State):
         else:
             wiped_in_text = self.vs_text
 
-        if self.returned_from_stage_select():
-            self.select_previous_characters()
-
         self.intro = IntroTransition(self,
                                      self.state_pass.announcer_channel)
         self.outro = OutroTransition(self)
-        self.intro.play()
+
+        if self.returned_from_stage_select():
+            self.select_previous_characters()
+        else:
+            self.intro.play()
 
     def load_data_from_file(self):
         """Load all of the required character data from external
