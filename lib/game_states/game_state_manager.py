@@ -19,11 +19,6 @@ class GameStateManager(object):
     data between them.
 
     Attributes:
-        character_list: Contains all of the CharacterData objects for
-            every playable Character listed in the
-            characters/character_list.txt file.
-        stage_list: Contains all of the StageData objects for every
-            playable Stage listed in the stages/stage_list.txt file.
         screen: The PyGame display Surface that represents the game
             screen.
         clock: A timer provided by the PyGame time module. It records
@@ -62,10 +57,6 @@ class GameStateManager(object):
         Args:
             screen: The PyGame Surface object that will serve
                 as the game window.
-            all_characters: A list containing CharacterData objects for
-                all of the playable characters.
-            all_stages: A list containing StageData objects for all
-                of the playable stages.
             settings_data: A SettingsData object for various options
                 that can be set by the players via the Settings screen.
         """
