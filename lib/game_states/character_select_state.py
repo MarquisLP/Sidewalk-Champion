@@ -87,17 +87,18 @@ class CharacterSelectState(State):
                 passed between Game States.
         """
         super(CharacterSelectState, self).__init__(state_manager, state_pass)
+        all_chars = load_all_characters()
         general_font = pygame.font.Font(self.FONT_PATH, self.FONT_SIZE)
         vs_font = pygame.font.Font(self.FONT_PATH, self.VS_SIZE)
-
-        self.roster = None
-        self.all_preview_data = None
         self.p1_preview = None
         self.p2_preview = None
         self.p1_char_index = None
         self.p2_char_index = None
-        self.load_data_from_file()
 
+        self.roster = RosterDisplay(all_chars)
+        self.all_preview_data = self.load_all_preview_data(all_chars)
+        if not self.has_no_characters():
+            self.create_previews(general_font)
         self.bg_lines = BackgroundLines()
         self.select_prompt = PlayerSelectPrompt(general_font)
         self.vs_text = render_outlined_text(vs_font, 'VS', self.VS_COLOR,
@@ -114,7 +115,6 @@ class CharacterSelectState(State):
             wiped_in_text = self.no_chars_text
         else:
             wiped_in_text = self.vs_text
-
         self.intro = IntroTransition(self,
                                      self.state_pass.announcer_channel)
         self.outro = OutroTransition(self)
@@ -123,29 +123,6 @@ class CharacterSelectState(State):
             self.select_previous_characters()
         else:
             self.intro.play()
-
-    def load_data_from_file(self):
-        """Load all of the required character data from external
-        character files and use it to create the roster and character
-        previews.
-        """
-        general_font = pygame.font.Font(self.FONT_PATH, self.FONT_SIZE)
-
-        all_chars = load_all_characters()
-        if all_chars is None:
-            self.roster = RosterDisplay(None)
-            return
-
-        self.roster = RosterDisplay(all_chars)
-        self.all_preview_data = self.load_all_preview_data(all_chars)
-
-        first_char = self.all_preview_data[0]
-        self.p1_preview = CharacterPreview(False, first_char.spritesheet,
-                                           first_char.name, general_font,
-                                           first_char.frame_durations)
-        self.p2_preview = CharacterPreview(True, first_char.spritesheet,
-                                           first_char.name, general_font,
-                                           first_char.frame_durations)
 
     @staticmethod
     def load_all_preview_data(all_chars):
@@ -168,6 +145,22 @@ class CharacterSelectState(State):
                                                 frame_durations))
 
         return tuple(all_preview_data)
+
+    def create_previews(self, name_font):
+        """Initialize the CharacterPreviews to display the first
+        character on the roster.
+
+        Args:
+            name_font: A PyGame Font used for rendering the characters'
+                name text.
+        """
+        first_char = self.all_preview_data[0]
+        self.p1_preview = CharacterPreview(False, first_char.spritesheet,
+                                           first_char.name, name_font,
+                                           first_char.frame_durations)
+        self.p2_preview = CharacterPreview(True, first_char.spritesheet,
+                                           first_char.name, name_font,
+                                           first_char.frame_durations)
 
     def has_no_characters(self):
         """Return a Boolean indicating whether no characters could be
