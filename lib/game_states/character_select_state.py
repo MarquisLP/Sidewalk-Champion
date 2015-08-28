@@ -110,11 +110,6 @@ class CharacterSelectState(State):
                                                   self.VS_OUTLINE_COLOR,
                                                   self.NO_CHARS_POSITION)
         self.sfx = SelectStateSFX(self.state_pass.ui_channel)
-
-        if self.has_no_characters():
-            wiped_in_text = self.no_chars_text
-        else:
-            wiped_in_text = self.vs_text
         self.intro = IntroTransition(self,
                                      self.state_pass.announcer_channel)
         self.outro = OutroTransition(self)
