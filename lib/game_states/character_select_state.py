@@ -413,7 +413,6 @@ class TransitionSpeeds(object):
     """
     LINES = 500
     ROSTER = 150
-    PREVIEWS = 200
     VS = 120
 
 
@@ -548,15 +547,16 @@ class IntroTransition(object):
             time: A float for time elapsed, in seconds, since the last
                 update cycle.
         """
-        distance = TransitionSpeeds.PREVIEWS * time
+        p1_distance = self.state.p1_preview.slide_speed() * time
+        p2_distance = self.state.p2_preview.slide_speed() * time
 
         if not self.state.p1_preview.is_onscreen():
-            self.state.p1_preview.move(distance)
+            self.state.p1_preview.move(dx=(p1_distance))
             if self.state.p1_preview.is_onscreen():
                 self.state.p1_preview.correct_position()
 
         if not self.state.p2_preview.is_onscreen():
-            self.state.p2_preview.move(-1 * distance)
+            self.state.p2_preview.move(dx=(-1 * p2_distance))
             if self.state.p2_preview.is_onscreen():
                 self.state.p2_preview.correct_position()
 
@@ -720,8 +720,10 @@ class OutroTransition(object):
             time: A float for the amount of time elapsed, in seconds,
                 since the last update.
         """
-        self.state.p1_preview.move(dx=(-1 * TransitionSpeeds.PREVIEWS * time))
-        self.state.p2_preview.move(dx=(TransitionSpeeds.PREVIEWS * time))
+        p1_distance = self.state.p1_preview.slide_speed() * time
+        p2_distance = self.state.p2_preview.slide_speed() * time
+        self.state.p1_preview.move(dx=(-1 * p1_distance))
+        self.state.p2_preview.move(dx=p2_distance)
 
     def wipe_out_vs(self, time):
         """Move the lower bound of the VS text's draw region upward in
