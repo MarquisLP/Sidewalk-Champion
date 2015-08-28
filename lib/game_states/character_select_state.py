@@ -97,7 +97,7 @@ class CharacterSelectState(State):
 
         self.roster = RosterDisplay(all_chars)
         self.all_preview_data = self.load_all_preview_data(all_chars)
-        if not self.has_no_characters():
+        if self.num_of_characters() > 0:
             self.create_previews(general_font)
         self.bg_lines = BackgroundLines()
         self.select_prompt = PlayerSelectPrompt(general_font)
@@ -130,14 +130,16 @@ class CharacterSelectState(State):
         """
         all_preview_data = []
 
-        for character in all_chars:
-            name = character.name
-            spritesheet_path = character.actions[0].spritesheet_path
-            spritesheet = pygame.image.load(spritesheet_path).convert_alpha()
-            frame_durations = load_frame_durations(character.actions[0])
+        if all_chars is not None:
+            for character in all_chars:
+                name = character.name
+                spritesheet_path = character.actions[0].spritesheet_path
+                spritesheet = pygame.image.load(spritesheet_path)
+                spritesheet = spritesheet.convert_alpha()
+                frame_durations = load_frame_durations(character.actions[0])
 
-            all_preview_data.append(PreviewData(name, spritesheet,
-                                                frame_durations))
+                all_preview_data.append(PreviewData(name, spritesheet,
+                                                    frame_durations))
 
         return tuple(all_preview_data)
 
@@ -157,14 +159,11 @@ class CharacterSelectState(State):
                                            first_char.name, name_font,
                                            first_char.frame_durations)
 
-    def has_no_characters(self):
-        """Return a Boolean indicating whether no characters could be
-        loaded from file.
+    def num_of_characters(self):
+        """Return an integer for the number of character loaded into
+        the game.
         """
-        if self.all_preview_data is None:
-            return True
-        else:
-            return False
+        return len(self.all_preview_data)
 
     def returned_from_stage_select(self):
         """Return a Boolean indicating whether the players returned to
@@ -202,7 +201,7 @@ class CharacterSelectState(State):
         input_name = self.get_input_name(key_name)
 
         if input_name == 'start':
-            if not self.has_no_characters():
+            if self.num_of_characters() > 0:
                 self.sfx.play_confirm()
                 self.confirm_character()
             else:
@@ -211,7 +210,7 @@ class CharacterSelectState(State):
             self.sfx.play_cancel()
             self.cancel_selection()
         if (input_name in ['back', 'forward', 'up', 'down'] and
-           not self.has_no_characters()):
+           self.num_of_characters() > 0):
             self.sfx.play_scroll()
             current_character = self.roster.get_character_index()
 
@@ -349,7 +348,7 @@ class CharacterSelectState(State):
             self.outro.update(time)
         else:
             self.select_prompt.update()
-            if not self.has_no_characters():
+            if self.num_of_characters() > 0:
                 self.p1_preview.update()
                 self.p2_preview.update()
 
@@ -363,7 +362,7 @@ class CharacterSelectState(State):
                          Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
 
         if self.intro.is_running or self.outro.is_running:
-            if self.has_no_characters():
+            if self.num_of_characters() <= 0:
                 center_text_pos = self.NO_CHARS_POSITION
             else:
                 center_text_pos = self.VS_POSITION
@@ -377,7 +376,7 @@ class CharacterSelectState(State):
             self.roster.draw(self.state_surface)
             self.select_prompt.draw(self.state_surface)
 
-            if self.has_no_characters():
+            if self.num_of_characters() <= 0:
                 self.no_chars_text.draw(self.state_surface)
             else:
                 self.vs_text.draw(self.state_surface)
@@ -463,7 +462,7 @@ class IntroTransition(object):
 
         self.state.bg_lines.move_right_end(-1 * SCREEN_SIZE[0])
         self.state.roster.place_offscreen()
-        if not self.state.has_no_characters():
+        if self.state.num_of_characters() > 0:
             self.state.p1_preview.place_offscreen()
             self.state.p2_preview.place_offscreen()
 
@@ -482,10 +481,10 @@ class IntroTransition(object):
         if not self.state.bg_lines.are_fully_extended():
             self.move_lines_in(time)
 
-        elif (self.state.has_no_characters() and
+        elif (self.state.num_of_characters() <= 0 and
               not self.state.roster.is_onscreen()):
             self.slide_in_roster(time)
-        elif not self.state.has_no_characters() and not (
+        elif self.state.num_of_characters() > 0 and not (
                 self.state.p1_preview.is_onscreen() and
                 self.state.p2_preview.is_onscreen() and
                 self.state.roster.is_onscreen()):
@@ -572,7 +571,7 @@ class IntroTransition(object):
                          Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1]))
         self.state.bg_lines.draw(parent_surf)
         self.state.roster.draw(parent_surf)
-        if not self.state.has_no_characters():
+        if self.state.num_of_characters() > 0:
             self.state.p1_preview.draw(parent_surf)
             self.state.p2_preview.draw(parent_surf)
         self.draw_vs_text(parent_surf)
@@ -587,7 +586,7 @@ class IntroTransition(object):
             parent_surf: The PyGame Surface upon which the VS text will
                 be drawn.
         """
-        if self.state.has_no_characters():
+        if self.state.num_of_characters() <= 0:
             draw_region = Rect(0, 0, self.state.no_chars_text.rect.width,
                 self.state.no_chars_text.rect.height - self.vs_wipe_y)
             self.state.no_chars_text.draw(parent_surf, region=draw_region)
@@ -657,7 +656,7 @@ class OutroTransition(object):
             time: A float for the amount of time elapsed, in seconds,
                 since the last update.
         """
-        if not self.state.has_no_characters():
+        if self.state.num_of_characters() > 0:
             self.state.p1_preview.update()
             self.state.p2_preview.update()
 
@@ -665,10 +664,10 @@ class OutroTransition(object):
         if self.vs_wipe_y > 0:
             self.wipe_out_vs(time)
 
-        elif (self.state.has_no_characters() and
+        elif (self.state.num_of_characters() <= 0 and
               not self.state.roster.is_offscreen()):
             self.slide_out_roster(time)
-        elif (not self.state.has_no_characters() and
+        elif (self.state.num_of_characters() > 0 and
               not (self.state.p1_preview.is_offscreen() and
                    self.state.p2_preview.is_offscreen() and
                    self.state.roster.is_offscreen())):
@@ -735,7 +734,7 @@ class OutroTransition(object):
         """
         self.state.bg_lines.draw(parent_surf)
         self.state.roster.draw(parent_surf)
-        if not self.state.has_no_characters():
+        if self.state.num_of_characters() > 0:
             self.state.p1_preview.draw(parent_surf)
             self.state.p2_preview.draw(parent_surf)
         self.draw_vs_text(parent_surf)
@@ -749,7 +748,7 @@ class OutroTransition(object):
             parent_surf: The Surface ipon which the VS text will be
                 drawn.
         """
-        if self.state.has_no_characters():
+        if self.state.num_of_characters() <= 0:
             draw_region = Rect(0, 0, self.state.no_chars_text.rect.width,
                                self.vs_wipe_y)
             self.state.no_chars_text.draw(parent_surf, region=draw_region)
