@@ -60,7 +60,8 @@ class CharacterSelectState(State):
         no_chars_text: A Graphic containing a message that will be shown
             indicating that no characters could be loaded into the game.
         p1_char_index: An integer for the index of the character
-            selected and confirmed by player 1.
+            selected and confirmed by player 1. A value of None means
+            that player 1 hasn't chosen a character yet.
         p2_char_index: An integer for the index of the character
             selected and confirmed by player 2.
         sfx: SelectStateSFX that will be used to play various sound
@@ -92,11 +93,11 @@ class CharacterSelectState(State):
         vs_font = pygame.font.Font(self.FONT_PATH, self.VS_SIZE)
         self.p1_preview = None
         self.p2_preview = None
-        self.p1_char_index = None
-        self.p2_char_index = None
 
         self.roster = RosterDisplay(all_chars)
         self.all_preview_data = self.load_all_preview_data(all_chars)
+        self.p1_char_index = None
+        self.p2_char_index = self.get_initial_p2_char_index()
         if self.num_of_characters() > 0:
             self.create_previews(general_font)
         self.bg_lines = BackgroundLines()
@@ -143,21 +144,35 @@ class CharacterSelectState(State):
 
         return tuple(all_preview_data)
 
+    def get_initial_p2_char_index(self):
+        """Return an integer for the roster index of Player 2's initial
+        character upon entering this State.
+
+        If at least two characters are loaded into the game, the second
+        character's index is returned.
+        If not, the first character's index is returned.
+        """
+        if len(self.all_preview_data) > 1:
+            return 1
+        else:
+            return 0
+
     def create_previews(self, name_font):
-        """Initialize the CharacterPreviews to display the first
-        character on the roster.
+        """Initialize the CharacterPreviews to display their initial
+        characters.
 
         Args:
             name_font: A PyGame Font used for rendering the characters'
                 name text.
         """
-        first_char = self.all_preview_data[0]
-        self.p1_preview = CharacterPreview(False, first_char.spritesheet,
-                                           first_char.name, name_font,
-                                           first_char.frame_durations)
-        self.p2_preview = CharacterPreview(True, first_char.spritesheet,
-                                           first_char.name, name_font,
-                                           first_char.frame_durations)
+        p1_char = self.all_preview_data[0]   # p1_char_index is initally None.
+        p2_char = self.all_preview_data[self.p2_char_index]
+        self.p1_preview = CharacterPreview(False, p1_char.spritesheet,
+                                           p1_char.name, name_font,
+                                           p1_char.frame_durations)
+        self.p2_preview = CharacterPreview(True, p2_char.spritesheet,
+                                           p2_char.name, name_font,
+                                           p2_char.frame_durations)
 
     def num_of_characters(self):
         """Return an integer for the number of character loaded into
@@ -267,7 +282,7 @@ class CharacterSelectState(State):
             self.clear_selected_characters()
             self.outro.play(StateIDs.TITLE, music_will_fade=True)
         else:
-            self.change_preview(0)
+            self.change_preview(self.p2_char_index)
             p1_last_selection = self.p1_char_index
             self.p1_char_index = None
             self.roster.select_character(p1_last_selection)
@@ -292,7 +307,7 @@ class CharacterSelectState(State):
         if self.get_current_player() == 1:
             self.p1_char_index = self.roster.get_character_index()
             self.state_pass.character_one = self.p1_char_index
-            self.roster.select_first()
+            self.roster.select_character(self.p2_char_index)
             self.toggle_player_display()
         else:
             self.p2_char_index = self.roster.get_character_index()
