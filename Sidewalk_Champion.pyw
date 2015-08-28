@@ -3,7 +3,7 @@
 * Sidewalk Champion - A Customizable Fighting Game
 * Author:           Mark Padilla
 * Created:          3 May 2014
-* Last Updated:     20 August 2014
+* Last Updated:     28 August 2015
 * ************************************************
 """
 import os
@@ -30,19 +30,7 @@ def check_pygame_modules():
 
 # Do some necessary checks and load external data while the game starts up.
 if check_pygame_modules() == True:
-    settings = load_settings()
-
-    display_flags = 0
-    if settings.screen_scale == FULL_SCALE:
-        display_flags = pygame.FULLSCREEN | pygame.HWSURFACE
-    screen = pygame.display.set_mode((SCREEN_SIZE[0] * settings.screen_scale,
-                                      SCREEN_SIZE[1] * settings.screen_scale),
-                                     display_flags)
-    pygame.display.set_caption('Sidewalk Champion')
-    pygame.mouse.set_visible(False)
-    clock = pygame.time.Clock()
-
-    state_manager = GameStateManager(screen, clock, settings)
+    state_manager = GameStateManager()
     state_manager.run_game()
 else:
     pygame.quit()

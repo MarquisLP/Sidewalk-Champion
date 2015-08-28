@@ -2,6 +2,7 @@ import sys
 from threading import Thread
 from pygame.locals import *
 from lib.globals import *
+from lib.custom_data.settings_manager import load_settings
 from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
 from lib.game_states.title_state import TitleState
@@ -51,18 +52,14 @@ class GameStateManager(object):
             screen_scale in state_pass.settings.)
     """
     # Initialization
-    def __init__(self, screen, clock, settings_data):
-        """Initialize instance variables.
+    def __init__(self):
+        """Initialize instance variables."""
+        settings = load_settings()
 
-        Args:
-            screen: The PyGame Surface object that will serve
-                as the game window.
-            settings_data: A SettingsData object for various options
-                that can be set by the players via the Settings screen.
-        """
-        self.clock = clock
-        self.screen = screen
-        self.state_pass = StatePass(settings_data)
+        self.screen = self.create_screen(settings)
+        self.prepare_screen()
+        self.clock = pygame.time.Clock()
+        self.state_pass = StatePass(settings)
         self.active_state_stack = [self.create_state_by_id(StateIDs.TITLE)]
         self.next_state = None
         self.init_state_thread = Thread()
@@ -73,6 +70,30 @@ class GameStateManager(object):
         self.zoom_three_surf = Surface((SCREEN_SIZE[0] * 3,
                                         SCREEN_SIZE[1] * 3)).convert()
         self.scaled_surf = self.zoom_one_surf
+
+    def create_screen(self, settings_data):
+        """Return the Surface that will be used as the game screen.
+
+        Args:
+            settings_data: A SettingsData object for various options
+                that can be set by the players via the Settings screen.
+        """
+        display_flags = 0
+        if settings_data.screen_scale == FULL_SCALE:
+            display_flags = pygame.FULLSCREEN | pygame.HWSURFACE
+
+        screen = pygame.display.set_mode(
+            (SCREEN_SIZE[0] * settings_data.screen_scale,
+            SCREEN_SIZE[1] * settings_data.screen_scale), display_flags)
+
+        return screen
+
+    def prepare_screen(self):
+        """Perform additional operations to initialize the game
+        window display.
+        """
+        pygame.display.set_caption('Sidewalk Champion')
+        pygame.mouse.set_visible(False)
 
     # Support
     def create_state_by_id(self, state_id):
