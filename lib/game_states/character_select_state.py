@@ -1454,6 +1454,9 @@ class CharacterPreview(object):
         OFFSET_FROM_SHADOW: An integer for the distance, in pixels,
             from the bottom edge of the character sprite to the vertical
             center of the shadow.
+        SLIDE_DURATION: A float for the the time taken, in seconds,
+            to move this preview into position during transition
+            animations.
 
     Attributes:
         x: An integer for the x-coordinate of the sprite relative to the
@@ -1474,6 +1477,7 @@ class CharacterPreview(object):
     SHADOW_HEIGHT = 14
     SHADOW_COLOR = (0, 5, 90)
     OFFSET_FROM_SHADOW = 4
+    SLIDE_DURATION = 0.4
 
     def __init__(self, is_facing_left, spritesheet, name, name_font,
                  frame_durations):
@@ -1617,6 +1621,12 @@ class CharacterPreview(object):
         """
         surface_difference = self.animation.get_width() - width
         return self.x + int(surface_difference / 2)
+
+    def slide_speed(self):
+        """Return a float for the speed at which this preview will move
+        during transition animations.
+        """
+        return (float(self.animation.get_width()) / self.SLIDE_DURATION)
 
     def move(self, dx=0, dy=0):
         """Move the animation around the screen space.
