@@ -260,15 +260,35 @@ class GameStateManager(object):
         self.next_state = None
 
     # Game Processing
-    def update_state(self, updated_state, seconds):
-        """Update the specified State.
+    def handle_events(self):
+        """Handle all PyGame events that are currently polled."""
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == KEYDOWN and not self.is_loading_next_state():
+                active_state = self.active_state_stack[-1]
+                if active_state.is_accepting_input:
+                    active_state.get_player_input(event)
+
+    def update_visible_states(self, seconds):
+        """Update all Game States currently visible on-screen.
 
         Args:
-            updated_state: The State that will be updated.
-            seconds: A float for the amount of seconds elapsed since the last
-                update.
+            seconds: A float for the time elapsed, in seconds, since the
+            last update cycle.
         """
-        updated_state.update_state(seconds)
+        for visible_state in self.get_visible_states():
+            visible_state.update_state(seconds)
+
+    def update_game_visuals(self):
+        """Update the entire game display."""
+        self.scale_screen(self.state_pass.settings.screen_scale)
+        self.draw_background()
+        for visible_state in self.get_visible_states():
+            self.draw_state(visible_state)
+        pygame.display.update()
 
     def draw_background(self):
         """Draw a black background underneath all States.
@@ -295,39 +315,35 @@ class GameStateManager(object):
         self.scale_surface(drawn_state.state_surface, scale)
         self.screen.blit(self.scaled_surf, drawn_state.screen_offset())
 
+    def sleep_between_cycles(self, milliseconds):
+        """If there is time remaining between game update cycles,
+        allow the program to sleep during that time.
+
+        This will free up a significant amount of CPU usage whenever
+        possible.
+
+        Args:
+            milliseconds: A float for the time elapsed, in milliseconds,
+                since the last update cycle.
+        """
+        sleep_time = (1000.0 / FRAME_RATE) - milliseconds
+        if sleep_time > 0.0:
+            pygame.time.wait(int(sleep_time))
+        else:
+            pygame.time.wait(1)
+
     def run_game(self):
         """Run the main game loop."""
         while True:
-            if self.next_state is not None:
-                self.run_next_state()
-
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
-
-                if event.type == KEYDOWN and not self.is_loading_next_state():
-                    active_state = self.active_state_stack[-1]
-                    if active_state.is_accepting_input:
-                        active_state.get_player_input(event)
-
             # Update processes after a passage of time equal to the
             # global frame rate.
             milliseconds = self.clock.tick(FRAME_RATE)
             seconds = milliseconds / 1000.0
 
-            visible_states = self.get_visible_states()
-            for game_state in visible_states:
-                self.update_state(game_state, seconds)
+            if self.next_state is not None:
+                self.run_next_state()
+            self.handle_events()
+            self.update_visible_states(seconds)
+            self.update_game_visuals()
+            self.sleep_between_cycles(milliseconds)
 
-            self.scale_screen(self.state_pass.settings.screen_scale)
-            self.draw_background()
-            for game_state in visible_states:
-                self.draw_state(game_state)
-            pygame.display.update()
-
-            sleep_time = (1000.0 / FRAME_RATE) - milliseconds
-            if sleep_time > 0.0:
-                pygame.time.wait(int(sleep_time))
-            else:
-                pygame.time.wait(1)
