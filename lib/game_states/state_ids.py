@@ -1,4 +1,7 @@
-class StateIDs(object):
+from enum import Enum
+
+
+class StateIDs(Enum):
     """An enum containing names for each of the game states, as they
     are listed in order within GameStateManager's state_list.
     """
@@ -8,3 +11,4 @@ class StateIDs(object):
     SELECT_STAGE = 3
     BATTLE = 4
     SHUT_DOWN = 5
+
