@@ -132,9 +132,9 @@ class TitleState(State):
             updated_options = self.option_lists[self.current_options]
 
             updated_options.update(time)
-            if updated_options.next_state > -1:
+            if updated_options.next_state is not None:
                 self.determine_state_change(updated_options.next_state)
-                updated_options.next_state = -1
+                updated_options.next_state = None
             elif updated_options.is_offscreen():
                 self.change_options()
 
@@ -413,7 +413,7 @@ class OptionList(object):
             should be performed and if so, which. Refer to the
             ListAnimation enum for the possible values.
         next_state: The index of the next Game State will be run. Refer
-            to the StateIDs enum for possible choices. A value of -1
+            to the StateIDs enum for possible choices. A value of None
             means that processing should remain in the Title State.
     """
     OPTION_DISTANCE = 8
@@ -446,7 +446,7 @@ class OptionList(object):
         self.option_index = 0
         self.confirm_timer = -1
         self.animation = ListAnimation.NONE
-        self.next_state = -1
+        self.next_state = None
         self.options = []
         self.create_options()
         self.highlight_option(0)
