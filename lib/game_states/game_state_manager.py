@@ -29,17 +29,17 @@ class GameStateManager(object):
         state_list: A List of all the State objects present within the
             game.
         active_state_stack: A List containing all of the currently-active
-            States, in the order they were called. The top-most State will
-            always be called when the game updates, while other States
-            underneath it will only be drawn and updated if they are visible on
-            the screen.
-        next_state: A Game State object that is currently being initialized; it
-            will be added to the top of the State stack and begin running once
-            it is finished initializing.
-            A value of None means that there is no Game State currently being
-            prepared.
-        init_state_thread: A Thread that handles initialization of new Game
-            States concurrently to the main game thread.
+            States, in the order they were called. The top-most State
+            will always be called when the game updates, while other
+            States underneath it will only be drawn and updated if
+            they are visible on the screen.
+        next_state: A Game State object that is currently being
+            initialized; it will be added to the top of the State stack
+            and begin running once it is finished initializing.
+            A value of None means that there is no Game State currently
+            being prepared.
+        init_state_thread: A Thread that handles initialization of new
+            Game States concurrently to the main game thread.
         zoom_one_surf: A Surface with dimensions equivalent to the
             native resolution of the game. (See SCREEN_SIZE in
             globals.py.)
@@ -100,8 +100,9 @@ class GameStateManager(object):
         """Initialize a new Game State and return it.
 
         Args:
-            state_id: An integer for the ID of the next State, according to
-                the StateIDs enum; view the enum itself for possible values.
+            state_id: An integer for the ID of the next State, according
+                to the StateIDs enum.
+                View the state_ids module for possible values.
         """
         if state_id == StateIDs.TITLE:
             return TitleState(self, self.state_pass)
@@ -132,7 +133,7 @@ class GameStateManager(object):
         """Resize the screen whenever the screen scale changes.
 
         Keyword arguments:
-            scale: The magnification rate.
+            scale: An integer for the magnification rate.
         """
         scaled_size = (SCREEN_SIZE[0] * scale,
                     SCREEN_SIZE[1] * scale)
@@ -171,18 +172,19 @@ class GameStateManager(object):
         self.match_surface_alpha(state_surf)
 
     def match_surface_alpha(self, surf):
-        """Match the alpha transparency of the scaled Surface currently in use
-        with that of another Surface.
+        """Match the alpha transparency of the scaled Surface currently
+        in use with that of another Surface.
 
         Args:
-            surf: The Surface whose alpha value will be used as reference.
+            surf: The Surface whose alpha value will be used as
+                reference.
         """
         if self.scaled_surf.get_alpha() != surf.get_alpha():
             self.scaled_surf.set_alpha(surf.get_alpha())
 
     def is_loading_next_state(self):
-        """Return a Boolean indicating whether the next Game State is currently
-        being prepared to run next.
+        """Return a Boolean indicating whether the next Game State is
+        currently being prepared to run next.
         """
         if self.init_state_thread.is_alive():
             return True
@@ -190,12 +192,9 @@ class GameStateManager(object):
             return False
 
     def get_visible_states(self):
-        """Determine which States on the stack are currently visible
-        on-screen.
-
-        Returns:
-            A tuple containing the Game States that are both active and
-            visible, in order from bottom to top of the stack.
+        """Return a tuple containing the Game States that are both
+        active and visible on-screen, in order from bottom to top of the
+        stack.
         """
         visible_states = []
         screen_is_covered = False
@@ -213,20 +212,21 @@ class GameStateManager(object):
 
     # Stack Management
     def pop_top_state(self):
-        """Pop the currently-active State off the top of the stack and switch
-        processing to the State underneath it.
+        """Pop the currently-active State off the top of the stack and
+        switch processing to the State underneath it.
         """
         self.active_state_stack.pop()
 
     def change_state(self, next_state_id):
-        """Pop the currently-active State from the stack and push a new State
-        on top in its place.
+        """Pop the currently-active State from the stack and push a new
+        State on top in its place.
 
         Game processing will immediately switch to this new State.
 
         Args:
-            next_state_id: An integer for the ID of the new State, according to
-                the StateIDs enum; view the enum itself for possible values.
+            next_state_id: An integer for the ID of the new State,
+                according to the StateIDs enum.
+                View the state_ids module for possible values.
         """
         self.pop_top_state()
         self.push_state(next_state_id)
@@ -235,26 +235,30 @@ class GameStateManager(object):
         """Prepare the next active Game State and push it to the top of the
         State stack once it is finished initializing.
 
+
         Args:
-            next_state_id: An integer for the ID of the new State, according to
-                the StateIDs enum; view the enum itself for possible values.
+            next_state_id: An integer for the ID of the new State,
+                according to the StateIDs enum.
+                View the state_ids module for possible values.
         """
         self.init_state_thread = Thread(target=self.prepare_next_state,
                                         args=(next_state_id,))
         self.init_state_thread.start()
 
     def prepare_next_state(self, next_state_id):
-        """Create a new Game State and store it as the next State to be run.
+        """Create a new Game State and store it as the next State to be
+        run.
 
         Args:
-            next_state_id: An integer for the ID of the new State, according to
-                the StateIDs enum; view the enum itself for possible values.
+            next_state_id: An integer for the ID of the new State,
+                according to the StateIDs enum.
+                View the state_ids module for possible values.
         """
         self.next_state = self.create_state_by_id(next_state_id)
 
     def run_next_state(self):
-        """Add the newly-prepared Game State to the top of the State stack and
-        switch game processing to that State.
+        """Add the newly-prepared Game State to the top of the State
+        stack and switch game processing to that State.
         """
         self.active_state_stack.append(self.next_state)
         self.next_state = None
