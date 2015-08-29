@@ -145,13 +145,13 @@ class GameStateManager(object):
             else:
                 self.screen = pygame.display.set_mode(scaled_size, 0)
 
-    def scale_surface(self, surf, scale):
-        """Magnify the specified Surface according to the specified
-       magnification rate and draw it onto the appropriately-scaled
-       Surface.
+    def scale_state_surface(self, state_surf, scale):
+        """Magnify Surface of a Game State according to the specified
+       magnification rate and draw it onto the scaled game Surface
+       currently in use.
 
         Args:
-            surf: The Surface to resize.
+            state_surf: The State Surface to resize.
             scale: An integer for the magnification rate.
         """
         new_size = (SCREEN_SIZE[0] * scale,
@@ -163,12 +163,12 @@ class GameStateManager(object):
             self.scaled_surf = self.zoom_two_surf
         else:
             self.scaled_surf = self.zoom_three_surf
-        pygame.transform.scale(surf, new_size, self.scaled_surf)
+        pygame.transform.scale(state_surf, new_size, self.scaled_surf)
 
         # Scaling causes the alpha value of the Surface to be lost,
         # so scaled_surf's alpha value will have to be explicitly set
         # to match the original transparency of the surf.
-        self.match_surface_alpha(surf)
+        self.match_surface_alpha(state_surf)
 
     def match_surface_alpha(self, surf):
         """Match the alpha transparency of the scaled Surface currently in use
@@ -312,7 +312,7 @@ class GameStateManager(object):
         """
         scale = self.state_pass.settings.screen_scale
 
-        self.scale_surface(drawn_state.state_surface, scale)
+        self.scale_state_surface(drawn_state.state_surface, scale)
         self.screen.blit(self.scaled_surf, drawn_state.screen_offset())
 
     def sleep_between_cycles(self, milliseconds):
