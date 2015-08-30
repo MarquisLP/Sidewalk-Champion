@@ -1,5 +1,6 @@
 import sys
 from __builtin__ import range
+from enum import IntEnum
 import pygame
 from pygame.locals import *
 from pygame.mixer import Sound
@@ -1182,7 +1183,7 @@ class BattleSetting(Option):
 
 
 # Enumerations
-class TitleOptionList(object):
+class TitleOptionList(IntEnum):
     """An enum containing the indices of all of the OptionLists within
     TitleState.
 
@@ -1199,7 +1200,7 @@ class TitleOptionList(object):
     BATTLE_SETUP = 2
 
 
-class ListAnimation(object):
+class ListAnimation(IntEnum):
     """An enumeration for the different animations that an OptionList
     can perform.
 
@@ -1216,7 +1217,7 @@ class ListAnimation(object):
     HIDE = 2
 
 
-class MainOptionIndex(object):
+class MainOptionIndex(IntEnum):
     """An enumeration for the index of each Option within the list of
     the Main Title Screen Options.
 
@@ -1236,7 +1237,7 @@ class MainOptionIndex(object):
     EXIT = 3
 
 
-class BattleSetupIndex(object):
+class BattleSetupIndex(IntEnum):
     """An enumeration for the index of each Option within the
     BattleSetupList.
 
