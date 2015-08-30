@@ -237,15 +237,16 @@ class Graphic(object):
         else:
             surf.blit(self.image, (x, y), region)
 
-    def move(self, dx, dy):
+    def move(self, dx=0, dy=0):
         """Move the Graphic some distance across the screen.
 
         Keyword arguments:
-            dx      The horizontal distance. Positive values will move
-                    it to the right, and negative values will move it
-                    to the left.
-            dy      The vertical distance. Positive values will move it
-                    down, and negative values will move it up.
+            dx      Optional. The horizontal distance. Positive values
+                    will move it to the right, and negative values will
+                    move it to the left.
+            dy      Optional. The vertical distance. Positive values
+                    will move it down, and negative values will move it
+                    up.
         """
         self.exact_pos = (self.exact_pos[0] + dx, self.exact_pos[1] + dy)
         self.rect = Rect(int(self.exact_pos[0]), int(self.exact_pos[1]),
