@@ -34,8 +34,9 @@ def load_tuple_of_images(filepaths):
 
 
 def render_outlined_text(font, text, text_color, outline_color,
-                         position):
-        """Render a text Graphic with an outline 1-pixel thick.
+                         position=None):
+        """Render a text Surface or Graphic with an outline 1-pixel
+        thick.
 
         Args:
             font: A PyGame Font object used for rendering the text.
@@ -44,27 +45,34 @@ def render_outlined_text(font, text, text_color, outline_color,
                 of the text.
             outline_color: A tuple of integers which specify the RGB
                 color  of the outline.
-            position: A tuple containing integer coordinates for the
-                text's position relative to its parent Surface.
+            position: Optional. A tuple containing integer coordinates
+                for the text's position relative to its parent Surface.
+                The default value of None will cause this function to
+                return a Surface, while passing a proper position tuple
+                will cause it to return a Graphic.
 
         Returns:
-            A Graphic with the desired text outlined.
+            A Surface with the desired text outlined. Passing a position
+            returns a Graphic instead.
         """
         text_surf = font.render(text, True, text_color)
         outline = font.render(text, True, outline_color)
 
-        outlined_text = Surface((text_surf.get_width() + 2,
-                                 text_surf.get_height() + 2),
+        outlined_text_surf = Surface((text_surf.get_width() + 2,
+                                text_surf.get_height() + 2),
                                 SRCALPHA)
 
-        outlined_text.blit(outline, (0, 0))
-        outlined_text.blit(outline, (0, 2))
-        outlined_text.blit(outline, (2, 0))
-        outlined_text.blit(outline, (2, 2))
-        outlined_text.blit(text_surf, (1, 1))
+        outlined_text_surf.blit(outline, (0, 0))
+        outlined_text_surf.blit(outline, (0, 2))
+        outlined_text_surf.blit(outline, (2, 0))
+        outlined_text_surf.blit(outline, (2, 2))
+        outlined_text_surf.blit(text_surf, (1, 1))
 
-        text_graphic = Graphic(outlined_text, position)
-        return text_graphic
+        if position is None:
+            return outlined_text_surf
+        else:
+            text_graphic = Graphic(outlined_text_surf, position)
+            return text_graphic
 
 
 def convert_to_colorkey_alpha(surf, colorkey=color.Color('magenta')):
