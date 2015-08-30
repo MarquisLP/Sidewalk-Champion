@@ -7,8 +7,7 @@ from pygame.font import Font
 from pygame.color import Color
 from lib.globals import SCREEN_SIZE
 from lib.globals import FRAME_RATE
-from lib.graphics import Graphic
-from lib.graphics import Animation
+from lib.graphics import Graphic, Animation, render_text
 from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
 from lib.game_states.state_fader import StateFader
@@ -494,12 +493,16 @@ class OptionList(object):
     def draw(self, parent_surf):
         """Draw all of the Options in this list onto a Surface.
 
+        An Option will only be displayed if its is_visible attribute is
+        set to True.
+
         Args:
             parent_surf: The Surface upon which the Option will be drawn
                 to.
         """
         for option in self.options:
-            option.draw(parent_surf)
+            if option.is_visible:
+                option.draw(parent_surf)
 
     def reset(self):
         """Prepare this OptionList to be shown again."""
@@ -516,15 +519,16 @@ class OptionList(object):
 
         biggest_width = 0
         for i in xrange(0, len(self.options), 2):
-            if self.options[i].get_width > biggest_width:
-                biggest_width = self.options[i].get_width()
+            if self.options[i].rect.width > biggest_width:
+                biggest_width = self.options[i].rect.width
 
         for i in xrange(0, len(self.options), 2):
-            self.options[i].x = 0 - (offset_from_center * 2) - biggest_width
+            self.options[i].reposition(
+                x=(0 - (offset_from_center * 2) - biggest_width))
 
         if len(self.options) > 1:
             for i in xrange(1, len(self.options), 2):
-                self.options[i].x = SCREEN_SIZE[0] + biggest_width
+                self.options[i].reposition(x=(SCREEN_SIZE[0] + biggest_width))
 
     def show_all(self, time):
         """Animate the OptionList revealing itself on-screen.
@@ -538,23 +542,23 @@ class OptionList(object):
             time: A float for the time elapsed, in seconds, since the
                 last update cycle.
         """
-        if self.options[0].x == self.x:
+        if self.options[0].rect.x == self.x:
             self.prepare_to_show_all()
         else:
             distance = int(self.TEXT_SLIDE_SPEED * time)
 
             for i in xrange(0, len(self.options), 2):
-                self.options[i].x += distance
+                self.options[i].move(distance)
                 # Prevent the Option from sliding past its final position.
-                if self.options[i].x > self.x:
-                    self.options[i].x = self.x
+                if self.options[i].rect.x > self.x:
+                    self.options[i].reposition(x=self.x)
             if len(self.options) > 1:
                 for i in xrange(1, len(self.options), 2):
-                    self.options[i].x -= distance
-                    if self.options[i].x < self.x:
-                        self.options[i].x = self.x
+                    self.options[i].move(distance * -1)
+                    if self.options[i].rect.x < self.x:
+                        self.options[i].reposition(x=self.x)
 
-            if self.options[0].x >= self.x:
+            if self.options[0].rect.x >= self.x:
                 self.animation = ListAnimation.NONE
 
     def hide_all(self, time):
@@ -570,16 +574,16 @@ class OptionList(object):
             time: A float for the time elapsed, in seconds, since the
                 last update cycle.
         """
-        if self.options[0].x == self.x:
+        if self.options[0].rect.x == self.x:
             self.sound_channel.play(self.sfx_slide)
 
         distance = self.TEXT_SLIDE_SPEED * time
 
         for i in xrange(0, len(self.options), 2):
-            self.options[i].x -= distance
+            self.options[i].move(distance * -1)
         if len(self.options) > 1:
             for i in xrange(1, len(self.options), 2):
-                self.options[i].x += distance
+                self.options[i].move(distance)
 
     def is_animating(self):
         """Determine whether this OptionList is currently performing an
@@ -601,12 +605,11 @@ class OptionList(object):
         """
         if self.animation == ListAnimation.HIDE:
             for i in range(0, len(self.options), 2):
-                right_edge = self.options[i].x + self.options[i].get_width()
-                if right_edge > 0:
+                if self.options[i].get_right_edge() > 0:
                     return False
 
             for i in range(1, len(self.options), 2):
-                if self.options[i].x < SCREEN_SIZE[0]:
+                if self.options[i].rect.x < SCREEN_SIZE[0]:
                     return False
 
             return True
@@ -803,7 +806,7 @@ class MainOptionList(OptionList):
 
         for i in xrange(0, len(names)):
             self.options.append(Option(names[i], self.x, y))
-            y += self.options[i].get_height() + self.OPTION_DISTANCE
+            y += self.options[i].rect.height + self.OPTION_DISTANCE
 
     def handle_input(self, input_name):
         """Respond to input from the players.
@@ -909,10 +912,10 @@ class BattleSetupList(OptionList):
         y = self.y
         rounds = BattleSetting('Rounds', self.x, y, 1, 3, 5)
 
-        y += rounds.get_height() + self.OPTION_DISTANCE
+        y += rounds.rect.height + self.OPTION_DISTANCE
         time_limit = BattleSetting('Time Limit', self.x, y, 30, 60, 99)
 
-        y += time_limit.get_height() + self.OPTION_DISTANCE
+        y += time_limit.rect.height + self.OPTION_DISTANCE
         begin = Option('Begin', self.x, y)
 
         self.options.extend([rounds, time_limit, begin])
@@ -984,37 +987,31 @@ class BattleSetupList(OptionList):
 
 
 # Option Classes
-class Option(object):
+class Option(Graphic):
     """An option that the players can select within the Title State.
 
     It is represented by a text name on the screen, which can be
     recolored or hidden to indicate player selection or confirmation.
 
     Class Constants:
-        NORMAL_COLOR: A String name for the regular color of an Option.
-        HIGHLIGHT_COLOR: A String name for the color of an Option when
-            it is selected by the users.
+        NORMAL_COLOR: A tuple of ints for the RGB values for the regular
+            color of an Option.
+        HIGHLIGHT_COLOR: A tuple of ints for the RGB values of an
+            Option's color when it is selected by the users.
         FONT_PATH: A String for the file path to the font file that
             will be used in rendering graphical text for Options.
         FONT_SIZE: An integer size of the font used in rendering Option
             text.
 
     Attributes:
+        font: The PyGame Font used for rendering the Option text.
         text: The text String that describes this Option. It will be
             written on the screen.
-        x: An integer value for the Option text's x-coordinate relative
-            to the screen.
-        y: An integer value for the Option text's y-coordinate relative
-            to the screen.
         is_visible: A Boolean indicating whether the text will be
             drawn onto its parent Surface.
-        font: The PyGame Font object that stores the font used in
-            rendering text.
-        surf: The text graphic will be rendered onto this PyGame
-            Surface.
     """
-    NORMAL_COLOR = 'dark gray'
-    HIGHLIGHT_COLOR = 'white'
+    NORMAL_COLOR = (169, 169, 169)
+    HIGHLIGHT_COLOR = (255, 255, 255)
     FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
     FONT_SIZE = 18
 
@@ -1028,55 +1025,19 @@ class Option(object):
             y: An integer value for the Option text's y-coordinate
                 relative to the screen.
         """
-        self.text = text
-        self.x = x
-        self.y = y
-        self.is_visible = True
         self.font = Font(self.FONT_PATH, self.FONT_SIZE)
-        self.surf = self.render_text(text, self.NORMAL_COLOR)
-
-    def render_text(self, text, color_name):
-        """Create a new Surface with the specified text, using the
-        font specifications defined by this class.
-
-        Args:
-            text: The String of text that will be drawn.
-            color_name: A String containing the name or hex code of the
-                color of the text.
-
-        Returns:
-            A Surface with the text drawn onto it.
-        """
-        text_color = Color(color_name)
-        return self.font.render(text, True, text_color)
+        image = render_text(self.font, text, self.NORMAL_COLOR)
+        super(Option, self).__init__(image, (x, y))
+        self.text = text
+        self.is_visible = True
 
     def highlight(self):
         """Redraw the text with an alternate color."""
-        self.surf = self.render_text(self.text, self.HIGHLIGHT_COLOR)
+        self.image = render_text(self.font, self.text, self.HIGHLIGHT_COLOR)
 
     def unhighlight(self):
         """Redraw the text with normal coloration."""
-        self.surf = self.render_text(self.text, self.NORMAL_COLOR)
-
-    def get_width(self):
-        """Return the integer width of the text graphic."""
-        return self.surf.get_width()
-
-    def get_height(self):
-        """Return the integer height of the text graphic."""
-        return self.surf.get_height()
-
-    def draw(self, parent_surf):
-        """Draw the text onto a Surface.
-
-        The text will only be shown if the is_visible attribute is set
-        to True.
-
-        Args:
-            parent_surf: The Surface upon which the text will be drawn.
-        """
-        if self.is_visible:
-            parent_surf.blit(self.surf, (self.x, self.y))
+        self.image = render_text(self.font, self.text, self.NORMAL_COLOR)
 
 
 class BattleSetting(Option):
@@ -1128,15 +1089,16 @@ class BattleSetting(Option):
         super(BattleSetting, self).__init__(text, x, y)
         self.values = values
         self.value_index = 0
-        self.value_surf = self.render_text(str(self.values[0]),
-                                           self.NORMAL_COLOR)
-        value_x = self.x + self.VALUE_DISTANCE
+        self.value_surf = render_text(self.font, str(self.values[0]),
+                                      self.NORMAL_COLOR)
+        value_x = self.rect.x + self.VALUE_DISTANCE
         self.scroll_left_arrow = Graphic.from_file(self.LEFT_ARROW_PATH,
-            (value_x - self.ARROW_DISTANCE, self.y + self.ARROW_Y_OFFSET))
-        self.scroll_left_arrow.move(-1 * self.scroll_left_arrow.rect[2], 0)
+            (value_x - self.ARROW_DISTANCE,
+             self.rect.y + self.ARROW_Y_OFFSET))
+        self.scroll_left_arrow.move(-1 * self.scroll_left_arrow.rect.width, 0)
         self.scroll_right_arrow = Graphic.from_file(self.LEFT_ARROW_PATH,
             (value_x + self.value_surf.get_width() + self.ARROW_DISTANCE,
-            self.y + self.ARROW_Y_OFFSET))
+            self.rect.y + self.ARROW_Y_OFFSET))
         self.scroll_right_arrow.flip(is_horizontal=True)
 
     def scroll_values_left(self, sound_channel, scroll_sound):
@@ -1149,7 +1111,7 @@ class BattleSetting(Option):
         """
         if self.value_index > 0:
             self.value_index -= 1
-            self.value_surf = self.render_text(
+            self.value_surf = render_text(self.font,
                 str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
             sound_channel.play(scroll_sound)
 
@@ -1163,20 +1125,20 @@ class BattleSetting(Option):
         """
         if self.value_index < len(self.values) - 1:
             self.value_index += 1
-            self.value_surf = self.render_text(
+            self.value_surf = render_text(self.font,
                 str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
             sound_channel.play(scroll_sound)
 
     def highlight(self):
         """Redraw the text with an alternate color."""
         super(BattleSetting, self).highlight()
-        self.value_surf = self.render_text(
+        self.value_surf = render_text(self.font,
             str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
 
     def unhighlight(self):
         """Redraw the text with normal coloration."""
         super(BattleSetting, self).unhighlight()
-        self.value_surf = self.render_text(
+        self.value_surf = render_text(self.font,
             str(self.values[self.value_index]), self.NORMAL_COLOR)
 
     def get_value(self):
@@ -1191,8 +1153,8 @@ class BattleSetting(Option):
                 will be drawn.
         """
         super(BattleSetting, self).draw(parent_surf)
-        parent_surf.blit(self.value_surf, (self.x + self.VALUE_DISTANCE,
-                                           self.y))
+        parent_surf.blit(self.value_surf, (self.rect.x + self.VALUE_DISTANCE,
+                                           self.rect.y))
         self.draw_scroll_arrows(parent_surf)
 
     def draw_scroll_arrows(self, parent_surf):
@@ -1206,12 +1168,12 @@ class BattleSetting(Option):
             parent_surf: The Surface upon which the arrows will be
                 drawn.
         """
-        value_x = self.x + self.VALUE_DISTANCE
+        value_x = self.rect.x + self.VALUE_DISTANCE
         left_arrow_x = (value_x - self.scroll_left_arrow.rect[2]
                         - self.ARROW_DISTANCE)
         right_arrow_x = (value_x + self.value_surf.get_width()
                          + self.ARROW_DISTANCE)
-        y = self.y + self.ARROW_Y_OFFSET
+        y = self.rect.y + self.ARROW_Y_OFFSET
 
         if self.value_index > 0:
             self.scroll_left_arrow.draw(parent_surf, left_arrow_x, y)
