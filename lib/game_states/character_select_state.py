@@ -7,7 +7,7 @@ from pygame import image
 from pygame.surface import Surface
 from pygame.rect import Rect
 from lib.graphics import load_tuple_of_images
-from lib.graphics import render_outlined_text
+from lib.graphics import render_text
 from lib.graphics import convert_to_colorkey_alpha
 from lib.graphics import Graphic, Animation, CharacterAnimation
 from lib.globals import SCREEN_SIZE
@@ -102,10 +102,10 @@ class CharacterSelectState(State):
             self.create_previews(general_font)
         self.bg_lines = BackgroundLines()
         self.select_prompt = PlayerSelectPrompt(general_font)
-        self.vs_text = render_outlined_text(vs_font, 'VS', self.VS_COLOR,
+        self.vs_text = render_text(vs_font, 'VS', self.VS_COLOR,
                                             self.VS_OUTLINE_COLOR,
                                             self.VS_POSITION)
-        self.no_chars_text = render_outlined_text(vs_font,
+        self.no_chars_text = render_text(vs_font,
                                                   'No Characters Loaded',
                                                   self.NO_CHARS_COLOR,
                                                   self.VS_OUTLINE_COLOR,
@@ -1599,7 +1599,7 @@ class CharacterPreview(object):
                 character's name.
             name: A String containing the character's name.
         """
-        name_graphic = render_outlined_text(name_font, name, self.NAME_COLOR,
+        name_graphic = render_text(name_font, name, self.NAME_COLOR,
                                             self.NAME_OUTLINE_COLOR, (0, 0))
 
         if name_graphic.rect.width < self.animation.get_width():

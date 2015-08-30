@@ -58,7 +58,7 @@ from collections import namedtuple
 from enum import IntEnum
 from math import ceil
 from random import randint
-from lib.graphics import (Graphic, Animation, render_outlined_text,
+from lib.graphics import (Graphic, Animation, render_text,
                           get_line_center, calculate_center_position)
 from lib.globals import SCREEN_SIZE
 from lib.custom_data.stage_loader import load_all_stages
@@ -162,16 +162,16 @@ class StageSelectState(State):
 
         self.metadata = self.load_all_stage_metadata()
         if self.num_of_stages() <= 0:
-            self.no_stages_text = render_outlined_text(self.name_font,
+            self.no_stages_text = render_text(self.name_font,
                 'No Stages Loaded', (255, 255, 255), (0, 0, 0), (0, 0))
             # The StagePreview will display solid black.
             preview_image = Surface((PREVIEW_WIDTH, PREVIEW_HEIGHT))
             pygame.draw.rect(preview_image, (0, 0, 0),
                              (0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT))
         else:
-            self.stage_name = render_outlined_text(self.name_font,
+            self.stage_name = render_text(self.name_font,
                 self.metadata[0].name, (255, 255, 255), (0, 0, 0), (0, 0))
-            self.stage_subtitle = render_outlined_text(self.subtitle_font,
+            self.stage_subtitle = render_text(self.subtitle_font,
                 self.metadata[0].subtitle, (255, 255, 255), (0, 0, 0), (0, 0))
             preview_image = self.metadata[0].preview
 
@@ -501,9 +501,9 @@ class StageSelectState(State):
                 namedtiple containing information for the Stage
                 currently being selected.
         """
-        self.stage_name = render_outlined_text(self.name_font,
+        self.stage_name = render_text(self.name_font,
             metadata.name, (255, 255, 255), (0, 0, 0), (0, 0))
-        self.stage_subtitle = render_outlined_text(self.subtitle_font,
+        self.stage_subtitle = render_text(self.subtitle_font,
             metadata.subtitle, (255, 255, 255), (0, 0, 0), (0, 0))
         self.align_text()
 
