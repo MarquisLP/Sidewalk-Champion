@@ -1,6 +1,6 @@
 import sys
 from __builtin__ import range
-from enum import IntEnum
+from enum import Enum, IntEnum
 import pygame
 from pygame.locals import *
 from pygame.mixer import Sound
@@ -802,7 +802,7 @@ class MainOptionList(OptionList):
 
     def create_options(self):
         """Create all of the Main Options and add them to the list."""
-        names = ['Battle', 'Training', 'Settings', 'Exit']
+        names = MainListOption.get_all_option_names()
         y = self.y
 
         for i in xrange(0, len(names)):
@@ -831,13 +831,13 @@ class MainOptionList(OptionList):
         """Perform the appropriate operation based on whichever Option
         was just confirmed.
         """
-        if self.option_index == MainOptionIndex.BATTLE:
+        if self.option_index == MainListOption.BATTLE.index:
             self.go_to_battle()
-        elif self.option_index == MainOptionIndex.TRAINING:
+        elif self.option_index == MainListOption.TRAINING.index:
             self.go_to_training()
-        elif self.option_index == MainOptionIndex.SETTINGS:
+        elif self.option_index == MainListOption.SETTINGS.index:
             self.go_to_settings()
-        elif self.option_index == MainOptionIndex.EXIT:
+        elif self.option_index == MainListOption.EXIT.index:
             self.exit_game()
 
     def go_to_battle(self):
@@ -911,15 +911,19 @@ class BattleSetupList(OptionList):
         Option, and add them to the list.
         """
         y = self.y
-        rounds = BattleSetting('Rounds', self.x, y, 1, 3, 5)
+        battle_settings = []
 
-        y += rounds.rect.height + self.OPTION_DISTANCE
-        time_limit = BattleSetting('Time Limit', self.x, y, 30, 60, 99)
+        for setting in BattleSetupOption.get_all_option_data()[:-1]:
+            new_setting = BattleSetting(setting.name, self.x, y,
+                                        *setting.possible_values)
+            y += new_setting.rect.height + self.OPTION_DISTANCE
+            battle_settings.append(new_setting)
 
-        y += time_limit.rect.height + self.OPTION_DISTANCE
-        begin = Option('Begin', self.x, y)
+        confirm_name = BattleSetupOption.get_all_option_data()[-1].name
+        confirm_option = Option(confirm_name, self.x, y)
+        battle_settings.append(confirm_option)
 
-        self.options.extend([rounds, time_limit, begin])
+        self.options.extend(battle_settings)
 
     def handle_input(self, input_name):
         """Respond to input from the players.
@@ -936,7 +940,7 @@ class BattleSetupList(OptionList):
         elif input_name == 'forward':
             self.scroll_setting_values_right()
         elif (input_name == 'start' and
-              self.option_index == BattleSetupIndex.BEGIN):
+              self.option_index == BattleSetupOption.BEGIN.index):
             self.confirm_option()
         elif input_name == 'cancel':
             self.cancel_setup()
@@ -948,11 +952,11 @@ class BattleSetupList(OptionList):
 
     def get_rounds(self):
         """Return the number of rounds in the upcoming battle."""
-        return self.options[BattleSetupIndex.ROUNDS].get_value()
+        return self.options[BattleSetupOption.ROUNDS.index].get_value()
 
     def get_time_limit(self):
         """Return the time limit per round in the upcoming battle."""
-        return self.options[BattleSetupIndex.TIME_LIMIT].get_value()
+        return self.options[BattleSetupOption.TIME_LIMIT.index].get_value()
 
     def scroll_setting_values_left(self):
         """Select the previous value in the currently-selected
@@ -1217,40 +1221,92 @@ class ListAnimation(IntEnum):
     HIDE = 2
 
 
-class MainOptionIndex(IntEnum):
-    """An enumeration for the index of each Option within the list of
-    the Main Title Screen Options.
+class OptionEnum(Enum):
+    """An abstract class defining shared behaviour between the Option
+    Enums.
+
+    Child classes must have tuples as attributes, each with at least two
+    items that represent, in this order:
+        1. The integer index of the Option within its respective list.
+        2. The String name of the Option as it will appear on-screen.
+    An example of a valid attribute would be:
+        battle = (0, 'battle')
+    """
+    @property
+    def index(self):
+        """Return the integer index of this Option within its respective
+        Option List.
+        """
+        return self.value[0]
+
+    @property
+    def name(self):
+        """Return the String name of this Option as it appears on-screen.
+        """
+        return self.value[1]
+
+    @classmethod
+    def get_all_option_names(cls):
+        """Return a tuple containing the names of all Options in this
+        Option List."""
+        names = [option_data.name for option_data in cls.__members__.values()]
+        return tuple(names)
+
+    @classmethod
+    def get_all_option_data(cls):
+        """Return a tuple containing tuples of data for all Options in
+        this Option list.
+        """
+        return tuple(cls.__members__.values())
+
+
+class MainListOption(OptionEnum):
+    """An enumeration for the index and name of each Option within the
+    list of the Main Title Screen Options.
 
     Attributes:
-        BATTLE: An integer for the index of the Option for setting up a
-            new battle.
-        TRAINING: An integer for the index of Option for launching
-            Training Mode.
-        SETTINGS: An integer for the index of Option that will call the
-            Settings Screen.
-        EXIT: An integer for the index of the Option that will close
-            the game.
+        BATTLE: A tuple containing the index and name of the Option for
+            setting up a new battle.
+        TRAINING: A tuple containing the index and name of the Option
+            for launching Training Mode.
+        SETTINGS: A tuple containing the index and name of the Option
+            that will call the Settings Screen.
+        EXIT: A tuple containing the index and name of the Option that
+            will close the game.
     """
-    BATTLE = 0
-    TRAINING = 1
-    SETTINGS = 2
-    EXIT = 3
+    BATTLE = (0, 'Battle')
+    TRAINING = (1, 'Training')
+    SETTINGS = (2, 'Settings')
+    EXIT = (3, 'Exit')
 
 
-class BattleSetupIndex(IntEnum):
-    """An enumeration for the index of each Option within the
-    BattleSetupList.
+class BattleSetupOption(OptionEnum):
+    """An enumeration for the index, name, and possible values of each
+    BattleSetting within the BattleSetupList.
+
+    In each of the tuples that make up an attribute, all items that
+    succeed the BattleSetting's name will be treated as its values.
+    The only exception is the very last attribute, which will always
+    be treated as the 'Confirm Battle' option.
 
     Attributes:
-        ROUNDS: An integer for the index of the BattleSetting that sets
-            the number of rounds for the upcoming battle.
-        TIME_LIMIT: An integer for the index of the BattleSetting that
-            sets the number time limit per round for the upcoming
-            battle.
-        BEGIN: An integer for the index of the Option that will allow
-            the players to confirm battle settings and proceed to the
-            Character Select Screen.
+        ROUNDS: A tuple containing the index, name, and possible values
+            of the BattleSetting that sets the number of rounds for the
+            upcoming battle.
+        TIME_LIMIT: A tuple containing the index, name, and possible
+            values of the BattleSetting that sets the number time limit
+            per round for the upcoming battle.
+        BEGIN: A tuple containing the index, name, and possible values
+            of the Option that will allow the players to confirm battle
+            settings and proceed to the Character Select Screen.
     """
-    ROUNDS = 0
-    TIME_LIMIT = 1
-    BEGIN = 2
+    ROUNDS = (0, 'Rounds', 1, 3, 5)
+    TIME_LIMIT = (1, 'Time Limit', 30, 60, 99)
+    BEGIN = (2, 'Begin')
+
+    @property
+    def possible_values(self):
+        """Return a tuple for the possible values of this
+        BattleSetting."""
+        return self.value[2:]
+
