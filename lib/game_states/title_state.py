@@ -699,6 +699,7 @@ class PressStartPrompt(OptionList):
     """
     X = 135
     Y = 150
+    PROMPT_TEXT = 'Press Start'
     WAIT_FLASH_SPEED = 45
 
     def __init__(self, channel, sfx_confirm, sfx_cancel, sfx_scroll,
@@ -717,7 +718,7 @@ class PressStartPrompt(OptionList):
 
     def create_options(self):
         """Create the prompt."""
-        self.options.append(Option("Press Start", self.x, self.y))
+        self.options.append(Option(self.PROMPT_TEXT, self.x, self.y))
 
     def update(self, time):
         """Update the processes within this prompt.
