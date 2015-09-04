@@ -7,8 +7,7 @@ from pygame.mixer import Sound
 from lib.globals import SCREEN_SIZE
 from lib.globals import INPUT_NAMES
 from lib.globals import FRAME_RATE
-from lib.graphics import Graphic
-from lib.graphics import Animation
+from lib.graphics import Graphic, Animation, render_text
 from lib.game_states.state import State
 from lib.game_states.state import StatePass
 from lib.custom_data.settings_manager import save_settings
@@ -588,7 +587,7 @@ class Setting(object):
 
             # The next option will be drawn OPTION_DISTANCE pixels away
             # from where the last option's Surface ends.
-            new_x += option_list[i].get_width() + self.OPTION_DISTANCE
+            new_x += option_list[i].rect.width + self.OPTION_DISTANCE
         return option_list
 
     def set_selected_option(self, option_num):
@@ -643,7 +642,7 @@ class Setting(object):
         """Return the height of the Setting name text graphic in
         pixels.
         """
-        return self.text.get_height()
+        return self.text.rect.height
 
     def draw(self, parent_surf):
         """Draw the Setting text and all of its options onto the
@@ -1146,12 +1145,12 @@ class KeyBinding(object):
                 Binding relative to the game screen.
         """
         self.y = new_y
-        self.input_text.y = new_y
-        self.key_text.y = new_y
+        self.input_text.reposition(y=new_y)
+        self.key_text.reposition(y=new_y)
 
     def get_height(self):
         """Return the height of the input text graphic, in pixels."""
-        return self.key_text.get_height()
+        return self.key_text.rect.height
 
     def draw(self, parent_surf):
         """Draws the text graphics for this key binding onto the
@@ -1165,18 +1164,18 @@ class KeyBinding(object):
         self.key_text.draw(parent_surf)
 
 
-class UnderlineText(object):
-    """Represents a text graphic that can be underlined.
+class UnderlineText(Graphic):
+    """Represents a text Graphic that can be underlined.
 
     Class Constants:
         FONT_PATH           The filepath to the font used for rendering
                             text.
-        FONT_COLOUR         The hexadecimal value for the colour used
-                            in rendering the text.
+        FONT_COLOUR         A tuple containing the RGB values for the
+                            text color.
         FONT_SIZE           The size of the font used for rendering the
                             text.
-        UNDERLINE_COLOUR    The hexadecimal value for the colour used
-                            in rendering the underline.
+        UNDERLINE_COLOUR    A tuple containing the RGB values for the
+                            underline color.
         UNDERLINE_SIZE      The height of the underline, in pixels.
         COLORKEY            The name of the color used in colorkeying
                             the Surface to create a transparent
@@ -1193,12 +1192,10 @@ class UnderlineText(object):
         surf    The Surface onto which the text will be rendered.
     """
     FONT_PATH = "fonts/corbel.ttf"
-    FONT_COLOUR = "0xFFFFFF"
+    FONT_COLOUR = (255, 255, 255)
     FONT_SIZE = 16
-    #UNDERLINE_COLOUR = "0x1E1E1E"
-    UNDERLINE_COLOUR = "0x888888"
+    UNDERLINE_COLOUR = (136, 136, 136)
     UNDERLINE_SIZE = 4
-    COLORKEY = "grey20"
 
     def __init__(self, x, y, text):
         """Define and initialize instance variables.
@@ -1211,31 +1208,10 @@ class UnderlineText(object):
             text    The text that will be rendered onto this object's
                     Surface.
         """
-        self.x = x
-        self.y = y
         self.text = text
         self.font = Font(self.FONT_PATH, self.FONT_SIZE)
-        self.surf = self.render_text(text)
-
-    def render_text(self, text):
-        """Render the specified text onto a new Suface and return
-        it.
-
-        Args:
-            text        The string of text that will be drawn.
-        """
-        text_render = self.font.render(text, True, Color(self.FONT_COLOUR))
-        text_width = text_render.get_width()
-        text_height = text_render.get_height()
-
-        # In order to enable proper antialiasing on the text, it will need to
-        # be drawn on top of a colorkeyed Surface.
-        new_surf = Surface((text_width, text_height))
-        new_surf.fill(Color(self.COLORKEY))
-        new_surf.set_colorkey(Color(self.COLORKEY))
-        new_surf.blit(text_render, (0, 0))
-
-        return new_surf
+        image = render_text(self.font, text, self.FONT_COLOUR)
+        super(UnderlineText, self).__init__(image, (x, y))
 
     def change_text(self, new_text):
         """Redraw the text Surface with a new text string.
@@ -1245,14 +1221,14 @@ class UnderlineText(object):
                         written on the text Surface.
         """
         self.text = new_text
-        self.surf = self.render_text(new_text)
+        self.image = render_text(self.font, new_text, self.FONT_COLOUR)
 
     def add_underline(self):
         """Draws an underline on the text Surface, on top the text."""
         # The underline will be drawn from the bottom of the text Surface
         # and will extend its entire horizontal length.
-        text_width = self.surf.get_width()
-        text_height = self.surf.get_height()
+        text_width = self.rect.width
+        text_height = self.rect.height
 
         start_point = (0, text_height - 4)
         end_point = (text_width, text_height - 4)
@@ -1260,31 +1236,15 @@ class UnderlineText(object):
         # The underline is drawn onto a new Surface with the same dimensions
         # as the text Surface, but slightly taller to account for the
         # underline. The text is drawn on top.
-        new_surf = Surface((text_width, text_height + 4), pygame.SRCALPHA, 32)
-        new_surf = new_surf.convert_alpha()
-        draw.line(new_surf, Color(self.UNDERLINE_COLOUR), start_point,
+        new_image = Surface((text_width, text_height + 4), pygame.SRCALPHA, 32)
+        new_image = new_image.convert_alpha()
+        draw.line(new_image, self.UNDERLINE_COLOUR, start_point,
                   end_point, self.UNDERLINE_SIZE)
-        new_surf.blit(self.surf, (0, 0))
+        new_image.blit(self.image, (0, 0))
 
-        self.surf = new_surf
+        self.image = new_image
 
     def erase_underline(self):
         """Re-renders the text Surface without an underline."""
-        self.surf = self.render_text(self.text)
+        self.image = render_text(self.font, self.text, self.FONT_COLOUR)
 
-    def get_width(self):
-        """Return the horizontal length of the text Surface."""
-        return self.surf.get_width()
-
-    def get_height(self):
-        """Return the vertical length of the text graphic in pixels."""
-        return self.surf.get_height()
-
-    def draw(self, parent_surf):
-        """Draws the text Surface onto the specified Surface.
-
-        Args:
-            parent_surf     The Surface onto which the text graphic
-                            will be displayed.
-        """
-        parent_surf.blit(self.surf, (self.x, self.y))
