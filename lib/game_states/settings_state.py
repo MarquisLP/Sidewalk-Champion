@@ -1,3 +1,5 @@
+"""This module contains the Settings State and all related components.
+"""
 import pygame
 from pygame import draw
 from pygame.color import Color

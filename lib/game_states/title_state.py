@@ -1,3 +1,4 @@
+"""This module contains the Title State and all related components."""
 import sys
 from __builtin__ import range
 from enum import Enum, IntEnum
