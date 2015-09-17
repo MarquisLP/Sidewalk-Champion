@@ -1,9 +1,12 @@
 import sys
+import pygame.display
 from threading import Thread
 from pygame.locals import *
+from pygame.surface import Surface
 from lib.globals import *
 from lib.custom_data.settings_manager import load_settings
-from lib.game_states.state import *
+from lib.game_states.state import State
+from lib.game_states.state_pass import StatePass
 from lib.game_states.state_ids import StateIDs
 from lib.game_states.title_state import TitleState
 from lib.game_states.settings_state import SettingsState

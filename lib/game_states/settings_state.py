@@ -11,7 +11,7 @@ from lib.globals import INPUT_NAMES
 from lib.globals import FRAME_RATE
 from lib.graphics import Graphic, Animation, render_text
 from lib.game_states.state import State
-from lib.game_states.state import StatePass
+from lib.game_states.state_pass import StatePass
 from lib.custom_data.settings_manager import save_settings
 from lib.custom_data.settings_data import SettingsData
 
