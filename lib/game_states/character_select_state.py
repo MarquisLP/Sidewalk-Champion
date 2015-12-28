@@ -10,7 +10,7 @@ from lib.graphics import load_tuple_of_images
 from lib.graphics import render_text
 from lib.graphics import convert_to_colorkey_alpha
 from lib.graphics import Graphic, Animation, CharacterAnimation
-from lib.globals import SCREEN_SIZE
+from customize.globals import SCREEN_SIZE
 from lib.custom_data.character_data import load_frame_durations
 from lib.custom_data.character_loader import (load_all_characters,
                                               load_character)

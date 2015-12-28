@@ -6,9 +6,9 @@ from pygame.color import Color
 from pygame.font import Font
 from pygame.surface import Surface
 from pygame.mixer import Sound
-from lib.globals import SCREEN_SIZE
-from lib.globals import INPUT_NAMES
-from lib.globals import FRAME_RATE
+from customize.globals import SCREEN_SIZE
+from customize.globals import INPUT_NAMES
+from customize.globals import FRAME_RATE
 from lib.graphics import Graphic, Animation, render_text
 from lib.game_states.state import State
 from lib.game_states.state_pass import StatePass

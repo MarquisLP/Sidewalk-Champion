@@ -7,8 +7,8 @@ from pygame.locals import *
 from pygame.mixer import Sound
 from pygame.font import Font
 from pygame.color import Color
-from lib.globals import SCREEN_SIZE
-from lib.globals import FRAME_RATE
+from customize.globals import SCREEN_SIZE
+from customize.globals import FRAME_RATE
 from customize.title import *
 from lib.graphics import Graphic, Animation, render_text
 from lib.game_states.state import *
