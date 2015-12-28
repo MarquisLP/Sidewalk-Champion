@@ -9,6 +9,7 @@ from pygame.font import Font
 from pygame.color import Color
 from lib.globals import SCREEN_SIZE
 from lib.globals import FRAME_RATE
+from customize.title import *
 from lib.graphics import Graphic, Animation, render_text
 from lib.game_states.state import *
 from lib.game_states.state_ids import StateIDs
@@ -28,59 +29,19 @@ class TitleState(State):
         * Open the Settings Screen.
         * Exit the game window.
 
-    Class Constants:
-        BG_PATH: A String for the file path to the background image's
-            sprite sheet.
-        BG_FRAMES: An integer for the amount of animation frames in the
-            background image's sprite sheet.
-        BG_DURATION: An integer for the duration of each frame in the
-            background image's animation, in update cycles.
-        LOGO_PATH: A String for the file path to the game logo's sprite
-            sheet.
-        LOGO_X: an integer for the game logo's x-position relative to
-            the screen.
-        LOGO_Y: an integer for the game logo's y-position relative to
-            the screen.
-        LOGO_FRAMES: An integer for the amount of animation frames in
-            the game logo's sprite sheet.
-        LOGO_DURATION: An integer for the duration of each frame in the
-            game logo's animation, in update cycles.
-        SFX_CONFIRM_PATH: A String for the file path of the sound effect
-            that plays when an Option is confirmed.
-        SFX_CANCEL_PATH: A String for the file path of the sound effect
-            that plays when a decision is cancelled.
-        SFX_SCROLL_PATH: A String for the file path of the sound effect
-            that plays when switching focus between Options.
-        SFX_SLIDE_PATH: A String for the file path of the sound effect
-            that plays during OptionLists' slide in and slide out
-            animations.
-
-        Attributes:
-            background: The Title Screen's background Animation.
-            logo: The game logo Animation.
-            intro_player: An IntroAnimator that manages and performs
-                the introductory animation.
-            fader: A StateFader used for fading to black when switching to
-                the Character Select State.
-            option_lists: A list containing three different OptionLists.
-                This contains one instance each of PressStartPrompt,
-                MainOptionList, and BattleSetupList.
-            current_options: An integer for the index of the currently-
-                displayed Option List within the option_lists attribute.
+    Attributes:
+        background: The Title Screen's background Animation.
+        logo: The game logo Animation.
+        intro_player: An IntroAnimator that manages and performs
+	    the introductory animation.
+        fader: A StateFader used for fading to black when switching to
+	    the Character Select State.
+        option_lists: A list containing three different OptionLists.
+	    This contains one instance each of PressStartPrompt,
+	    MainOptionList, and BattleSetupList.
+        current_options: An integer for the index of the currently-
+	    displayed Option List within the option_lists attribute.
     """
-    BG_PATH = 'images/title_back.png'
-    BG_FRAMES = 7
-    BG_DURATION = 5
-    LOGO_PATH = 'images/logo.png'
-    LOGO_X = 12
-    LOGO_Y = 40
-    LOGO_FRAMES = 6
-    LOGO_DURATION = 5
-    SFX_CONFIRM_PATH = 'audio/confirm.wav'
-    SFX_CANCEL_PATH = 'audio/cancel.wav'
-    SFX_SCROLL_PATH = 'audio/scroll.wav'
-    SFX_SLIDE_PATH = 'audio/woosh.ogg'
-
     def __init__(self, state_manager, state_pass):
         """Declare and initialize instance variables.
 
@@ -91,19 +52,19 @@ class TitleState(State):
                 onto other States.
         """
         super(TitleState, self).__init__(state_manager, state_pass)
-        self.background = Animation.from_file(self.BG_PATH, (0, 0),
-            self.BG_FRAMES, self.BG_DURATION)
-        self.logo = Animation.from_file(self.LOGO_PATH,
-                              (self.LOGO_X, self.LOGO_Y),
-                              self.LOGO_FRAMES, self.LOGO_DURATION)
+        self.background = Animation.from_file(BG_PATH, (0, 0),
+            BG_FRAMES, BG_DURATION)
+        self.logo = Animation.from_file(LOGO_PATH,
+                              (LOGO_X, LOGO_Y),
+                              LOGO_FRAMES, LOGO_DURATION)
         self.intro_animator = IntroAnimator()
         self.intro_animator.reset(self.background, self.logo)
         self.fader = StateFader(self.change_state)
 
-        confirm = Sound(self.SFX_CONFIRM_PATH)
-        cancel = Sound(self.SFX_CANCEL_PATH)
-        scroll = Sound(self.SFX_SCROLL_PATH)
-        slide = Sound(self.SFX_SLIDE_PATH)
+        confirm = Sound(SFX_CONFIRM_PATH)
+        cancel = Sound(SFX_CANCEL_PATH)
+        scroll = Sound(SFX_SCROLL_PATH)
+        slide = Sound(SFX_SLIDE_PATH)
         ui_channel = self.state_pass.ui_channel
         prompt = PressStartPrompt(ui_channel, confirm, cancel, scroll,
                                   slide)
@@ -230,16 +191,6 @@ class IntroAnimator(object):
     """This class is in charge of animating the Title Screen's
     introductory animation.
 
-    Class Constants:
-        BG_OFFSET: A float for the distance of the background from the
-            bottom of the screen, in pixels, when the animation starts.
-        BG_SCROLL_SPEED: A float for the speed, in pixels per second,
-            at which the background will be scrolled up.
-        VOICE_PATH: A String for the file path of the voice clip where
-            the announcer states the title of the game.
-        FADE_DELAY: An integer for the alpha value that the logo
-            Animation must attain before the voice clip is played.
-
     Attributes:
         is_running: A Boolean indicating whether the animation is
             currently being shown.
@@ -253,18 +204,10 @@ class IntroAnimator(object):
         voice_duration: An integer for the duration of the voice clip,
             in update cycles.
     """
-    BG_OFFSET = 50.0
-    BG_SCROLL_SPEED = 70.0
-    FADE_LOGO_RATE = 7
-    VOICE_PATH = 'audio/announcer-title.wav'
-    FADE_DELAY = 7
-    VOICE_DURATION = 118
-    MUSIC_PATH = 'audio/title_theme.wav'
-
     def __init__(self):
         """Declare and initialize instance variables."""
         self.is_running = False
-        self.voice = Sound(self.VOICE_PATH)
+        self.voice = Sound(VOICE_PATH)
         self.voice_duration = (self.voice.get_length() * FRAME_RATE)
         self.voice_timer = 0
         self.voice_has_played = False
@@ -293,7 +236,7 @@ class IntroAnimator(object):
         elif logo.image.get_alpha() < 255:
             self.fade_in_logo(logo)
 
-        if (logo.image.get_alpha() >= self.FADE_DELAY
+        if (logo.image.get_alpha() >= FADE_DELAY
                 and (not self.voice_has_played)):
             sound_channel.play(self.voice)
             self.voice_has_played = True
@@ -315,7 +258,7 @@ class IntroAnimator(object):
             time: A float for the amount of time, in seconds, elapsed
                 since the last update cycle.
         """
-        distance = -1 * self.BG_SCROLL_SPEED * time
+        distance = -1 * BG_SCROLL_SPEED * time
         bg.move(0, distance)
 
         if bg.exact_pos[1] < 0.0:
@@ -329,7 +272,7 @@ class IntroAnimator(object):
             logo: The game logo Animation.
         """
         old_alpha = logo.image.get_alpha()
-        logo.image.set_alpha(old_alpha + self.FADE_LOGO_RATE)
+        logo.image.set_alpha(old_alpha + FADE_LOGO_RATE)
 
     def skip_intro(self, bg, logo, sound_channel):
         """Skip to the end of animation immediately.
@@ -361,10 +304,10 @@ class IntroAnimator(object):
             logo: The game logo Animation.
         """
         pygame.mixer.stop()
-        pygame.mixer.music.load(self.MUSIC_PATH)
+        pygame.mixer.music.load(MUSIC_PATH)
         self.voice_timer = 0
         self.voice_has_played = False
-        bg.exact_pos = (0.0, SCREEN_SIZE[1] + self.BG_OFFSET)
+        bg.exact_pos = (0.0, SCREEN_SIZE[1] + BG_OFFSET)
         logo.is_animated = False
         logo.image.set_alpha(0)
         self.is_running = True
@@ -377,19 +320,6 @@ class OptionList(object):
 
     This is an abstract class; subclasses should implement their own
     unique Options as well as ways of responding to them.
-
-    Class Constants:
-        OPTION_DISTANCE: The vertical distance, in pixels, between
-            two Options.
-        CONFIRM_DURATION: An integer for the time, in update frames, to
-            flash a confirmed Option's text before performing the
-            appropriate operation.
-        TEXT_FLASH_SPEED: An integer for the speed, in update frames, at
-            which Option text will flash upon being selected and
-            confirmed. For example, a value of 5 means that the text
-            will change its visibility every 5 update cycles.
-        TEXT_SLIDE_SPEED: The speed at which to slide Options in and out
-            of the screen, in pixels per second.
 
     Attributes:
         options: A list of Options.
@@ -417,11 +347,6 @@ class OptionList(object):
             to the StateIDs enum for possible choices. A value of None
             means that processing should remain in the Title State.
     """
-    OPTION_DISTANCE = 8
-    CONFIRM_DURATION = 60
-    TEXT_FLASH_SPEED = 5
-    TEXT_SLIDE_SPEED = 800
-
     def __init__(self, x, y, channel, sfx_confirm, sfx_cancel,
                  sfx_scroll, sfx_slide):
         """Declare and initialize instance variables.
@@ -484,7 +409,7 @@ class OptionList(object):
 
         if self.confirm_timer > -1:
             self.flash_confirmed_option()
-            if self.confirm_timer >= self.CONFIRM_DURATION:
+            if self.confirm_timer >= CONFIRM_DURATION:
                 self.confirm_timer = -1     # End the flash.
                 self.respond_to_confirm()
         elif self.animation == ListAnimation.SHOW:
@@ -547,7 +472,7 @@ class OptionList(object):
         if self.options[0].rect.x == self.x:
             self.prepare_to_show_all()
         else:
-            distance = int(self.TEXT_SLIDE_SPEED * time)
+            distance = int(TEXT_SLIDE_SPEED * time)
 
             for i in xrange(0, len(self.options), 2):
                 self.options[i].move(distance)
@@ -579,7 +504,7 @@ class OptionList(object):
         if self.options[0].rect.x == self.x:
             self.sound_channel.play(self.sfx_slide)
 
-        distance = self.TEXT_SLIDE_SPEED * time
+        distance = TEXT_SLIDE_SPEED * time
 
         for i in xrange(0, len(self.options), 2):
             self.options[i].move(distance * -1)
@@ -665,7 +590,7 @@ class OptionList(object):
         """Flash the name of the confirmed Option."""
         self.confirm_timer += 1
 
-        if self.confirm_timer % self.TEXT_FLASH_SPEED == 0:
+        if self.confirm_timer % TEXT_FLASH_SPEED == 0:
             self.options[self.option_index].is_visible = (
                 not self.options[self.option_index].is_visible)
 
@@ -683,26 +608,12 @@ class PressStartPrompt(OptionList):
     Pressing Start will bring the players to another OptionList with the
     main Title Screen Options.
 
-    Class Constants:
-        X: An integer for the x-position of the prompt relative to the
-            screen.
-        Y: An integer for the y-position of the prompt relative to the
-            screen.
-        WAIT_SPEED_FLASH: An integer for the speed of the prompt's
-            flash, in update cycles, while it is waiting for the
-            players' input.
-
     Attributes:
         idle_flash_timer: An integer counter that keeps track of how
             many update cycles have flashed since the last time the
             prompt's visibility was toggled. Setting it to -1 or less
             will stop the idle flashing.
     """
-    X = 135
-    Y = 150
-    PROMPT_TEXT = 'Press Start'
-    WAIT_FLASH_SPEED = 45
-
     def __init__(self, channel, sfx_confirm, sfx_cancel, sfx_scroll,
                  sfx_slide):
         """Declare and initialize instance variables.
@@ -712,14 +623,14 @@ class PressStartPrompt(OptionList):
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(PressStartPrompt, self).__init__(self.X, self.Y, channel,
+        super(PressStartPrompt, self).__init__(START_X, START_Y, channel,
                                                sfx_confirm, sfx_cancel,
                                                sfx_scroll, sfx_slide)
         self.idle_flash_timer = 0
 
     def create_options(self):
         """Create the prompt."""
-        self.options.append(Option(self.PROMPT_TEXT, self.x, self.y))
+        self.options.append(Option(START_PROMPT_TEXT, self.x, self.y))
 
     def update(self, time):
         """Update the processes within this prompt.
@@ -750,8 +661,8 @@ class PressStartPrompt(OptionList):
 
     def reset(self):
         """Prepare the prompt to be shown again."""
-        self.x = self.X
-        self.y = self.Y
+        self.x = START_X
+        self.y = START_Y
         self.idle_flash_timer = 0
         self.animation = ListAnimation.NONE
 
@@ -763,7 +674,7 @@ class PressStartPrompt(OptionList):
         """Flash the prompt at a slower speed for waiting."""
         self.idle_flash_timer += 1
 
-        if self.idle_flash_timer >= self.WAIT_FLASH_SPEED:
+        if self.idle_flash_timer >= START_WAIT_FLASH_SPEED:
             self.options[0].is_visible = not self.options[0].is_visible
             self.idle_flash_timer = 0
 
@@ -777,17 +688,10 @@ class MainOptionList(OptionList):
         3. Settings - Open the Settings screen.
         4. Exit - Close the game window.
 
-    Class Constants:
-        X: The x-position of the Options relative to the screen.
-        Y: The y-position of the top Option relative to the screen.
-
     Attributes:
         state_pass: The StatePass object containing data that will be
             transferred between all Game States.
     """
-    X = 155
-    Y = 104
-
     def __init__(self, channel, sfx_confirm, sfx_cancel, sfx_scroll,
                  sfx_slide):
         """Declare and initialize instance variables.
@@ -797,9 +701,10 @@ class MainOptionList(OptionList):
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(MainOptionList, self).__init__(self.X, self.Y, channel,
-                                             sfx_confirm, sfx_cancel,
-                                             sfx_scroll, sfx_slide)
+        super(MainOptionList, self).__init__(MAIN_OPTIONS_X, MAIN_OPTIONS_Y,
+                                             channel, sfx_confirm,
+                                             sfx_cancel, sfx_scroll,
+                                             sfx_slide)
         self.animation = ListAnimation.SHOW
 
     def create_options(self):
@@ -809,7 +714,7 @@ class MainOptionList(OptionList):
 
         for i in xrange(0, len(names)):
             self.options.append(Option(names[i], self.x, y))
-            y += self.options[i].rect.height + self.OPTION_DISTANCE
+            y += self.options[i].rect.height + OPTION_DISTANCE
 
     def handle_input(self, input_name):
         """Respond to input from the players.
@@ -880,19 +785,10 @@ class BattleSetupList(OptionList):
     allows the players to confirm the chosen parameters and proceed to
     the Character Select Screen.
 
-    Class Constants:
-        X: The x-position of the first BattleSetting relative to the
-            screen.
-        Y: The y-position of the first BattleSetting relative to the
-            screen.
-
     Attributes:
         state_pass: The StatePass object containing data that will be
             passed between all Game States.
     """
-    X = 130
-    Y = 117
-
     def __init__(self, channel, sfx_confirm, sfx_cancel, sfx_scroll,
                  sfx_slide):
         """Declare and initialize instance variables.
@@ -902,7 +798,7 @@ class BattleSetupList(OptionList):
             sfx_cancel: A PyGame Sound for cancelling a decision.
             sfx_scroll: A PyGame Sound for scrolling through the list.
         """
-        super(BattleSetupList, self).__init__(self.X, self.Y, channel,
+        super(BattleSetupList, self).__init__(BATTLE_X, BATTLE_Y, channel,
                                               sfx_confirm, sfx_cancel,
                                               sfx_scroll, sfx_slide)
         self.sfx_slide = self.sfx_cancel
@@ -918,7 +814,7 @@ class BattleSetupList(OptionList):
         for setting in BattleSetupOption.get_all_option_data()[:-1]:
             new_setting = BattleSetting(setting.name, self.x, y,
                                         *setting.possible_values)
-            y += new_setting.rect.height + self.OPTION_DISTANCE
+            y += new_setting.rect.height + OPTION_DISTANCE
             battle_settings.append(new_setting)
 
         confirm_name = BattleSetupOption.get_all_option_data()[-1].name
@@ -1000,16 +896,6 @@ class Option(Graphic):
     It is represented by a text name on the screen, which can be
     recolored or hidden to indicate player selection or confirmation.
 
-    Class Constants:
-        NORMAL_COLOR: A tuple of ints for the RGB values for the regular
-            color of an Option.
-        HIGHLIGHT_COLOR: A tuple of ints for the RGB values of an
-            Option's color when it is selected by the users.
-        FONT_PATH: A String for the file path to the font file that
-            will be used in rendering graphical text for Options.
-        FONT_SIZE: An integer size of the font used in rendering Option
-            text.
-
     Attributes:
         font: The PyGame Font used for rendering the Option text.
         text: The text String that describes this Option. It will be
@@ -1017,11 +903,6 @@ class Option(Graphic):
         is_visible: A Boolean indicating whether the text will be
             drawn onto its parent Surface.
     """
-    NORMAL_COLOR = (169, 169, 169)
-    HIGHLIGHT_COLOR = (255, 255, 255)
-    FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
-    FONT_SIZE = 18
-
     def __init__(self, text, x, y):
         """Declare and initialize instance variables.
 
@@ -1032,19 +913,19 @@ class Option(Graphic):
             y: An integer value for the Option text's y-coordinate
                 relative to the screen.
         """
-        self.font = Font(self.FONT_PATH, self.FONT_SIZE)
-        image = render_text(self.font, text, self.NORMAL_COLOR)
+        self.font = Font(OPTION_FONT_PATH, OPTION_FONT_SIZE)
+        image = render_text(self.font, text, OPTION_NORMAL_COLOR)
         super(Option, self).__init__(image, (x, y))
         self.text = text
         self.is_visible = True
 
     def highlight(self):
         """Redraw the text with an alternate color."""
-        self.image = render_text(self.font, self.text, self.HIGHLIGHT_COLOR)
+        self.image = render_text(self.font, self.text, OPTION_HIGHLIGHT_COLOR)
 
     def unhighlight(self):
         """Redraw the text with normal coloration."""
-        self.image = render_text(self.font, self.text, self.NORMAL_COLOR)
+        self.image = render_text(self.font, self.text, OPTION_NORMAL_COLOR)
 
 
 class BattleSetting(Option):
@@ -1052,17 +933,6 @@ class BattleSetting(Option):
 
     Aside from being a selectable Option, it also contains its own list
     of numerical values that the players can scroll through.
-
-    Class Constants:
-        VALUE_X: The integer coordinate for the x-position of value
-            text relative to the screen.
-        LEFT_ARROW_PATH: A String for the file path to the scroll left
-            arrow image.
-        ARROW_DISTANCE: An integer for the horizontal distance between
-            each scroll arrow and the text for the selected value.
-        ARROW_Y_OFFSET: The integer distance, in pixels, between the
-            the top of the text graphic and the top of each scroll
-            arrow.
 
     Attributes:
         values: A list of integer values that can be set for this
@@ -1076,11 +946,6 @@ class BattleSetting(Option):
         scroll_right_arrow: A Graphic that displays the image of the
             'scroll values right' arrow.
     """
-    VALUE_DISTANCE = 118
-    LEFT_ARROW_PATH = 'images/battle_setup_arrow_left.png'
-    ARROW_DISTANCE = 7
-    ARROW_Y_OFFSET = 5
-
     def __init__(self, text, x, y, *values):
         """Declare and initialize instance variables.
 
@@ -1097,15 +962,15 @@ class BattleSetting(Option):
         self.values = values
         self.value_index = 0
         self.value_surf = render_text(self.font, str(self.values[0]),
-                                      self.NORMAL_COLOR)
-        value_x = self.rect.x + self.VALUE_DISTANCE
-        self.scroll_left_arrow = Graphic.from_file(self.LEFT_ARROW_PATH,
-            (value_x - self.ARROW_DISTANCE,
-             self.rect.y + self.ARROW_Y_OFFSET))
+                                      OPTION_NORMAL_COLOR)
+        value_x = self.rect.x + VALUE_DISTANCE
+        self.scroll_left_arrow = Graphic.from_file(LEFT_ARROW_PATH,
+            (value_x - ARROW_DISTANCE,
+             self.rect.y + ARROW_Y_OFFSET))
         self.scroll_left_arrow.move(-1 * self.scroll_left_arrow.rect.width, 0)
-        self.scroll_right_arrow = Graphic.from_file(self.LEFT_ARROW_PATH,
-            (value_x + self.value_surf.get_width() + self.ARROW_DISTANCE,
-            self.rect.y + self.ARROW_Y_OFFSET))
+        self.scroll_right_arrow = Graphic.from_file(LEFT_ARROW_PATH,
+            (value_x + self.value_surf.get_width() + ARROW_DISTANCE,
+            self.rect.y + ARROW_Y_OFFSET))
         self.scroll_right_arrow.flip(is_horizontal=True)
 
     def scroll_values_left(self, sound_channel, scroll_sound):
@@ -1119,7 +984,7 @@ class BattleSetting(Option):
         if self.value_index > 0:
             self.value_index -= 1
             self.value_surf = render_text(self.font,
-                str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
+                str(self.values[self.value_index]), OPTION_HIGHLIGHT_COLOR)
             sound_channel.play(scroll_sound)
 
     def scroll_values_right(self, sound_channel, scroll_sound):
@@ -1133,20 +998,20 @@ class BattleSetting(Option):
         if self.value_index < len(self.values) - 1:
             self.value_index += 1
             self.value_surf = render_text(self.font,
-                str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
+                str(self.values[self.value_index]), OPTION_HIGHLIGHT_COLOR)
             sound_channel.play(scroll_sound)
 
     def highlight(self):
         """Redraw the text with an alternate color."""
         super(BattleSetting, self).highlight()
         self.value_surf = render_text(self.font,
-            str(self.values[self.value_index]), self.HIGHLIGHT_COLOR)
+            str(self.values[self.value_index]), OPTION_HIGHLIGHT_COLOR)
 
     def unhighlight(self):
         """Redraw the text with normal coloration."""
         super(BattleSetting, self).unhighlight()
         self.value_surf = render_text(self.font,
-            str(self.values[self.value_index]), self.NORMAL_COLOR)
+            str(self.values[self.value_index]), OPTION_NORMAL_COLOR)
 
     def get_value(self):
         """Return the selected value."""
@@ -1160,7 +1025,7 @@ class BattleSetting(Option):
                 will be drawn.
         """
         super(BattleSetting, self).draw(parent_surf)
-        parent_surf.blit(self.value_surf, (self.rect.x + self.VALUE_DISTANCE,
+        parent_surf.blit(self.value_surf, (self.rect.x + VALUE_DISTANCE,
                                            self.rect.y))
         self.draw_scroll_arrows(parent_surf)
 
@@ -1175,12 +1040,12 @@ class BattleSetting(Option):
             parent_surf: The Surface upon which the arrows will be
                 drawn.
         """
-        value_x = self.rect.x + self.VALUE_DISTANCE
+        value_x = self.rect.x + VALUE_DISTANCE
         left_arrow_x = (value_x - self.scroll_left_arrow.rect[2]
-                        - self.ARROW_DISTANCE)
+                        - ARROW_DISTANCE)
         right_arrow_x = (value_x + self.value_surf.get_width()
-                         + self.ARROW_DISTANCE)
-        y = self.rect.y + self.ARROW_Y_OFFSET
+                         + ARROW_DISTANCE)
+        y = self.rect.y + ARROW_Y_OFFSET
 
         if self.value_index > 0:
             self.scroll_left_arrow.draw(parent_surf, left_arrow_x, y)
@@ -1311,4 +1176,3 @@ class BattleSetupOption(OptionEnum):
         """Return a tuple for the possible values of this
         BattleSetting."""
         return self.value[2:]
-
