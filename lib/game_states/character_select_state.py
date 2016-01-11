@@ -11,6 +11,7 @@ from lib.graphics import render_text
 from lib.graphics import convert_to_colorkey_alpha
 from lib.graphics import Graphic, Animation, CharacterAnimation
 from customize.globals import SCREEN_SIZE
+from customize.character_select import *
 from lib.custom_data.character_data import load_frame_durations
 from lib.custom_data.character_loader import (load_all_characters,
                                               load_character)
@@ -26,21 +27,6 @@ PreviewData = collections.namedtuple('PreviewData',
 class CharacterSelectState(State):
     """The screen where players can select their characters before
     diving into battle.
-
-    Class Constants:
-        FONT_PATH: A String for the file path to the font used for
-            rendering the text in this State.
-        FONT_SIZE: An integer for the size of most text in this State.
-        VS_SIZE: An integer for the size of the VS text.
-        VS_COLOR: A tuple of three integers, representing the RGB color
-            of the VS text.
-        VS_OUTLINE_TEXT: A tuple of three integers, representing the
-            RGB color of the VS text's outline.
-        VS_POSITION: A tuple of two integers, for the x and y-positions
-            of the VS text relative to the screen.
-        NO_CHARS_POSITION: A tuple of two integers for the x and y-
-            positions of the 'No Characters' text relative to the
-            screen.
 
     Attributes:
         bg_lines: BackgroundLines that will be drawn on the screen.
@@ -69,15 +55,6 @@ class CharacterSelectState(State):
         intro: The IntroTransition that plays upon entering this State.
         outro: The OutroTransition that plays upon exiting this State.
     """
-    FONT_PATH = 'fonts/fighting-spirit-TBS.ttf'
-    FONT_SIZE = 16
-    VS_SIZE = 28
-    VS_COLOR = (255, 255, 255)
-    VS_OUTLINE_COLOR = (80, 80, 80)
-    VS_POSITION = (167, 80)
-    NO_CHARS_COLOR = (255, 255, 255)
-    NO_CHARS_POSITION = (40, 78)
-
     def __init__(self, state_manager, state_pass):
         """Declare and initialize instance variables.
 
@@ -89,8 +66,8 @@ class CharacterSelectState(State):
         """
         super(CharacterSelectState, self).__init__(state_manager, state_pass)
         all_chars = load_all_characters()
-        general_font = pygame.font.Font(self.FONT_PATH, self.FONT_SIZE)
-        vs_font = pygame.font.Font(self.FONT_PATH, self.VS_SIZE)
+        general_font = pygame.font.Font(FONT_PATH, FONT_SIZE)
+        vs_font = pygame.font.Font(FONT_PATH, VS_SIZE)
         self.p1_preview = None
         self.p2_preview = None
 
@@ -102,14 +79,14 @@ class CharacterSelectState(State):
             self.create_previews(general_font)
         self.bg_lines = BackgroundLines()
         self.select_prompt = PlayerSelectPrompt(general_font)
-        self.vs_text = render_text(vs_font, 'VS', self.VS_COLOR,
-                                            self.VS_OUTLINE_COLOR,
-                                            self.VS_POSITION)
+        self.vs_text = render_text(vs_font, 'VS', VS_COLOR,
+                                            VS_OUTLINE_COLOR,
+                                            VS_POSITION)
         self.no_chars_text = render_text(vs_font,
                                                   'No Characters Loaded',
-                                                  self.NO_CHARS_COLOR,
-                                                  self.VS_OUTLINE_COLOR,
-                                                  self.NO_CHARS_POSITION)
+                                                  NO_CHARS_COLOR,
+                                                  VS_OUTLINE_COLOR,
+                                                  NO_CHARS_POSITION)
         self.sfx = SelectStateSFX(self.state_pass.ui_channel)
         self.intro = IntroTransition(self,
                                      self.state_pass.announcer_channel)
@@ -378,9 +355,9 @@ class CharacterSelectState(State):
 
         if self.intro.is_running or self.outro.is_running:
             if self.num_of_characters() <= 0:
-                center_text_pos = self.NO_CHARS_POSITION
+                center_text_pos = NO_CHARS_POSITION
             else:
-                center_text_pos = self.VS_POSITION
+                center_text_pos = VS_POSITION
 
             if self.intro.is_running:
                 self.intro.draw(self.state_surface)
@@ -432,12 +409,6 @@ class IntroTransition(object):
         * Once the three components have finished sliding in, the VS
           VS text wipes into the middle of the screen.
 
-    Class Constants:
-        MUSIC_PATH: A String for the file path to the Character Select
-            Screen and Stage Select Screen music.
-        VOICE_PATH: A String for the file path to the announcer voice
-            clip.
-
     Attributes:
         state: The CharacterSelectState that will be animated.
         vs_wipe_y: An integer for the top end of the wipe in effect,
@@ -448,9 +419,6 @@ class IntroTransition(object):
         is_running: A Boolean indicating whether the intro is currently
             running.
     """
-    MUSIC_PATH = 'audio/select-theme.wav'
-    VOICE_PATH = 'audio/announcer-character_select.wav'
-
     def __init__(self, state, voice_channel):
         """Declare and initialize instance variables.
 
@@ -463,7 +431,7 @@ class IntroTransition(object):
         self.state = state
         self.vs_wipe_y = self.state.vs_text.rect.height
         self.is_running = False
-        self.voice = pygame.mixer.Sound(self.VOICE_PATH)
+        self.voice = pygame.mixer.Sound(VOICE_PATH)
         self.voice_channel = voice_channel
         self.voice_has_played = False
 
@@ -472,7 +440,7 @@ class IntroTransition(object):
         self.is_running = True
 
         if not self.state.returned_from_stage_select():
-            pygame.mixer.music.load(self.MUSIC_PATH)
+            pygame.mixer.music.load(MUSIC_PATH)
             pygame.mixer.music.play(-1)
 
         self.state.bg_lines.move_right_end(-1 * SCREEN_SIZE[0])
@@ -621,10 +589,6 @@ class OutroTransition(object):
         * The BackgroundLines scroll out of the screen from left to
           right, leaving only a black screen.
 
-    Class Constants:
-        MUSIC_FADEOUT_TIME: An integer for the time taken, in
-            milliseconds, to fade out the Select Screen music.
-
     Attributes:
         state: The CharacterSelectState that will be animated.
         vs_wipe_y: An integer for the top end of the wipe out effect,
@@ -635,8 +599,6 @@ class OutroTransition(object):
             run after this animation is completed. See the state_ids
             module for possible values.
     """
-    MUSIC_FADEOUT_TIME = 2000
-
     def __init__(self, state):
         """Declare and initialize instance variables.
 
@@ -662,7 +624,7 @@ class OutroTransition(object):
         self.is_running = True
         self.next_state = next_state
         if music_will_fade:
-            pygame.mixer.music.fadeout(self.MUSIC_FADEOUT_TIME)
+            pygame.mixer.music.fadeout(MUSIC_FADEOUT_TIME)
 
     def update(self, time):
         """Update the outro animation.
@@ -777,20 +739,6 @@ class PlayerSelectPrompt(object):
     """A prompt that notifies either Player 1 or Player 2 that they are
     currently choosing their character.
 
-    Class Constants:
-        Y: An integer for the y-position of the prompt relative to the
-            screen.
-        FLASH_RATE: An integer for the amount of time elapsed, in update
-            cycles, between toggling the visibility of the text.
-        P1_TEXT: A String for the text that will be displayed as player
-            1's prompt message.
-        P2_TEXT: A String for the text that will be displayed as player
-            2's prompt message.
-        P1_COLOR: A tuple of three integers, representing the RGB value
-            for player 1's text.
-        P2_COLOR: A tuple of three integers, representing the RGB value
-            for player 2's text.
-
     Attributes:
         p1_surf: A Surface containing player 1's prompt message.
         p2_surf: A Surface containing player 1's prompt message.
@@ -801,13 +749,6 @@ class PlayerSelectPrompt(object):
         text_is_visible: A Boolean indicating whether the current prompt
             is being shown.
     """
-    Y = 13
-    FLASH_RATE = 30
-    P1_TEXT = 'P1 Select'
-    P2_TEXT = 'P2 Select'
-    P1_COLOR = (255, 0, 0)
-    P2_COLOR = (0, 255, 255)
-
     def __init__(self, font):
         """Declare and initialize instance variables.
 
@@ -815,8 +756,8 @@ class PlayerSelectPrompt(object):
             font: A PyGame Font that will be used in rendering the
                 prompt text.
         """
-        self.p1_surf = font.render(self.P1_TEXT, True, self.P1_COLOR)
-        self.p2_surf = font.render(self.P2_TEXT, True, self.P2_COLOR)
+        self.p1_surf = font.render(P1_TEXT, True, P1_COLOR)
+        self.p2_surf = font.render(P2_TEXT, True, P2_COLOR)
         self.current_surf = self.p1_surf
         self.flash_timer = 0
         self.text_is_visible = True
@@ -840,7 +781,7 @@ class PlayerSelectPrompt(object):
     def update(self):
         """Update the text flashing."""
         self.flash_timer += 1
-        if self.flash_timer >= self.FLASH_RATE:
+        if self.flash_timer >= FLASH_RATE:
             self.flash_timer = 0
             self.text_is_visible = not self.text_is_visible
 
@@ -852,7 +793,7 @@ class PlayerSelectPrompt(object):
                 drawn.
         """
         if self.text_is_visible:
-            parent_surf.blit(self.current_surf, (self.x, self.Y))
+            parent_surf.blit(self.current_surf, (self.x, PROMPT_Y))
 
     def reset(self):
         """Reset the flash and display player 1's prompt."""
@@ -868,28 +809,12 @@ class BackgroundLines(object):
     The starting and end points of the lines can be moved to create a
     type of scrolling movement effect.
 
-    Class Constants:
-        LINE_COLOR: A tuple three integers, representing the RGB color
-            used in drawing all of the lines.
-        LINE_Y_COOORS: A tuple of integers, each of which represent one
-            of the lines' y-position relative to the screen.
-        LINE_WIDTHS: A tuple of integers, each of which represent the
-            width of one of the lines, in pixels.
-            Note that this is in the same order as LINE_Y_COORS. For
-            example, if the first value in LINE_Y_COORS is 50 and the
-            first value in LINE_WIDTHS is 5, a line with a width of 5
-            pixels will be drawn at a y-position of 50.
-
     Attributes:
         left_end: An integer for the x-position of the lines' starting
             point from the left edge of the screen.
         right_end: An integer for the x-position of the lines' end point
             closer to the right side of the screen.
     """
-    LINE_COLOR = (0, 19, 127)
-    LINE_Y_COORDS = (11, 26, 59, 95, 151)
-    LINE_WIDTHS = (3, 9, 7, 5, 17)
-
     def __init__(self):
         """Declare and initialize instance variables."""
         self.left_end = 0
@@ -902,10 +827,10 @@ class BackgroundLines(object):
             parent_surf: The Surface upon which the lines will be drawn.
         """
         if self.right_end > self.left_end:
-            for line_index in xrange(0, len(self.LINE_Y_COORDS)):
-                y = self.LINE_Y_COORDS[line_index]
-                width = self.LINE_WIDTHS[line_index]
-                pygame.draw.line(parent_surf, self.LINE_COLOR,
+            for line_index in xrange(0, len(LINE_Y_COORDS)):
+                y = LINE_Y_COORDS[line_index]
+                width = LINE_WIDTHS[line_index]
+                pygame.draw.line(parent_surf, LINE_COLOR,
                                  (self.left_end, y), (self.right_end, y),
                                  width)
 
@@ -966,21 +891,6 @@ class RosterDisplay():
     player may select from the list at a time; the color of the cursor
     can be toggled to show which player is currently choosing.
 
-    Class Constants:
-        MUGSHOT_SIZE: An integer for the length and width of a
-            character's mugshot image (which should be square-shaped).
-        SLOTS_PER_ROW: An integer for the number of character slots that
-            can be shown on the displayed row.
-        FRAME_THICKNESS: An integer for the thickness, in pixels, of
-            each character slot frame.
-        FRAME_COLOR: A tuple of integers for the RGB color of the
-            character slot frames.
-        BACKGROUND_COLOR: A tuple of integers for the RGB color of each
-            character slot's background.
-        ARROW_DISTANCE: An integer for the horizontal distance, in
-            pixels, between the edges of the roster and each of the
-            scroll arrows.
-
     Attributes:
         x: An integer for the x-position of the roster relative to the
             screen.
@@ -1005,13 +915,6 @@ class RosterDisplay():
         scroll_down_arrow: A RosterArrow indicating that the players can
             scroll down a row.
     """
-    MUGSHOT_SIZE = 50
-    SLOTS_PER_ROW = 5
-    FRAME_THICKNESS = 2
-    FRAME_COLOR = (102, 102, 102)
-    BACKGROUND_COLOR = (255, 255, 255)
-    ARROW_DISTANCE = 11
-
     def __init__(self, all_chars=None):
         """Declare and initialize instance variables.
 
@@ -1061,12 +964,12 @@ class RosterDisplay():
                 rendered. For example, given that SLOTS_PER_ROW is 5,
                 passing 1 would render mugshots of index 5 through 9.
         """
-        row_surf = Surface((self.slot_size() * self.SLOTS_PER_ROW,
+        row_surf = Surface((self.slot_size() * SLOTS_PER_ROW,
                             self.slot_size()))
         slot_x = 0
 
-        first_slot = row_index * self.SLOTS_PER_ROW
-        last_slot = first_slot + self.SLOTS_PER_ROW
+        first_slot = row_index * SLOTS_PER_ROW
+        last_slot = first_slot + SLOTS_PER_ROW
 
         for slot_index in xrange(first_slot, last_slot + 1):
             if slot_index <= len(self.mugshots) - 1:
@@ -1098,27 +1001,27 @@ class RosterDisplay():
         slot_surf = Surface((self.slot_size(), self.slot_size()))
 
         # Background.
-        pygame.draw.rect(slot_surf, self.BACKGROUND_COLOR,
-                         Rect(self.FRAME_THICKNESS, self.FRAME_THICKNESS,
-                              self.MUGSHOT_SIZE, self.MUGSHOT_SIZE))
+        pygame.draw.rect(slot_surf, BACKGROUND_COLOR,
+                         Rect(FRAME_THICKNESS, FRAME_THICKNESS,
+                              MUGSHOT_SIZE, MUGSHOT_SIZE))
 
         # Mugshot.
         if slot_index >= 0:
             mugshot = self.mugshots[slot_index]
-            slot_surf.blit(mugshot, (self.FRAME_THICKNESS, self.FRAME_THICKNESS))
+            slot_surf.blit(mugshot, (FRAME_THICKNESS, FRAME_THICKNESS))
 
         # Frame.
-        pygame.draw.rect(slot_surf, self.FRAME_COLOR,
+        pygame.draw.rect(slot_surf, FRAME_COLOR,
                          Rect(0, 0,
                               self.slot_size() - 1, self.slot_size() - 1),
-                         self.FRAME_THICKNESS)
+                         FRAME_THICKNESS)
         return slot_surf
 
     def slot_size(self):
         """Return an integer for the length and width, in pixels, of
         a character slot (mugshot + frame).
         """
-        return self.MUGSHOT_SIZE + (self.FRAME_THICKNESS * 2)
+        return MUGSHOT_SIZE + (FRAME_THICKNESS * 2)
 
     def get_screen_centered_x(self):
         """Return an integer for the x-position that will center the
@@ -1130,7 +1033,7 @@ class RosterDisplay():
         """Return an integer for the number of rows of characters that
         can be selected.
         """
-        return int(round_up(len(self.mugshots) / float(self.SLOTS_PER_ROW)))
+        return int(round_up(len(self.mugshots) / float(SLOTS_PER_ROW)))
 
     def draw(self, parent_surf):
         """Draw the entire roster onto another Surface.
@@ -1150,7 +1053,7 @@ class RosterDisplay():
         """Return an integer for the index of character currently
         selected.
         """
-        return (self.current_row * self.SLOTS_PER_ROW) + self.current_slot
+        return (self.current_row * SLOTS_PER_ROW) + self.current_slot
 
     def select_first(self):
         """Select the very first slot in the roster."""
@@ -1167,8 +1070,8 @@ class RosterDisplay():
                 This index is based on the order of the character file
                 paths in the character list text file.
         """
-        row = int(character_index / self.SLOTS_PER_ROW)
-        new_slot = character_index - (self.SLOTS_PER_ROW * row)
+        row = int(character_index / SLOTS_PER_ROW)
+        new_slot = character_index - (SLOTS_PER_ROW * row)
         slot_diff = new_slot - self.current_slot
 
         self.current_row = row
@@ -1179,7 +1082,7 @@ class RosterDisplay():
     def select_next(self):
         """Select the next character slot, if there is one."""
         if self.get_character_index() < len(self.mugshots) - 1:
-            if self.current_slot >= self.SLOTS_PER_ROW - 1:
+            if self.current_slot >= SLOTS_PER_ROW - 1:
                 # Move on to the next row.
                 self.cursor.move(0 - self.slot_size() * self.current_slot, 0)
                 self.current_slot = 0
@@ -1195,9 +1098,9 @@ class RosterDisplay():
             if self.current_slot <= 0:
                 # Go back to the previous row.
                 self.cursor.move(self.slot_size() *
-                                 (self.SLOTS_PER_ROW - 1 - self.current_slot),
+                                 (SLOTS_PER_ROW - 1 - self.current_slot),
                                  0)
-                self.current_slot = self.SLOTS_PER_ROW - 1
+                self.current_slot = SLOTS_PER_ROW - 1
                 self.current_row -= 1
                 self.rendered_row = self.render_row(self.current_row)
             else:
@@ -1209,8 +1112,8 @@ class RosterDisplay():
         less slots than the previous one, make sure  the selection only
         goes as far as the very last slot.
         """
-        if len(self.mugshots) % self.SLOTS_PER_ROW != 0:
-            last_slot = (len(self.mugshots) - 1) % self.SLOTS_PER_ROW
+        if len(self.mugshots) % SLOTS_PER_ROW != 0:
+            last_slot = (len(self.mugshots) - 1) % SLOTS_PER_ROW
             self.cursor.move(0 - (self.slot_size() *
                                   (self.current_slot - last_slot)), 0)
             self.current_slot = last_slot
@@ -1305,16 +1208,6 @@ class RosterCursor(Animation):
     identical dimensions; use this to signify which player is currently
     choosing.
 
-    Class Constants:
-        P1_SPRITESHEET: A String for the file path to player 1's cursor
-            animation.
-        P2_SPRITESHEET: A String for the file path to player 2's cursor
-            animation.
-        FRAME_AMOUNT: An integer for the amount of frames in each
-            Animation.
-        FRAME_DURATION: An integer for the duration, in update cycles,
-            of each animation frame.
-
     Attributes:
         p1_image: A Surface containing player 1's spritesheet image.
         p2_image: A Surface containing player 2's spritesheet image.
@@ -1322,10 +1215,6 @@ class RosterCursor(Animation):
             choosing their character. This value can be either 1 or 2,
             for Player 1 and 2 respectively.
     """
-    P1_SPRITESHEET = 'images/p1_character_cursor.png'
-    P2_SPRITESHEET = 'images/p2_character_cursor.png'
-    FRAME_AMOUNT = 2
-    FRAME_DURATION = 8
 
     def __init__(self, position):
         """Declare and initialize instance variables.
@@ -1334,13 +1223,13 @@ class RosterCursor(Animation):
             position: A tuple of two integers which represent the x
                 and y-positions of the cursor relative to ths screen.
         """
-        self.p1_image = pygame.image.load(self.P1_SPRITESHEET)
+        self.p1_image = pygame.image.load(P1_SPRITESHEET)
         self.p1_image = convert_to_colorkey_alpha(self.p1_image)
-        self.p2_image = pygame.image.load(self.P2_SPRITESHEET)
+        self.p2_image = pygame.image.load(P2_SPRITESHEET)
         self.p2_image = convert_to_colorkey_alpha(self.p2_image)
         super(RosterCursor, self).__init__(self.p1_image, position,
-                                           self.FRAME_AMOUNT,
-                                           self.FRAME_DURATION)
+                                           CURSOR_FRAME_AMOUNT,
+                                           CURSOR_FRAME_DURATION)
         self.current_player = 1
 
     def toggle_player(self):
@@ -1356,21 +1245,7 @@ class RosterCursor(Animation):
 class RosterArrow(Animation):
     """An animated arrow that notifies the players of a direction in
     which the character roster can be scrolled.
-
-    Class Constants:
-        SPRITESHEET: A String for the file path to the animation
-            spritesheet.
-        FRAME_AMOUNT: An integer for the number of frames in the
-            animation.
-        FRAME_DURATION: An integer for the duration, in update cycles,
-            of each animation frame.
-        ROSTER_DISTANCE: An integer for the distance, in pixels, of this
-            arrow from the edge of the roster.
     """
-    SPRITESHEET = 'images/roster_up_arrow.png'
-    FRAME_AMOUNT = 2
-    FRAME_DURATION = 10
-    ROSTER_DISTANCE = 18
 
     def __init__(self, arrow_type, roster_x, roster_y, roster_width,
                  roster_height):
@@ -1388,11 +1263,11 @@ class RosterArrow(Animation):
             roster_height: An integer for the height of the roster, in
                 pixels.
         """
-        spritesheet = image.load(self.SPRITESHEET)
+        spritesheet = image.load(ARROW_SPRITESHEET)
         spritesheet = convert_to_colorkey_alpha(spritesheet)
         super(RosterArrow, self).__init__(spritesheet, (0, 0),
-                                          self.FRAME_AMOUNT,
-                                          self.FRAME_DURATION)
+                                          ARROW_FRAME_AMOUNT,
+                                          ARROW_FRAME_DURATION)
         self.correct_position(arrow_type, roster_x, roster_y,
                               roster_width, roster_height)
         if arrow_type == ArrowType.DOWN:
@@ -1420,10 +1295,10 @@ class RosterArrow(Animation):
         y = roster_y + ((roster_height - self.image.get_height()) / 2)
 
         if arrow_type == ArrowType.UP:
-            x = roster_x - self.frame_width - self.ROSTER_DISTANCE
+            x = roster_x - self.frame_width - ARROW_ROSTER_DISTANCE
             self.move(x, y)
         if arrow_type == ArrowType.DOWN:
-            x = roster_x + roster_width + self.ROSTER_DISTANCE
+            x = roster_x + roster_width + ARROW_ROSTER_DISTANCE
             self.move(x, y)
 
 
@@ -1442,26 +1317,6 @@ class CharacterPreview(object):
     """A looped character animation with an accompanying shadow and
     name.
 
-    Class Constants:
-        GROUND_Y: An integer for the y-position of the ground upon which
-            the character will be standing, relative to the screen.
-        NAME_COLOR: A tuple containing the RGB values for the name
-            text's color.
-        NAME_OUTLINE_COLOR: A tuple containing the RGB values for the
-            color of the name text's outline.
-        NAME_OFFSET: An integer for the vertical shift up, in pixels,
-            of the name text from the bottom of the character sprite.
-        SHADOW_HEIGHT: An integer for the height of the shadow, in
-            pixels.
-        SHADOW_COLOR: A tuple containing the RGB values for the color
-            of the shadow.
-        OFFSET_FROM_SHADOW: An integer for the distance, in pixels,
-            from the bottom edge of the character sprite to the vertical
-            center of the shadow.
-        SLIDE_DURATION: A float for the the time taken, in seconds,
-            to move this preview into position during transition
-            animations.
-
     Attributes:
         x: An integer for the x-coordinate of the sprite relative to the
             screen.
@@ -1474,15 +1329,6 @@ class CharacterPreview(object):
         name: A Graphic with the character's name rendered onto it.
         shadow: A Graphic with the character's shadow drawn onto it.
     """
-    GROUND_Y = 157
-    NAME_COLOR = (255, 255, 255)
-    NAME_OUTLINE_COLOR = (80, 80, 80)
-    NAME_OFFSET = 6
-    SHADOW_HEIGHT = 14
-    SHADOW_COLOR = (0, 5, 90)
-    OFFSET_FROM_SHADOW = 4
-    SLIDE_DURATION = 0.4
-
     def __init__(self, is_facing_left, spritesheet, name, name_font,
                  frame_durations):
         """Declare and initialize instance variables.
@@ -1547,7 +1393,7 @@ class CharacterPreview(object):
             An integer for the character's y-position.
         """
         character_height = self.animation.get_height()
-        y = self.GROUND_Y - character_height
+        y = GROUND_Y - character_height
         return y
 
     def correct_position(self):
@@ -1568,14 +1414,14 @@ class CharacterPreview(object):
             drawn onto it.
         """
         frame_width = self.animation.get_width()
-        shadow_surf = Surface((frame_width, self.SHADOW_HEIGHT + 1),
+        shadow_surf = Surface((frame_width, SHADOW_HEIGHT + 1),
                               pygame.locals.SRCALPHA)
-        draw_region = Rect(0, 0, frame_width, self.SHADOW_HEIGHT)
+        draw_region = Rect(0, 0, frame_width, SHADOW_HEIGHT)
 
-        pygame.draw.ellipse(shadow_surf, self.SHADOW_COLOR, draw_region)
+        pygame.draw.ellipse(shadow_surf, SHADOW_COLOR, draw_region)
 
         char_bottom = self.y + self.animation.get_height()
-        y = char_bottom - self.SHADOW_HEIGHT + self.OFFSET_FROM_SHADOW
+        y = char_bottom - SHADOW_HEIGHT + OFFSET_FROM_SHADOW
         return Graphic(shadow_surf, (self.x, y))
 
     def update(self):
@@ -1599,8 +1445,8 @@ class CharacterPreview(object):
                 character's name.
             name: A String containing the character's name.
         """
-        name_graphic = render_text(name_font, name, self.NAME_COLOR,
-                                            self.NAME_OUTLINE_COLOR, (0, 0))
+        name_graphic = render_text(name_font, name, NAME_COLOR,
+                                            NAME_OUTLINE_COLOR, (0, 0))
 
         if name_graphic.rect.width < self.animation.get_width():
             x = self.get_centered_x(name_graphic.rect.width)
@@ -1608,7 +1454,7 @@ class CharacterPreview(object):
             x = self.x + self.animation.get_width() - name_graphic.rect.width
         else:
             x = self.x
-        y = self.y + self.animation.get_height() - self.NAME_OFFSET
+        y = self.y + self.animation.get_height() - NAME_OFFSET
         name_graphic.move(x, y)
 
         return name_graphic
@@ -1630,7 +1476,7 @@ class CharacterPreview(object):
         """Return a float for the speed at which this preview will move
         during transition animations.
         """
-        return (float(self.animation.get_width()) / self.SLIDE_DURATION)
+        return (float(self.animation.get_width()) / PREVIEW_SLIDE_DURATION)
 
     def move(self, dx=0, dy=0):
         """Move the animation around the screen space.
