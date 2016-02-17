@@ -1,19 +1,10 @@
 from pygame.mixer import Sound
+from customize.select_screens_sfx import *
 
 
 class SelectStateSFX(object):
     """Plays sound effects that are used by both the Character Select
     State and the Stage Select State.
-
-    Class Constants:
-        SCROLL_PATH: A String for the file path to the scroll items
-            sound effect.
-        CONFIRM_PATH: A String for the file path to the confirm choice
-            sound effect.
-        CANCEL_PATH: A String for the file path to the cancel selection sound
-            effect.
-        NO_CONFIRM_PATH: A String for the file path to the cannot confirm sound
-            effect.
 
     Attributes:
         channel: A PyGame Channel where all of the sounds will be
@@ -28,11 +19,6 @@ class SelectStateSFX(object):
             confirm when no choices are available, such as when no characters
             or stages could be loaded.
     """
-    SCROLL_PATH = 'audio/scroll_char_stage.ogg'
-    CONFIRM_PATH = 'audio/confirm.wav'
-    CANCEL_PATH = 'audio/cancel.wav'
-    NO_CONFIRM_PATH = 'audio/invalid.wav'
-
     def __init__(self, channel):
         """Declare and initialize instance variables.
 
@@ -41,10 +27,10 @@ class SelectStateSFX(object):
                 Sounds.
         """
         self.channel = channel
-        self.scroll = Sound(self.SCROLL_PATH)
-        self.confirm = Sound(self.CONFIRM_PATH)
-        self.cancel = Sound(self.CANCEL_PATH)
-        self.no_confirm = Sound(self.NO_CONFIRM_PATH)
+        self.scroll = Sound(SCROLL_PATH)
+        self.confirm = Sound(CONFIRM_PATH)
+        self.cancel = Sound(CANCEL_PATH)
+        self.no_confirm = Sound(NO_CONFIRM_PATH)
 
     def play_scroll(self):
         """Play the 'scroll items' sound effect."""
