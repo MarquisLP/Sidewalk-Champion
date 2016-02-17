@@ -1,4 +1,5 @@
 import pygame.mixer
+from customize.screen_transitions import *
 
 
 class StateFader(object):
@@ -10,12 +11,6 @@ class StateFader(object):
 
     When fading out, the next Game State will automatically take over
     game processing once the fade finishes.
-
-    Class Constants:
-        FADE_SPEED: An integer for the speed of the fade, in alpha value
-            gained/lost per second.
-        MUSIC_FADEOUT_TIME: An integer for the time, in milliseconds, taken
-            to fade out music.
 
     Attributes:
         next_state: An integer for the ID of the next Game State to go
@@ -29,9 +24,6 @@ class StateFader(object):
         is_running: A Boolean indicating whether the fade is still
             running.
     """
-    FADE_SPEED = 200
-    MUSIC_FADEOUT_TIME = 2000
-
     def __init__(self, change_state):
         """Declare and initialize instance variables.
 
@@ -68,7 +60,7 @@ class StateFader(object):
                 enum.
         """
         if pygame.mixer.music.get_busy():
-            pygame.mixer.music.fadeout(self.MUSIC_FADEOUT_TIME)
+            pygame.mixer.music.fadeout(MUSIC_FADEOUT_TIME)
         self.next_state = next_state
         self.is_running = True
 
@@ -101,7 +93,7 @@ class StateFader(object):
         if old_alpha >= 255:
             self.is_running = False
         else:
-            state_surf.set_alpha(old_alpha + (self.FADE_SPEED * time))
+            state_surf.set_alpha(old_alpha + (FADE_SPEED * time))
 
     def fade_out_state(self, time, state_surf):
         """Fade out a Game State's Surface.
@@ -120,4 +112,4 @@ class StateFader(object):
             self.is_running = False
             self.change_state(self.next_state)
         else:
-            state_surf.set_alpha(old_alpha - (self.FADE_SPEED * time))
+            state_surf.set_alpha(old_alpha - (FADE_SPEED * time))

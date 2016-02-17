@@ -1,5 +1,5 @@
 from pygame.surface import Surface
-from lib.globals import SCREEN_SIZE
+from customize.globals import SCREEN_SIZE
 from lib.custom_data.character_data import *
 from exceptions import NotImplementedError
 from __builtin__ import False

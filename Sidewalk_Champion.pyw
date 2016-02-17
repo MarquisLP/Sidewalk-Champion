@@ -11,8 +11,8 @@ import pygame
 from pygame.locals import *
 from lib.custom_data.settings_manager import load_settings
 from lib.game_states.game_state_manager import *
-from lib.globals import SCREEN_SIZE
-from lib.globals import FULL_SCALE
+from customize.globals import SCREEN_SIZE
+from customize.globals import FULL_SCALE
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 

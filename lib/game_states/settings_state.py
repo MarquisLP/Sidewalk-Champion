@@ -6,9 +6,10 @@ from pygame.color import Color
 from pygame.font import Font
 from pygame.surface import Surface
 from pygame.mixer import Sound
-from lib.globals import SCREEN_SIZE
-from lib.globals import INPUT_NAMES
-from lib.globals import FRAME_RATE
+from customize.globals import SCREEN_SIZE
+from customize.globals import INPUT_NAMES
+from customize.globals import FRAME_RATE
+from customize.settings import *
 from lib.graphics import Graphic, Animation, render_text
 from lib.game_states.state import State
 from lib.game_states.state_pass import StatePass
@@ -26,19 +27,6 @@ class SettingsState(State):
 
     State flow consists of alternating between these two lists and
     modifying their contained items, as per the players' requests.
-
-    Class Constants:
-        BG_PATH: A string containing the file path for the background
-            image.
-        SLIDE_SFX_PATH: A string containing the file path for the
-            slide-in sound effect.
-
-        SCROLL_SFX_PATH: A string containing the file path for the
-            scroll list sound effect.
-        EXIT_SFX_PATH: A string containing the file path for the
-            exit screen sound effect.
-        SLIDE_SPEED: An integer that sets the speed at which the State
-            Surface will slide, in pixels per second.
 
     Attributes:
         setting_list: The SettingList object that controls all of
@@ -59,12 +47,6 @@ class SettingsState(State):
             is currently in the process of exiting this State and going
             to another State.
     """
-    BG_PATH = "images/settings_back.png"
-    SLIDE_SFX_PATH = "audio/settings_slide.wav"
-    SCROLL_SFX_PATH = "audio/scroll.wav"
-    EXIT_SFX_PATH = "audio/cancel.wav"
-    SLIDE_SPEED = 1000.0
-
     # Initialization
     def __init__(self, state_manager, state_pass):
         """Declare and initialize instance variables.
@@ -80,10 +62,10 @@ class SettingsState(State):
         p2_bindings = self.state_pass.settings.player2_keys
         self.setting_list = SettingList(p1_bindings, p2_bindings)
         self.binding_list = self.setting_list.binding_list
-        self.bg_image = Graphic.from_file(self.BG_PATH, (0.0, 0.0))
-        self.slide_sound = Sound(self.SLIDE_SFX_PATH)
-        self.scroll_sound = Sound(self.SCROLL_SFX_PATH)
-        self.exit_sound = Sound(self.EXIT_SFX_PATH)
+        self.bg_image = Graphic.from_file(BG_PATH, (0.0, 0.0))
+        self.slide_sound = Sound(SLIDE_SFX_PATH)
+        self.scroll_sound = Sound(SCROLL_SFX_PATH)
+        self.exit_sound = Sound(EXIT_SFX_PATH)
         self.is_editing_binding = False
         self.is_leaving_state = False
         self.load_settings_from_file()
@@ -169,7 +151,7 @@ class SettingsState(State):
                 should slide out of the window, rather than into it.
         """
         scale = self.state_pass.settings.screen_scale
-        distance = self.SLIDE_SPEED * time * scale
+        distance = SLIDE_SPEED * time * scale
 
         if not is_backwards:
             if self.exact_offset[0] >= SCREEN_SIZE[0] * scale:
@@ -369,14 +351,6 @@ class SettingList(object):
     """Contains all of the Setting objects that will be displayed in
     and that can be modified from the Settings Screen.
 
-    Class Constants:
-        X: The x-position of the top of the list relative to the game
-            screen.
-        Y: The y-position of the top of the list relative to the game
-            screen.
-        SETTING_DISTANCE: The vertical distance between Setting text
-            graphics, in pixels.
-
     Attributes:
         settings: A list containing all of the Settings in this State.
         binding_list: A KeyBindingList that controls all of the Key
@@ -384,10 +358,6 @@ class SettingList(object):
         active_setting: An integer for the index of the currently-
             selected Setting.
     """
-    X = 21
-    Y = 17
-    SETTING_DISTANCE = 15
-
     # Initialization
     def __init__(self, p1_bindings, p2_bindings):
         """Declare and initialize instance variables.
@@ -407,13 +377,14 @@ class SettingList(object):
         """
         setting_list = []
 
-        scale = Setting(self.X, self.Y, "Window Scale", "1x", "2x", "FULL")
-        box_display = Setting(self.X,
-            self.Y + scale.get_height() + self.SETTING_DISTANCE,
+        scale = Setting(SETTING_LIST_X, SETTING_LIST_Y, "Window Scale", "1x",
+            "2x", "FULL")
+        box_display = Setting(SETTING_LIST_X,
+            SETTING_LIST_Y + scale.get_height() + SETTING_DISTANCE,
             "Collision Box Display", "OFF", "ON")
-        binding_player = Setting(self.X,
-            self.Y + (box_display.get_height() * 2) +
-            (self.SETTING_DISTANCE * 2),
+        binding_player = Setting(SETTING_LIST_X,
+            SETTING_LIST_Y + (box_display.get_height() * 2) +
+            (SETTING_DISTANCE * 2),
             "Set Key Bindings for...", "Player 1", "Player 2")
 
         setting_list.append(scale)
@@ -520,16 +491,6 @@ class Setting(object):
     """One of the Settings on the Settings Screen with selectable
     options.
 
-    Class Constants:
-        OPTION_DISTANCE     The horizontal distance, in pixels, between
-                            each of the text graphics for options.
-        OPTION_X            The x-coordinate for this Setting's first
-                            option, relative to the Setting Surface.
-        WIDTH               The width, in pixels, for the Setting
-                            Surface.
-        HEIGHT              The height, in pixels, for the Setting
-                            Surface.
-
     Attributes:
         x                   The x-position for this Setting's Surface,
                             relative to the parent Surface.
@@ -546,9 +507,6 @@ class Setting(object):
         surf                The Surface onto which this Setting's name
                             and its options will be rendered.
     """
-    OPTION_DISTANCE = 20
-    OPTION_X = 200
-
     def __init__(self, x, y, name, *options):
         """Declare and initialize instance variables.
 
@@ -580,7 +538,7 @@ class Setting(object):
         """
         option_list = []
 
-        new_x = self.OPTION_X
+        new_x = OPTION_X
         for i in range(0, len(option_strings)):
             text = option_strings[i]
 
@@ -589,7 +547,7 @@ class Setting(object):
 
             # The next option will be drawn OPTION_DISTANCE pixels away
             # from where the last option's Surface ends.
-            new_x += option_list[i].rect.width + self.OPTION_DISTANCE
+            new_x += option_list[i].rect.width + OPTION_DISTANCE
         return option_list
 
     def set_selected_option(self, option_num):
@@ -669,35 +627,6 @@ class KeyBindingList(object):
     shown at a time. To access the others, this object will scroll
     through them based on the current selection.
 
-    Class Constants:
-        X                   The x-position of the main Surface,
-                            relative to the parent Surface.
-        Y                   The y-position of the main Surface.
-                            relative to the parent Surface.
-        REMAP_SFX_PATH      A string containing the file path for the
-                            key remap sound effect.
-        INVALID_SFX_PATH    A string containing the file path for the
-                            invalid key sound effect.
-        TEXT_DISTANCE       The vertical distance, in pixels, between
-                            the top edges of the text graphic for each
-                            Key Binding.
-        BINDINGS_ON_SCREEN  The number of key bindings that will be
-                            shown on-screen at any one time.
-        UP_ARROW_PATH       The filepath for the scroll up arrow
-                            sprite sheet.
-        DOWN_ARROW_PATH     The filepath for the scroll down arrow
-                            sprite sheet.
-        ARROW_X             The x-position of both arrows on the main
-                            Surface.
-        UP_ARROW_Y          The y-position of the up arrow on the
-                            main Surface.
-        DOWN_ARROW_Y        The y-position of the down arrow on the
-                            main Surface.
-        ARROW_FRAMES        The number of frames in the scroll arrows'
-                            sprite sheets.
-        ARROW_DURATION      The duration of each frame in the scroll
-                            arrows' animations, in pixels per second.
-
     Attributes:
         setting_list        The SettingList object that controls all
                             other Settings in this game state.
@@ -721,20 +650,6 @@ class KeyBindingList(object):
         top_binding         The index of the key binding currently
                             shown
     """
-    X = 52
-    Y = 115
-    REMAP_SFX_PATH = "audio/settings_remap.wav"
-    INVALID_SFX_PATH = "audio/invalid.wav"
-    TEXT_DISTANCE = 23
-    BINDINGS_ON_SCREEN = 4
-    UP_ARROW_PATH = "images/settings_arrow_up.png"
-    DOWN_ARROW_PATH = "images/settings_arrow_down.png"
-    ARROW_X = 125.0
-    UP_ARROW_Y = 0.0
-    DOWN_ARROW_Y = 86.0
-    ARROW_FRAMES = 2
-    ARROW_DURATION = 10
-
     # Initialization
     def __init__(self, setting_list, p1_bindings, p2_bindings):
         """Declare and initialize instance variables.
@@ -748,17 +663,18 @@ class KeyBindingList(object):
                             bindings.
         """
         self.setting_list = setting_list
-        self.remap_sound = Sound(self.REMAP_SFX_PATH)
-        self.invalid_sound = Sound(self.INVALID_SFX_PATH)
+        self.remap_sound = Sound(REMAP_SFX_PATH)
+        self.invalid_sound = Sound(INVALID_SFX_PATH)
         self.bindings = self.load_bindings(p1_bindings, p2_bindings)
         self.current_binding = 0
         self.top_binding = 0
-        self.up_arrow = Animation.from_file(self.UP_ARROW_PATH,
-            (self.X + self.ARROW_X, self.Y + self.UP_ARROW_Y),
-            self.ARROW_FRAMES, self.ARROW_DURATION)
-        self.down_arrow = Animation.from_file(self.DOWN_ARROW_PATH,
-            (self.X + self.ARROW_X, self.Y + self.DOWN_ARROW_Y),
-            self.ARROW_FRAMES, self.ARROW_DURATION)
+        self.up_arrow = Animation.from_file(UP_ARROW_PATH,
+            (BINDING_LIST_X + ARROW_X, BINDING_LIST_Y + UP_ARROW_Y),
+            ARROW_FRAMES, ARROW_DURATION)
+        self.down_arrow = Animation.from_file(DOWN_ARROW_PATH,
+            (BINDING_LIST_X + ARROW_X, BINDING_LIST_Y +
+             DOWN_ARROW_Y),
+            ARROW_FRAMES, ARROW_DURATION)
 
     def load_bindings(self, p1_bindings, p2_bindings):
         """Create all KeyBinding objects in a list and return them.
@@ -776,13 +692,13 @@ class KeyBindingList(object):
             p1_key = p1_bindings[input_name]
             p2_key = p2_bindings[input_name]
 
-            new_binding = KeyBinding(self.X, self.Y + text_y, input_name,
+            new_binding = KeyBinding(BINDING_LIST_X, BINDING_LIST_Y + text_y, input_name,
                                      p1_key, p2_key)
             binding_list.append(new_binding)
 
             # The next Key Binding will be drawn a set distance beneath
             # the previous one.
-            text_y += self.TEXT_DISTANCE
+            text_y += BINDING_TEXT_DISTANCE
 
         return binding_list
 
@@ -816,7 +732,7 @@ class KeyBindingList(object):
         last_binding = len(self.bindings) - 1
 
         self.set_selected_binding(last_binding)
-        self.top_binding = last_binding - self.BINDINGS_ON_SCREEN + 1
+        self.top_binding = last_binding - BINDINGS_ON_SCREEN + 1
         self.move_binding_display()
 
     def scroll_bindings(self, is_reversed=False):
@@ -851,7 +767,7 @@ class KeyBindingList(object):
         """Display the next or previous set of Key Bindings based on
         which Binding is currently selected.
         """
-        low_binding = self.top_binding + self.BINDINGS_ON_SCREEN - 1
+        low_binding = self.top_binding + BINDINGS_ON_SCREEN - 1
 
         if self.current_binding > low_binding:
             self.top_binding += 1
@@ -874,15 +790,15 @@ class KeyBindingList(object):
         """
         # The top binding can't be lower than the number of bindings
         # needed to fill the screen.
-        max_top_binding = len(self.bindings) - self.BINDINGS_ON_SCREEN
+        max_top_binding = len(self.bindings) - BINDINGS_ON_SCREEN
         if self.top_binding > max_top_binding:
             self.top_binding = max_top_binding
 
-        bottom_binding = self.top_binding + self.BINDINGS_ON_SCREEN - 1
+        bottom_binding = self.top_binding + BINDINGS_ON_SCREEN - 1
         new_y = 0
         for index in range(self.top_binding, bottom_binding + 1):
-            self.bindings[index].set_y(self.Y + new_y)
-            new_y += self.TEXT_DISTANCE
+            self.bindings[index].set_y(BINDING_LIST_Y + new_y)
+            new_y += BINDING_TEXT_DISTANCE
 
     # Rebinding
     def edit_selected_binding(self, player_num, new_key, channel):
@@ -985,7 +901,7 @@ class KeyBindingList(object):
         @type parent_surf: SurfaceType
         """
         for index in range(self.top_binding, self.top_binding +
-                self.BINDINGS_ON_SCREEN):
+                BINDINGS_ON_SCREEN):
             self.bindings[index].draw(parent_surf)
 
         self.draw_arrows(parent_surf)
@@ -1009,12 +925,7 @@ class KeyBindingList(object):
 
 class KeyBinding(object):
     """Stores the keys that both players use for a certain input
-    within the game.
-
-    Class Constants:
-        TEXT_SPACING    The horizontal distance, in pixels, between each
-                        of the UnderlineText objects.
-        KEY_TEXT_X      The x-position of the text for the key's name.
+    within the game.UNDER
 
     Attributes:
         x               The x-position of the main
@@ -1029,9 +940,6 @@ class KeyBinding(object):
         key_text        The UnderlineText object that will render
                         and display the current player's binding.
     """
-    TEXT_SPACING = 15
-    KEY_TEXT_X = 175
-
     def __init__(self, x, y, input_name, p1_binding, p2_binding):
         self.x = x
         self.y = y
@@ -1040,7 +948,7 @@ class KeyBinding(object):
         self.p2_binding = p2_binding
         self.input_text = UnderlineText(self.x, self.y,
                                         self.format_input_text(input_name))
-        self.key_text = UnderlineText(self.x + self.KEY_TEXT_X, self.y,
+        self.key_text = UnderlineText(self.x + KEY_TEXT_X, self.y,
                                       p1_binding)
 
     def format_input_text(self, xml_string):
@@ -1170,18 +1078,6 @@ class UnderlineText(Graphic):
     """Represents a text Graphic that can be underlined.
 
     Class Constants:
-        FONT_PATH           The filepath to the font used for rendering
-                            text.
-        FONT_COLOUR         A tuple containing the RGB values for the
-                            text color.
-        FONT_SIZE           The size of the font used for rendering the
-                            text.
-        UNDERLINE_COLOUR    A tuple containing the RGB values for the
-                            underline color.
-        UNDERLINE_SIZE      The height of the underline, in pixels.
-        COLORKEY            The name of the color used in colorkeying
-                            the Surface to create a transparent
-                            background.
 
     Attributes:
         text    The string of text that will be shown.
@@ -1193,12 +1089,6 @@ class UnderlineText(Graphic):
                 Surface.
         surf    The Surface onto which the text will be rendered.
     """
-    FONT_PATH = "fonts/corbel.ttf"
-    FONT_COLOUR = (255, 255, 255)
-    FONT_SIZE = 16
-    UNDERLINE_COLOUR = (136, 136, 136)
-    UNDERLINE_SIZE = 4
-
     def __init__(self, x, y, text):
         """Define and initialize instance variables.
 
@@ -1211,8 +1101,8 @@ class UnderlineText(Graphic):
                     Surface.
         """
         self.text = text
-        self.font = Font(self.FONT_PATH, self.FONT_SIZE)
-        image = render_text(self.font, text, self.FONT_COLOUR)
+        self.font = Font(FONT_PATH, FONT_SIZE)
+        image = render_text(self.font, text, FONT_COLOUR)
         super(UnderlineText, self).__init__(image, (x, y))
 
     def change_text(self, new_text):
@@ -1223,7 +1113,7 @@ class UnderlineText(Graphic):
                         written on the text Surface.
         """
         self.text = new_text
-        self.image = render_text(self.font, new_text, self.FONT_COLOUR)
+        self.image = render_text(self.font, new_text, FONT_COLOUR)
 
     def add_underline(self):
         """Draws an underline on the text Surface, on top the text."""
@@ -1240,13 +1130,13 @@ class UnderlineText(Graphic):
         # underline. The text is drawn on top.
         new_image = Surface((text_width, text_height + 4), pygame.SRCALPHA, 32)
         new_image = new_image.convert_alpha()
-        draw.line(new_image, self.UNDERLINE_COLOUR, start_point,
-                  end_point, self.UNDERLINE_SIZE)
+        draw.line(new_image, UNDERLINE_COLOUR, start_point,
+                  end_point, UNDERLINE_SIZE)
         new_image.blit(self.image, (0, 0))
 
         self.image = new_image
 
     def erase_underline(self):
         """Re-renders the text Surface without an underline."""
-        self.image = render_text(self.font, self.text, self.FONT_COLOUR)
+        self.image = render_text(self.font, self.text, FONT_COLOUR)
 

@@ -5,3 +5,4 @@ test - Copy.pyw
 *.swp
 *.swo
 .*.sw*
+.ropeproject

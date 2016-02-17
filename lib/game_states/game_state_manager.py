@@ -3,7 +3,7 @@ import pygame.display
 from threading import Thread
 from pygame.locals import *
 from pygame.surface import Surface
-from lib.globals import *
+from customize.globals import *
 from lib.custom_data.settings_manager import load_settings
 from lib.game_states.state import State
 from lib.game_states.state_pass import StatePass

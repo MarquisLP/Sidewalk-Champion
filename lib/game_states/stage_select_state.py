@@ -60,7 +60,7 @@ from math import ceil
 from random import randint
 from lib.graphics import (Graphic, Animation, render_text,
                           get_line_center, calculate_center_position)
-from lib.globals import SCREEN_SIZE
+from customize.globals import SCREEN_SIZE
 from lib.custom_data.stage_loader import load_all_stages
 from lib.game_states.state import State
 from lib.game_states.state_ids import StateIDs
