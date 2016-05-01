@@ -5,7 +5,6 @@ A customizable fighting game written with Python and the PyGame library.
 ![Title Screenie](screenshots/title_screen.png)
 ![Character Select Screenie](screenshots/character_select.png)
 ![Stage Select Screenie](screenshots/stage_select.png)
-![Character Editor Screenie](screenshots/edit_collision_boxes.png)
 
 ## Features
 * A fighting game engine modelled after classic 2D fighters, such as Street Fighter 3.
